@@ -1,6 +1,6 @@
 package com.creativedrewy.nativ.nft
 
-data class NftResult(
+data class NftMetadata(
     val name: String,
     val symbol: String,
     val description: String,

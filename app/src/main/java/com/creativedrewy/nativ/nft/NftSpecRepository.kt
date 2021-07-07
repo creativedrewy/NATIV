@@ -12,7 +12,7 @@ class NftSpecRepository(
     private val gson: Gson = Gson()
 ) {
 
-    suspend fun getNftDetails(uri: String): NftResult? {
+    suspend fun getNftDetails(uri: String): NftMetadata? {
         val request = Request.Builder()
             .url(uri)
             .get()
@@ -24,7 +24,7 @@ class NftSpecRepository(
             is Success -> {
                 val resString = result.response.body?.string()
 
-                val dto = gson.fromJson(resString, NftResult::class.java)
+                val dto = gson.fromJson(resString, NftMetadata::class.java)
                 dto
             }
             is Error -> {
