@@ -19,6 +19,18 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

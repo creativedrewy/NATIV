@@ -63,6 +63,8 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 val pdaAddr = PublicKey.findProgramAddress(pdaSeeds, PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"))
 
                 val accountInfo = testRepository.getAccountInfo(pdaAddr.address)
+                Log.v("SOL", "Your details ${ accountInfo }:")
+
                 try {
                     val borshData = Base64.getDecoder().decode(accountInfo.data[0])
 
@@ -75,7 +77,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     val details = nftRepo.getNftDetails(metaplexData.data.uri)
                     Log.v("SOL", "Your details ${ details?.name }:")
                 } catch (e: Exception) {
-                    Log.e("SOL", "Err", e)
+
                 }
             }
         }
