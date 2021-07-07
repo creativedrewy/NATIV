@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    Greeting("Andrew")
                 }
             }
         }
@@ -35,7 +36,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+    LazyColumn() {
+        items(
+            count = 10
+        ) {
+            Text(text = "Hello $name!")
+        }
+    }
 }
 
 @Preview(showBackground = true)
