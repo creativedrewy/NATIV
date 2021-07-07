@@ -1,10 +1,15 @@
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    //repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
-rootProject.name = "NATIV"
+//rootProject.name = "NATIV"
+
 include ':app'
+
+include ':solana'
+project(":solana").projectDir = new File("../Solana.kt")
+include ':SolanaRepository'
