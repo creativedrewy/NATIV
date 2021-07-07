@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.creativedrewy.nativ">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".NATIVApp"
         android:allowBackup="true"
