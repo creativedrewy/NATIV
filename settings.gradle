@@ -9,7 +9,6 @@ dependencyResolutionManagement {
 //rootProject.name = "NATIV"
 
 include ':app'
-
 include ':solana'
-project(":solana").projectDir = new File("../Solana.kt")
+project(":solana").projectDir = new File("../Solana.kt/Solana")
 include ':SolanaRepository'
