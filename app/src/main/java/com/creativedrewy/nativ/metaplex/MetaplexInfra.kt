@@ -4,6 +4,11 @@ import com.solana.core.PublicKey
 import com.solana.vendor.borshj.BorshCodable
 import com.solana.vendor.borshj.FieldOrder
 
+object MetaplexContstants {
+    const val METADATA_NAME = "metadata"
+    const val METADATA_ACCOUNT_PUBKEY = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+}
+
 data class MetaplexMeta(
     @FieldOrder(0) val key: Byte,
     @FieldOrder(1) val update_authority: PublicKey,

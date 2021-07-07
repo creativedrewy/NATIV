@@ -24,8 +24,7 @@ class NftSpecRepository(
             is Success -> {
                 val resString = result.response.body?.string()
 
-                val dto = gson.fromJson(resString, NftMetadata::class.java)
-                dto
+                gson.fromJson(resString, NftMetadata::class.java)
             }
             is Error -> {
                 null
