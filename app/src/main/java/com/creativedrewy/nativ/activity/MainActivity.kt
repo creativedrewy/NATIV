@@ -2,6 +2,7 @@
 package com.creativedrewy.nativ.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
@@ -67,7 +68,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
             }
         }
 
-        //viewModel.loadNfts()
+        viewModel.loadNfts()
         initFilament()
     }
 
@@ -180,6 +181,8 @@ fun FilamentViewer() {
     SideEffect {
         val (engine, scene, asset) = scenes["car"]!!
         modelViewer?.scene = scene
+
+        Log.v("SOL", "::: You are doing a side effect!! :;")
     }
 
     AndroidView({ context ->

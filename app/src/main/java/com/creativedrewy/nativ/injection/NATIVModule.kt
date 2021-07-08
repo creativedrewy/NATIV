@@ -1,6 +1,7 @@
 package com.creativedrewy.nativ.injection
 
 import com.creativedrewy.nativ.nft.NftSpecRepository
+import com.creativedrewy.solanarepository.ApiRequestClient
 import com.creativedrewy.solanarepository.accounts.AccountRepository
 import com.solana.core.PublicKeyRule
 import com.solana.vendor.borshj.Borsh
@@ -31,6 +32,11 @@ class NATIVModule {
     @Provides
     fun providesNftSpecRepository(): NftSpecRepository {
         return NftSpecRepository()
+    }
+
+    @Provides
+    fun providesApiRequestClient(): ApiRequestClient {
+        return ApiRequestClient()
     }
 
 }
