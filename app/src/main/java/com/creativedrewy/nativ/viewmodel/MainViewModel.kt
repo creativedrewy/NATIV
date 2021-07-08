@@ -9,13 +9,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class NftViewProps(
+    val name: String,
+    val mediaBytes: ByteArray
+)
+
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val metaplexNftUseCase: MetaplexNftUseCase,
     private val assetDownloadUseCase: AssetDownloadUseCase
 ): ViewModel() {
 
-    var viewState: MutableLiveData<List<String>> = MutableLiveData(listOf())
+    var viewState: MutableLiveData<List<NftViewProps>> = MutableLiveData(listOf())
 
     fun loadNfts() {
         viewModelScope.launch {
@@ -26,7 +31,9 @@ class MainViewModel @Inject constructor(
             val fileDownload = results.first().properties.files.first()
             val assetBytes = assetDownloadUseCase.downloadAsset(fileDownload)
 
-            viewState.postValue(listOf())
+            viewState.postValue(
+                listOf(NftViewProps(nftData.first().name, assetBytes))
+            )
         }
     }
 

@@ -24,14 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LiveData
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.filament.*
+import com.creativedrewy.nativ.filament.ModelViewer
+import com.creativedrewy.nativ.filament.scenes
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.MainViewModel
-import com.google.android.filament.*
-import com.google.android.filament.gltfio.AssetLoader
-import com.google.android.filament.gltfio.MaterialProvider
-import com.google.android.filament.gltfio.ResourceLoader
-import com.google.android.filament.utils.KtxLoader
+import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.google.android.filament.Engine
 import com.google.android.filament.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -42,17 +40,10 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private lateinit var engine: Engine
-    private lateinit var assetLoader: AssetLoader
-    private lateinit var resourceLoader: ResourceLoader
-
-    private lateinit var indirectLight: IndirectLight
-    private lateinit var skybox: Skybox
-    private var light: Int = 0
-
     companion object {
         init { Utils.init() }
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,75 +54,12 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     color = MaterialTheme.colors.background
                 ) {
                     //Greeting(viewModel.viewState)
-                    FilamentRoot()
+                    FilamentRoot(viewModel.viewState)
                 }
             }
         }
 
         viewModel.loadNfts()
-        initFilament()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        engine.lightManager.destroy(light)
-        engine.destroyEntity(light)
-        engine.destroyIndirectLight(indirectLight)
-        engine.destroySkybox(skybox)
-
-        scenes.forEach {
-            engine.destroyScene(it.value.scene)
-            assetLoader.destroyAsset(it.value.asset)
-        }
-
-        assetLoader.destroy()
-        resourceLoader.destroy()
-
-        engine.destroy()
-    }
-
-    private fun initFilament() {
-        engine = Engine.create()
-        assetLoader = AssetLoader(engine, MaterialProvider(engine), EntityManager.get())
-        resourceLoader = ResourceLoader(engine)
-
-        val ibl = "courtyard_8k"
-        readCompressedAsset(this, "${ibl}_ibl.ktx").let {
-            indirectLight = KtxLoader.createIndirectLight(engine, it)
-            indirectLight.intensity = 30_000.0f
-        }
-
-        readCompressedAsset(this, "${ibl}_skybox.ktx").let {
-            skybox = KtxLoader.createSkybox(engine, it)
-        }
-
-        light = EntityManager.get().create()
-        val (r, g, b) = Colors.cct(6_000.0f)
-        LightManager.Builder(LightManager.Type.SUN)
-            .color(r, g, b)
-            .intensity(70_000.0f)
-            .direction(0.28f, -0.6f, -0.76f)
-            .build(engine, light)
-
-        createScene("car", "material_car_paint.glb")
-    }
-
-    private fun createScene(name: String, gltf: String) {
-        val scene = engine.createScene()
-        val asset = readCompressedAsset(this, gltf).let {
-            val asset = loadModelGlb(assetLoader, resourceLoader, it)
-            //transformToUnitCube(engine, asset)
-            asset
-        }
-        scene.indirectLight = indirectLight
-        scene.skybox = skybox
-
-        scene.addEntities(asset.entities)
-
-        scene.addEntity(light)
-
-        scenes[name] = ProductScene(engine, scene, asset)
     }
 }
 
@@ -156,18 +84,28 @@ fun SampleLabel(
 }
 
 @Composable
-fun FilamentRoot() {
-    Surface(
-        modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 16.dp),
-        shape = RoundedCornerShape(24.dp, 24.dp, 24.dp, 24.dp),
-        elevation = 8.dp
-    ) {
-        FilamentViewer()
+fun FilamentRoot(
+    viewState: LiveData<List<NftViewProps>>
+) {
+    val nfts by viewState.observeAsState(listOf())
+
+    LazyColumn {
+        items(nfts) { nft ->
+            Surface(
+                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 16.dp),
+                shape = RoundedCornerShape(24.dp, 24.dp, 24.dp, 24.dp),
+                elevation = 8.dp
+            ) {
+                FilamentViewer(nft)
+            }
+        }
     }
 }
 
 @Composable
-fun FilamentViewer() {
+fun FilamentViewer(
+    nftProp: NftViewProps
+) {
     var modelViewer by remember { mutableStateOf<ModelViewer?>(null) }
 
     LaunchedEffect(modelViewer) {
@@ -185,15 +123,25 @@ fun FilamentViewer() {
         Log.v("SOL", "::: You are doing a side effect!! :;")
     }
 
+    DisposableEffect(modelViewer) {
+        onDispose {
+            //TODO: Look into proper disposing of this
+            //modelViewer?.destroy()
+        }
+    }
+
     AndroidView({ context ->
         LayoutInflater.from(context).inflate(
             R.layout.filament_host, FrameLayout(context), false
         ).apply {
-            val (engine) = scenes["car"]!!
 
-            modelViewer = ModelViewer(engine, this as SurfaceView).also {
-                setupModelViewer(it)
-            }
+            modelViewer = ModelViewer(
+                context,
+                Engine.create(),
+                this as SurfaceView,
+                nftProp.mediaBytes
+            )
+            //setupModelViewer(modelViewer)
         }
     })
 }
