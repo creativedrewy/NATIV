@@ -1,3 +1,5 @@
 
 include ':app'
 include ':SolanaRepository'
+include ':solana'
+project(":solana").projectDir = new File("../Solana.kt/Solana")

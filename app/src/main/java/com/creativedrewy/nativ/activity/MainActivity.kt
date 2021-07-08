@@ -6,11 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.LiveData
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +34,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Andrew")
+                    Greeting(viewModel.viewState)
                 }
             }
         }
@@ -40,20 +44,29 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    LazyColumn() {
-        items(
-            count = 10
-        ) {
-            Text(text = "Hello $name!")
+fun Greeting(
+    viewState: LiveData<List<String>>
+) {
+    val nfts by viewState.observeAsState(listOf())
+
+    LazyColumn {
+        items(nfts) { nft ->
+            SampleLabel(name = nft)
         }
     }
+}
+
+@Composable
+fun SampleLabel(
+    name: String
+) {
+    Text(text = "Hello $name!")
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     NATIVTheme {
-        Greeting("Android")
+        //Greeting("Android")
     }
 }
