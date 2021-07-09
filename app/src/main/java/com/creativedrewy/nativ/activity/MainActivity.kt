@@ -4,6 +4,7 @@ package com.creativedrewy.nativ.activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -28,6 +27,8 @@ import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.MainViewModel
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.google.android.filament.Skybox
+import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
 import com.google.android.filament.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +54,9 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    FilamentRoot(viewModel.viewState)
+                    GalleryRoot {
+                        FilamentRoot(viewModel.viewState)
+                    }
                 }
             }
         }
@@ -69,6 +72,26 @@ fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
     return ByteBuffer.wrap(bytes)
 }
 
+@Composable
+fun GalleryRoot(
+    content: @Composable () -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                backgroundColor = MaterialTheme.colors.surface,
+                contentColor = MaterialTheme.colors.onSurface,
+                elevation = 0.dp,
+                title = {
+                    Text(text = "NATIV")
+                }
+            )
+        },
+        content = {
+            content()
+        }
+    )
+}
 
 @ExperimentalComposeUiApi
 @Composable
@@ -78,7 +101,7 @@ fun FilamentRoot(
     val nfts by viewState.observeAsState(listOf())
 
     LazyColumn(
-        modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp)
+        modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
     ) {
         items(nfts) { nft ->
             GalleryItem(nft)
@@ -129,21 +152,19 @@ fun FilamentViewer(
         LayoutInflater.from(context).inflate(
             R.layout.filament_host, FrameLayout(context), false
         ).apply {
-            //Commenting this out for now while I do other stuff
+            modelViewer = ModelViewer(this as SurfaceView)
+            modelViewer?.let { viewer ->
+                val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
+                viewer.scene.indirectLight = KtxLoader.createIndirectLight(viewer.engine, ibl)
+                viewer.scene.indirectLight?.intensity = 30_000.0f
 
-//            modelViewer = ModelViewer(this as SurfaceView)
-//            modelViewer?.let { viewer ->
-//                val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
-//                viewer.scene.indirectLight = KtxLoader.createIndirectLight(viewer.engine, ibl)
-//                viewer.scene.indirectLight?.intensity = 30_000.0f
-//
-//                viewer.scene.skybox = Skybox.Builder()
-//                    .color(0.035f, 0.035f, 0.035f, 1.0f)
-//                    .build(viewer.engine)
-//
-//                viewer.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
-//                viewer.transformToUnitCube()
-//            }
+                viewer.scene.skybox = Skybox.Builder()
+                    .color(0.035f, 0.035f, 0.035f, 1.0f)
+                    .build(viewer.engine)
+
+                viewer.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
+                viewer.transformToUnitCube()
+            }
         }
     }, modifier = Modifier.pointerInteropFilter {
         modelViewer?.onTouchEvent(it)
