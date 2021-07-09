@@ -1,8 +1,8 @@
 
 package com.creativedrewy.nativ.activity
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
@@ -18,22 +18,24 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LiveData
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.filament.ModelViewer
-import com.creativedrewy.nativ.filament.scenes
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.MainViewModel
 import com.creativedrewy.nativ.viewmodel.NftViewProps
-import com.google.android.filament.Engine
+import com.google.android.filament.utils.KtxLoader
+import com.google.android.filament.utils.ModelViewer
 import com.google.android.filament.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import java.nio.ByteBuffer
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         init { Utils.init() }
     }
 
-
+    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,6 +63,14 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
         viewModel.loadNfts()
     }
+}
+
+
+fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
+    val input = context.assets.open(assetName)
+    val bytes = ByteArray(input.available())
+    input.read(bytes)
+    return ByteBuffer.wrap(bytes)
 }
 
 @Composable
@@ -83,6 +93,7 @@ fun SampleLabel(
     Text(text = "Hello $name!")
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun FilamentRoot(
     viewState: LiveData<List<NftViewProps>>
@@ -102,6 +113,7 @@ fun FilamentRoot(
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun FilamentViewer(
     nftProp: NftViewProps
@@ -116,33 +128,25 @@ fun FilamentViewer(
         }
     }
 
-    SideEffect {
-        val (engine, scene, asset) = scenes["car"]!!
-        modelViewer?.scene = scene
-
-        Log.v("SOL", "::: You are doing a side effect!! :;")
-    }
-
-    DisposableEffect(modelViewer) {
-        onDispose {
-            //TODO: Look into proper disposing of this
-            //modelViewer?.destroy()
-        }
-    }
-
     AndroidView({ context ->
         LayoutInflater.from(context).inflate(
             R.layout.filament_host, FrameLayout(context), false
         ).apply {
+            modelViewer = ModelViewer(this as SurfaceView)
 
-            modelViewer = ModelViewer(
-                context,
-                Engine.create(),
-                this as SurfaceView,
-                nftProp.mediaBytes
-            )
-            //setupModelViewer(modelViewer)
+            val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
+            modelViewer?.scene?.indirectLight = KtxLoader.createIndirectLight(modelViewer?.engine!!, ibl)
+            modelViewer?.scene?.indirectLight?.intensity = 30_000.0f
+
+            val skybox = readCompressedAsset(context, "courtyard_8k_skybox.ktx")
+            modelViewer?.scene?.skybox = KtxLoader.createSkybox(modelViewer?.engine!!, skybox)
+
+            modelViewer?.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
+            modelViewer?.transformToUnitCube()
         }
+    }, modifier = Modifier.pointerInteropFilter {
+        modelViewer?.onTouchEvent(it)
+        true
     })
 }
 
