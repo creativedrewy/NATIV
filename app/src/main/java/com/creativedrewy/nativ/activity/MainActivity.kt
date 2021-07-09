@@ -15,13 +15,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LiveData
@@ -29,6 +27,7 @@ import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.MainViewModel
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
 import com.google.android.filament.utils.Utils
@@ -55,7 +54,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    //Greeting(viewModel.viewState)
                     FilamentRoot(viewModel.viewState)
                 }
             }
@@ -65,7 +63,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     }
 }
 
-
 fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
     val input = context.assets.open(assetName)
     val bytes = ByteArray(input.available())
@@ -73,25 +70,6 @@ fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
     return ByteBuffer.wrap(bytes)
 }
 
-@Composable
-fun Greeting(
-    viewState: LiveData<List<String>>
-) {
-    val nfts by viewState.observeAsState(listOf())
-
-    LazyColumn {
-        items(nfts) { nft ->
-            SampleLabel(name = nft)
-        }
-    }
-}
-
-@Composable
-fun SampleLabel(
-    name: String
-) {
-    Text(text = "Hello $name!")
-}
 
 @ExperimentalComposeUiApi
 @Composable
@@ -133,27 +111,21 @@ fun FilamentViewer(
             R.layout.filament_host, FrameLayout(context), false
         ).apply {
             modelViewer = ModelViewer(this as SurfaceView)
+            modelViewer?.let { viewer ->
+                val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
+                viewer.scene.indirectLight = KtxLoader.createIndirectLight(viewer.engine, ibl)
+                viewer.scene.indirectLight?.intensity = 30_000.0f
 
-            val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
-            modelViewer?.scene?.indirectLight = KtxLoader.createIndirectLight(modelViewer?.engine!!, ibl)
-            modelViewer?.scene?.indirectLight?.intensity = 30_000.0f
+                viewer.scene.skybox = Skybox.Builder()
+                    .color(0.035f, 0.035f, 0.035f, 1.0f)
+                    .build(viewer.engine)
 
-            val skybox = readCompressedAsset(context, "courtyard_8k_skybox.ktx")
-            modelViewer?.scene?.skybox = KtxLoader.createSkybox(modelViewer?.engine!!, skybox)
-
-            modelViewer?.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
-            modelViewer?.transformToUnitCube()
+                viewer.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
+                viewer.transformToUnitCube()
+            }
         }
     }, modifier = Modifier.pointerInteropFilter {
         modelViewer?.onTouchEvent(it)
         true
     })
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    NATIVTheme {
-        //Greeting("Android")
-    }
 }
