@@ -6,13 +6,31 @@ import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class NftViewProps(
-    val name: String,
-    val mediaBytes: ByteArray
+    val name: String = "",
+    val description: String = "",
+    val blockchain: Blockchain = Dev,
+    val siteUrl: String = "",
+    val assetType: AssetType = Model3d,
+    val mediaBytes: ByteArray = byteArrayOf()
 )
+
+sealed class AssetType
+
+object Model3d : AssetType()
+object Image: AssetType()
+
+sealed class Blockchain(
+    val name: String
+)
+
+object Dev: Blockchain("Development")
+object Solana : Blockchain("Solana")
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -26,14 +44,24 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val nftData = metaplexNftUseCase.getMetaplexNftsForAccount("6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw")
 
-            val results = nftData.filter { it.properties.category == "vr" }
+            val results = nftData.filter {
+                it.properties.category == "vr"
+            }
 
-            val fileDownload = results.first().properties.files.first()
-            val assetBytes = assetDownloadUseCase.downloadAsset(fileDownload)
+            val nftProps = results.map { nft ->
+                return@map async {
+                    NftViewProps(
+                        name = nft.name,
+                        description = nft.description,
+                        blockchain = Solana,
+                        //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly
+                        assetType = Model3d,
+                        mediaBytes = assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                    )
+                }
+            }.awaitAll()
 
-            viewState.postValue(
-                listOf(NftViewProps(nftData.first().name, assetBytes))
-            )
+            viewState.postValue(nftProps)
         }
     }
 
