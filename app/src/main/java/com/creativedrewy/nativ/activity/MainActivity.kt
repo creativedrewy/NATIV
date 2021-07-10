@@ -9,7 +9,10 @@ import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,8 +28,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LiveData
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
+import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.MainViewModel
+import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
@@ -55,7 +61,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     color = MaterialTheme.colors.background
                 ) {
                     GalleryRoot {
-                        FilamentRoot(viewModel.viewState)
+                        ListRoot(viewModel.viewState)
                     }
                 }
             }
@@ -95,7 +101,7 @@ fun GalleryRoot(
 
 @ExperimentalComposeUiApi
 @Composable
-fun FilamentRoot(
+fun ListRoot(
     viewState: LiveData<List<NftViewProps>>
 ) {
     val nfts by viewState.observeAsState(listOf())
@@ -123,7 +129,23 @@ fun GalleryItem(
         elevation = 8.dp
     ) {
         Column {
-            FilamentViewer(nftProps)
+            when (nftProps.assetType) {
+                is Model3d -> {
+                    FilamentViewer(nftProps)
+                }
+                is Image -> {
+                    Image(
+                        painter = rememberGlidePainter(
+                            request = nftProps.assetUrl
+                        ),
+                        contentDescription = "Nft Image",
+                        modifier = Modifier.fillMaxWidth()
+                            .aspectRatio(1f)
+                            .padding(top = 24.dp)
+                    )
+                }
+            }
+
             Text(
                 text = nftProps.name,
                 modifier = Modifier.padding(16.dp)

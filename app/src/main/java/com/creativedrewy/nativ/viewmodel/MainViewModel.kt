@@ -17,6 +17,7 @@ data class NftViewProps(
     val blockchain: Blockchain = Dev,
     val siteUrl: String = "",
     val assetType: AssetType = Model3d,
+    val assetUrl: String = "",
     val mediaBytes: ByteArray = byteArrayOf()
 )
 
@@ -44,18 +45,15 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val nftData = metaplexNftUseCase.getMetaplexNftsForAccount("6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw")
 
-            val results = nftData.filter {
-                it.properties.category == "vr"
-            }
-
-            val nftProps = results.map { nft ->
+            val nftProps = nftData.map { nft ->
                 return@map async {
                     NftViewProps(
                         name = nft.name,
                         description = nft.description,
                         blockchain = Solana,
                         //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly
-                        assetType = Model3d,
+                        assetType = if (nft.properties.category == "vr") Model3d else Image,
+                        assetUrl = if (nft.properties.category != "vr") nft.image else "",
                         mediaBytes = assetDownloadUseCase.downloadAsset(nft.properties.files.first())
                     )
                 }
