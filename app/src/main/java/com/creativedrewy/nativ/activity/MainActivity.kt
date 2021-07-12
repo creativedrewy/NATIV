@@ -73,13 +73,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     }
 }
 
-fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
-    val input = context.assets.open(assetName)
-    val bytes = ByteArray(input.available())
-    input.read(bytes)
-    return ByteBuffer.wrap(bytes)
-}
-
 @Composable
 fun ScreenLayout(
     content: @Composable () -> Unit
@@ -176,6 +169,13 @@ fun GalleryItem(
 fun FilamentViewer(
     nftProp: NftViewProps
 ) {
+    fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
+        val input = context.assets.open(assetName)
+        val bytes = ByteArray(input.available())
+        input.read(bytes)
+        return ByteBuffer.wrap(bytes)
+    }
+
     var modelViewer by remember { mutableStateOf<ModelViewer?>(null) }
 
     LaunchedEffect(modelViewer) {
