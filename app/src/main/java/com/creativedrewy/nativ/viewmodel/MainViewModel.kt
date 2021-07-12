@@ -20,10 +20,10 @@ class Empty: ScreenState(listOf())
 class Loading: ScreenState(
     listOf(
         NftViewProps(
-            name = "This is some loading text is some loading text"
+            name = "Text text text text text text text text text"
         ),
         NftViewProps(
-            name = "This is some loading text is some loading text"
+            name = "Text text text text text text text text text"
         )
     )
 )

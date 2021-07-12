@@ -18,10 +18,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.House
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -81,7 +84,6 @@ fun ScreenLayout(
         topBar = {
             TopAppBar(
                 backgroundColor = MaterialTheme.colors.surface,
-                contentColor = MaterialTheme.colors.onSurface,
                 elevation = 0.dp,
                 title = {
                     Text(text = "NATIV")
@@ -90,6 +92,46 @@ fun ScreenLayout(
         },
         content = {
             content()
+        },
+        bottomBar = {
+            BottomNavigation {
+                BottomNavigationItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Filled.House,
+                            contentDescription = "Gallery"
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = "Gallery"
+                        )
+                    },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.White.copy(0.7f),
+                    alwaysShowLabel = true,
+                    selected = false,
+                    onClick = { }
+                )
+                BottomNavigationItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Filled.House,
+                            contentDescription = "Gallery"
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = "Gallery"
+                        )
+                    },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.White.copy(0.7f),
+                    alwaysShowLabel = true,
+                    selected = false,
+                    onClick = { }
+                )
+            }
         }
     )
 }
@@ -103,7 +145,7 @@ fun ListRoot(
 
     val isLoading = state is Loading
     LazyColumn(
-        modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
+        modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
     ) {
         items(state.listItems) { nft ->
             GalleryItem(
@@ -139,7 +181,8 @@ fun GalleryItem(
                             request = nftProps.assetUrl
                         ),
                         contentDescription = "Nft Image",
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .aspectRatio(1f)
                             .padding(top = 24.dp)
                             .placeholder(
@@ -152,7 +195,8 @@ fun GalleryItem(
             }
             Text(
                 text = nftProps.name,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
                     .placeholder(
                         visible = loading,
                         color = ShimmerColor,
