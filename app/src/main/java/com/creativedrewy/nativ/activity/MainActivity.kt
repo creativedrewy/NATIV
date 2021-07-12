@@ -10,9 +10,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.House
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.creativedrewy.nativ.ui.AccountsScreen
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.NftGalleryViewModel
@@ -39,9 +43,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    ScreenLayout {
-                        GalleryList()
-                    }
+                    AppScreenContent()
                 }
             }
         }
@@ -50,17 +52,18 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     }
 }
 
+sealed class AppScreen(
+    val route: String
+)
+
+object Gallery: AppScreen("gallery")
+object Accounts: AppScreen("accounts")
+
+@ExperimentalComposeUiApi
 @Composable
 fun AppScreenContent() {
+    val screenState = rememberSaveable { mutableStateOf(Gallery.route) }
 
-    //val homeScreenState = rememberSaveable { mutableStateOf(BottomNavType.HOME) }
-
-}
-
-@Composable
-fun ScreenLayout(
-    content: @Composable () -> Unit
-) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,16 +75,21 @@ fun ScreenLayout(
             )
         },
         content = {
-            content()
+            when (screenState.value) {
+                Gallery.route -> GalleryList()
+                Accounts.route -> AccountsScreen()
+            }
         },
         bottomBar = {
-            BottomNavigationContents()
+            BottomNavigationContents(screenState)
         }
     )
 }
 
 @Composable
-fun BottomNavigationContents() {
+fun BottomNavigationContents(
+    screenState: MutableState<String>
+) {
     BottomNavigation {
         BottomNavigationItem(
             icon = {
@@ -98,8 +106,8 @@ fun BottomNavigationContents() {
             selectedContentColor = Color.White,
             unselectedContentColor = Color.White.copy(0.7f),
             alwaysShowLabel = true,
-            selected = false,
-            onClick = { }
+            selected = screenState.value == Gallery.route,
+            onClick = { screenState.value = Gallery.route }
         )
         BottomNavigationItem(
             icon = {
@@ -116,8 +124,8 @@ fun BottomNavigationContents() {
             selectedContentColor = Color.White,
             unselectedContentColor = Color.White.copy(0.7f),
             alwaysShowLabel = true,
-            selected = false,
-            onClick = { }
+            selected = screenState.value == Accounts.route,
+            onClick = { screenState.value = Accounts.route }
         )
     }
 }
