@@ -1,8 +1,11 @@
 package com.creativedrewy.nativ.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,6 +14,7 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -19,7 +23,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AddressesScreen() {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(bottom = 64.dp)
     ) {
         Column(
@@ -30,7 +35,7 @@ fun AddressesScreen() {
                 style = MaterialTheme.typography.h5,
             )
             LazyColumn() {
-                items(5) {
+                items(1) {
                     Text("Hello World")
                 }
             }
@@ -38,12 +43,20 @@ fun AddressesScreen() {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.align(Alignment.BottomStart)
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp
+                )
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
 
+            ChainSelectDropDown()
+
             OutlinedTextField(
+                modifier = Modifier.weight(1f),
                 value = address,
                 leadingIcon = {
                     Icon(
@@ -56,9 +69,6 @@ fun AddressesScreen() {
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
-                label = {
-                    Text(text = "Add Blockchain Address")
-                },
                 onValueChange = { address = it },
                 interactionSource = addressInteractionState,
             )
@@ -67,8 +77,46 @@ fun AddressesScreen() {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Add Address"
+                    contentDescription = "Add Address",
+                    modifier = Modifier
+                        .size(36.dp)
+                        .padding(4.dp)
+                        .background(
+                            color = Color.Red,
+                            shape = CircleShape
+                        )
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun ChainSelectDropDown() {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    val items = listOf("SOL", "ETH", "BSC")
+
+    Box {
+        Text(
+            text = items[selectedIndex],
+            modifier = Modifier.background(Color.Gray)
+                .clickable { expanded = true }
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            items.forEachIndexed { index, s ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedIndex = index
+                        expanded = false
+                    }
+                ) {
+                    Text(text = s)
+                }
             }
         }
     }
