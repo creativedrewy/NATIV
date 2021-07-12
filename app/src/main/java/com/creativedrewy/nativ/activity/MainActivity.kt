@@ -28,11 +28,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LiveData
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
-import com.creativedrewy.nativ.viewmodel.Image
-import com.creativedrewy.nativ.viewmodel.MainViewModel
-import com.creativedrewy.nativ.viewmodel.Model3d
-import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.ui.theme.ShimmerColor
+import com.creativedrewy.nativ.ui.theme.White
+import com.creativedrewy.nativ.viewmodel.*
 import com.google.accompanist.glide.rememberGlidePainter
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.placeholder.shimmer
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
@@ -60,7 +62,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    GalleryRoot {
+                    ScreenLayout {
                         ListRoot(viewModel.viewState)
                     }
                 }
@@ -79,7 +81,7 @@ fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
 }
 
 @Composable
-fun GalleryRoot(
+fun ScreenLayout(
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -102,15 +104,19 @@ fun GalleryRoot(
 @ExperimentalComposeUiApi
 @Composable
 fun ListRoot(
-    viewState: LiveData<List<NftViewProps>>
+    viewState: LiveData<ScreenState>
 ) {
-    val nfts by viewState.observeAsState(listOf())
+    val state by viewState.observeAsState(Empty())
 
+    val isLoading = state is Loading
     LazyColumn(
         modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
     ) {
-        items(nfts) { nft ->
-            GalleryItem(nft)
+        items(state.listItems) { nft ->
+            GalleryItem(
+                loading = isLoading,
+                nftProps = nft
+            )
         }
     }
 }
@@ -118,6 +124,7 @@ fun ListRoot(
 @ExperimentalComposeUiApi
 @Composable
 fun GalleryItem(
+    loading: Boolean,
     nftProps: NftViewProps
 ) {
     Surface(
@@ -142,13 +149,22 @@ fun GalleryItem(
                         modifier = Modifier.fillMaxWidth()
                             .aspectRatio(1f)
                             .padding(top = 24.dp)
+                            .placeholder(
+                                visible = loading,
+                                color = ShimmerColor,
+                                highlight = PlaceholderHighlight.shimmer(White)
+                            )
                     )
                 }
             }
-
             Text(
                 text = nftProps.name,
                 modifier = Modifier.padding(16.dp)
+                    .placeholder(
+                        visible = loading,
+                        color = ShimmerColor,
+                        highlight = PlaceholderHighlight.shimmer(White)
+                    )
             )
         }
 

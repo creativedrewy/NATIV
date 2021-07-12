@@ -78,6 +78,7 @@ dependencies {
     implementation 'org.bitcoinj:bitcoinj-core:0.15.10'
 
     implementation "com.google.accompanist:accompanist-glide:0.13.0"
+    implementation "com.google.accompanist:accompanist-placeholder:0.13.0"
 
     implementation "com.google.android.filament:filament-android:1.8.1"
     implementation "com.google.android.filament:filament-utils-android:1.8.1"

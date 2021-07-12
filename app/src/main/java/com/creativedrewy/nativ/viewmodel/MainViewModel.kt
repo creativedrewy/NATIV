@@ -11,12 +11,34 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed class ScreenState(
+    val listItems: List<NftViewProps>
+)
+
+class Empty: ScreenState(listOf())
+
+class Loading: ScreenState(
+    listOf(
+        NftViewProps(
+            name = "This is some loading text is some loading text"
+        ),
+        NftViewProps(
+            name = "This is some loading text is some loading text"
+        )
+    )
+)
+
+class Display(
+    val items: List<NftViewProps>
+): ScreenState(items)
+
+
 data class NftViewProps(
     val name: String = "",
     val description: String = "",
     val blockchain: Blockchain = Dev,
     val siteUrl: String = "",
-    val assetType: AssetType = Model3d,
+    val assetType: AssetType = Image,
     val assetUrl: String = "",
     val mediaBytes: ByteArray = byteArrayOf()
 )
@@ -39,14 +61,18 @@ class MainViewModel @Inject constructor(
     private val assetDownloadUseCase: AssetDownloadUseCase
 ): ViewModel() {
 
-    var viewState: MutableLiveData<List<NftViewProps>> = MutableLiveData(listOf())
+    var viewState: MutableLiveData<ScreenState> = MutableLiveData(Empty())
 
     fun loadNfts() {
+        viewState.postValue(Loading())
+
         viewModelScope.launch {
             val nftData = metaplexNftUseCase.getMetaplexNftsForAccount("6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw")
 
             val nftProps = nftData.map { nft ->
                 return@map async {
+                    val assetBytes = assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+
                     NftViewProps(
                         name = nft.name,
                         description = nft.description,
@@ -54,12 +80,12 @@ class MainViewModel @Inject constructor(
                         //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly
                         assetType = if (nft.properties.category == "vr") Model3d else Image,
                         assetUrl = if (nft.properties.category != "vr") nft.image else "",
-                        mediaBytes = assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                        mediaBytes = assetBytes
                     )
                 }
             }.awaitAll()
 
-            viewState.postValue(nftProps)
+            viewState.postValue(Display(nftProps))
         }
     }
 
