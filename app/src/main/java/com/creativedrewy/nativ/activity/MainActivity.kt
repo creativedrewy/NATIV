@@ -51,7 +51,7 @@ import java.nio.ByteBuffer
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: NftGalleryViewModel by viewModels()
 
     companion object {
         init { Utils.init() }
@@ -152,7 +152,7 @@ fun BottomNavigationContents() {
 @ExperimentalComposeUiApi
 @Composable
 fun GalleryList(
-    viewModel: MainViewModel = viewModel()
+    viewModel: NftGalleryViewModel = viewModel()
 ) {
     val state by viewModel.viewState.observeAsState(Empty())
 
