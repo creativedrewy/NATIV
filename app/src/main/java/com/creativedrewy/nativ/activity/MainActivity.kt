@@ -16,7 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.creativedrewy.nativ.ui.AccountsScreen
+import com.creativedrewy.nativ.ui.AddressesScreen
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.viewmodel.NftGalleryViewModel
@@ -62,7 +62,7 @@ object Accounts: AppScreen("accounts")
 @ExperimentalComposeUiApi
 @Composable
 fun AppScreenContent() {
-    val screenState = rememberSaveable { mutableStateOf(Gallery.route) }
+    val screenState = rememberSaveable { mutableStateOf(Accounts.route) }
 
     Scaffold(
         topBar = {
@@ -77,7 +77,7 @@ fun AppScreenContent() {
         content = {
             when (screenState.value) {
                 Gallery.route -> GalleryList()
-                Accounts.route -> AccountsScreen()
+                Accounts.route -> AddressesScreen()
             }
         },
         bottomBar = {
@@ -113,12 +113,12 @@ fun BottomNavigationContents(
             icon = {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Accounts"
+                    contentDescription = "Addresses"
                 )
             },
             label = {
                 Text(
-                    text = "Accounts"
+                    text = "Addresses"
                 )
             },
             selectedContentColor = Color.White,
