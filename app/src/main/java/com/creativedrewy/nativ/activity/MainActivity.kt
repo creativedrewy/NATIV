@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.House
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -28,7 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.ui.theme.ShimmerColor
@@ -66,7 +67,7 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                     color = MaterialTheme.colors.background
                 ) {
                     ScreenLayout {
-                        ListRoot(viewModel.viewState)
+                        GalleryList()
                     }
                 }
             }
@@ -74,6 +75,13 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
 
         viewModel.loadNfts()
     }
+}
+
+@Composable
+fun AppScreenContent() {
+
+    //val homeScreenState = rememberSaveable { mutableStateOf(BottomNavType.HOME) }
+
 }
 
 @Composable
@@ -94,61 +102,66 @@ fun ScreenLayout(
             content()
         },
         bottomBar = {
-            BottomNavigation {
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.House,
-                            contentDescription = "Gallery"
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = "Gallery"
-                        )
-                    },
-                    selectedContentColor = Color.White,
-                    unselectedContentColor = Color.White.copy(0.7f),
-                    alwaysShowLabel = true,
-                    selected = false,
-                    onClick = { }
-                )
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.House,
-                            contentDescription = "Gallery"
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = "Gallery"
-                        )
-                    },
-                    selectedContentColor = Color.White,
-                    unselectedContentColor = Color.White.copy(0.7f),
-                    alwaysShowLabel = true,
-                    selected = false,
-                    onClick = { }
-                )
-            }
+            BottomNavigationContents()
         }
     )
 }
 
+@Composable
+fun BottomNavigationContents() {
+    BottomNavigation {
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.House,
+                    contentDescription = "Gallery"
+                )
+            },
+            label = {
+                Text(
+                    text = "Gallery"
+                )
+            },
+            selectedContentColor = Color.White,
+            unselectedContentColor = Color.White.copy(0.7f),
+            alwaysShowLabel = true,
+            selected = false,
+            onClick = { }
+        )
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.AccountCircle,
+                    contentDescription = "Accounts"
+                )
+            },
+            label = {
+                Text(
+                    text = "Accounts"
+                )
+            },
+            selectedContentColor = Color.White,
+            unselectedContentColor = Color.White.copy(0.7f),
+            alwaysShowLabel = true,
+            selected = false,
+            onClick = { }
+        )
+    }
+}
+
 @ExperimentalComposeUiApi
 @Composable
-fun ListRoot(
-    viewState: LiveData<ScreenState>
+fun GalleryList(
+    viewModel: MainViewModel = viewModel()
 ) {
-    val state by viewState.observeAsState(Empty())
+    val state by viewModel.viewState.observeAsState(Empty())
 
     val isLoading = state is Loading
     LazyColumn(
         modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
     ) {
         items(state.listItems) { nft ->
-            GalleryItem(
+            GalleryItemCard(
                 loading = isLoading,
                 nftProps = nft
             )
@@ -158,7 +171,7 @@ fun ListRoot(
 
 @ExperimentalComposeUiApi
 @Composable
-fun GalleryItem(
+fun GalleryItemCard(
     loading: Boolean,
     nftProps: NftViewProps
 ) {
@@ -173,24 +186,10 @@ fun GalleryItem(
         Column {
             when (nftProps.assetType) {
                 is Model3d -> {
-                    FilamentViewer(nftProps)
+                    Model3dViewer(nftProps)
                 }
                 is Image -> {
-                    Image(
-                        painter = rememberGlidePainter(
-                            request = nftProps.assetUrl
-                        ),
-                        contentDescription = "Nft Image",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f)
-                            .padding(top = 24.dp)
-                            .placeholder(
-                                visible = loading,
-                                color = ShimmerColor,
-                                highlight = PlaceholderHighlight.shimmer(White)
-                            )
-                    )
+                    ImageViewer(loading, nftProps)
                 }
             }
             Text(
@@ -208,9 +207,31 @@ fun GalleryItem(
     }
 }
 
+@Composable
+fun ImageViewer(
+    loading: Boolean,
+    nftProps: NftViewProps
+) {
+    Image(
+        painter = rememberGlidePainter(
+            request = nftProps.assetUrl
+        ),
+        contentDescription = "Nft Image",
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .padding(top = 24.dp)
+            .placeholder(
+                visible = loading,
+                color = ShimmerColor,
+                highlight = PlaceholderHighlight.shimmer(White)
+            )
+    )
+}
+
 @ExperimentalComposeUiApi
 @Composable
-fun FilamentViewer(
+fun Model3dViewer(
     nftProp: NftViewProps
 ) {
     fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
