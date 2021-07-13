@@ -2,11 +2,13 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +34,14 @@ class AddressesViewModel @Inject constructor(
 ): ViewModel() {
 
     val viewState: MutableLiveData<AddrViewState> = MutableLiveData(AddrViewState())
+
+    val userAddressState = addressesUseCase.allUserAddresses
+        .map { list ->
+            list.map { addr ->
+                UserAddress(addr.pubKey ?: "", R.drawable.solana_logo)
+            }
+        }
+        .asLiveData()
 
     init {
         val chainList = listOf(

@@ -36,6 +36,8 @@ fun AddressesScreen(
 ) {
     val viewState by viewModel.viewState.observeAsState(AddrViewState())
 
+    val addresses by viewModel.userAddressState.observeAsState()
+
     Box(
         modifier = Modifier.fillMaxSize()
             .padding(bottom = 64.dp)
@@ -49,31 +51,33 @@ fun AddressesScreen(
                 style = MaterialTheme.typography.h5,
             )
             LazyColumn() {
-                items(viewState.userAddresses) { addr ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Image(
-                            modifier = Modifier.size(36.dp)
-                                .padding(end = 8.dp),
-                            painter = painterResource(
-                                id = addr.chainDrawable
-                            ),
-                            contentDescription = ""
-                        )
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            style = MaterialTheme.typography.h6,
-                            text = addr.addrPubKey
-                        )
-                        IconButton(
-                            onClick = { }
+                addresses?.let {
+                    items(it) { addr ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.DeleteOutline,
-                                contentDescription = "Delete",
-                                modifier = Modifier.size(24.dp)
+                            Image(
+                                modifier = Modifier.size(36.dp)
+                                    .padding(end = 8.dp),
+                                painter = painterResource(
+                                    id = addr.chainDrawable
+                                ),
+                                contentDescription = ""
                             )
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.h6,
+                                text = addr.addrPubKey
+                            )
+                            IconButton(
+                                onClick = { }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.DeleteOutline,
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     }
                 }

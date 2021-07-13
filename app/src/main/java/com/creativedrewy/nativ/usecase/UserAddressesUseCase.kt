@@ -14,7 +14,7 @@ class UserAddressesUseCase @Inject constructor(
 
     suspend fun saveNewAddress(symbol: String, pubKey: String) {
         withContext(Dispatchers.IO) {
-            val addrEntity = ChainAddr(0, symbol, pubKey)
+            val addrEntity = ChainAddr(0, pubKey, symbol)
 
             databaseRepository.saveAddress(addrEntity)
         }
