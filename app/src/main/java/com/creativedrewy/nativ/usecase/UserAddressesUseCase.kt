@@ -12,4 +12,9 @@ class UserAddressesUseCase @Inject constructor(
         return databaseRepository.getUserAddresses()
     }
 
+    fun saveNewAddress(symbol: String, pubKey: String) {
+        val addrEntity = ChainAddr(0, symbol, pubKey)
+
+        databaseRepository.saveAddress(addrEntity)
+    }
 }

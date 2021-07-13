@@ -29,7 +29,7 @@ data class UserAddress(
 
 @HiltViewModel
 class AddressesViewModel @Inject constructor(
-    val addressesUseCase: UserAddressesUseCase
+    private val addressesUseCase: UserAddressesUseCase
 ): ViewModel() {
 
     var viewState: MutableLiveData<AddrViewState> = MutableLiveData(AddrViewState())
@@ -62,8 +62,10 @@ class AddressesViewModel @Inject constructor(
         ))
     }
 
-    fun saveAddress() {
-
+    fun saveAddress(symbol: String, address: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            addressesUseCase.saveNewAddress(symbol, address)
+        }
     }
 
 }

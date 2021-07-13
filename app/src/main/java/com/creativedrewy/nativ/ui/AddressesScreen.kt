@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -89,9 +90,15 @@ fun AddressesScreen(
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
+            var selectedSymbol by remember { mutableStateOf("") }
 
             if (viewState.supportedChains.isNotEmpty()) {
-                ChainSelectDropDown(viewState.supportedChains)
+                ChainSelectDropDown(
+                    chainItems = viewState.supportedChains,
+                    onSelect = { selected ->
+                        selectedSymbol = selected
+                    }
+                )
             }
 
             OutlinedTextField(
@@ -112,7 +119,10 @@ fun AddressesScreen(
                 interactionSource = addressInteractionState,
             )
             IconButton(
-                onClick = { }
+                onClick = {
+                    Log.v("SOL", "You are inserting $selectedSymbol, ${ address.text }")
+                    viewModel.saveAddress(selectedSymbol, address.text)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -131,10 +141,14 @@ fun AddressesScreen(
 
 @Composable
 fun ChainSelectDropDown(
-    chainItems: List<SupportedChain>
+    chainItems: List<SupportedChain>,
+    onSelect: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(0) }
+
+    //Be sure to "select" the first item in the list by default
+    onSelect(chainItems[0].symbol)
 
     Box {
         Image(
@@ -154,6 +168,8 @@ fun ChainSelectDropDown(
             chainItems.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     onClick = {
+                        onSelect(chainItems[index].symbol)
+
                         selectedIndex = index
                         expanded = false
                     }

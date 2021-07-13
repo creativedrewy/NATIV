@@ -12,4 +12,7 @@ class DatabaseRepository @Inject constructor(
         return addressDao.getAllPubKeys()
     }
 
+    fun saveAddress(addr: ChainAddr) {
+        addressDao.insertAll(addr)
+    }
 }
