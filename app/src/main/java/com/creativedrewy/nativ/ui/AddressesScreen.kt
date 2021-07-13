@@ -6,11 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -41,12 +43,38 @@ fun AddressesScreen(
             modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp)
         ) {
             Text(
+                modifier = Modifier.padding(bottom = 8.dp),
                 text = "Your Addresses",
                 style = MaterialTheme.typography.h5,
             )
             LazyColumn() {
-                items(1) {
-                    Text("Hello World")
+                items(viewState.userAddresses) { addr ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            modifier = Modifier.size(36.dp)
+                                .padding(end = 8.dp),
+                            painter = painterResource(
+                                id = addr.chainDrawable
+                            ),
+                            contentDescription = ""
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.h6,
+                            text = addr.addrPubKey
+                        )
+                        IconButton(
+                            onClick = { }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.DeleteOutline,
+                                contentDescription = "Delete",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -90,7 +118,7 @@ fun AddressesScreen(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add Address",
                     tint = Color.White,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(24.dp)
                         .background(
                             color = Color.Black,
                             shape = CircleShape
@@ -110,7 +138,7 @@ fun ChainSelectDropDown(
 
     Box {
         Image(
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(36.dp)
                 .padding(end = 8.dp)
                 .clickable { expanded = true },
             painter = painterResource(

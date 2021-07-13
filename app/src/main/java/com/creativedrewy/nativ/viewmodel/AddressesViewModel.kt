@@ -7,13 +7,19 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 data class AddrViewState(
-    val supportedChains: List<SupportedChain> = listOf()
+    val supportedChains: List<SupportedChain> = listOf(),
+    val userAddresses: List<UserAddress> = listOf()
 )
 
 data class SupportedChain(
     val name: String,
     val symbol: String,
     val iconRes: Int
+)
+
+data class UserAddress(
+    val addrPubKey: String,
+    val chainDrawable: Int
 )
 
 @HiltViewModel
@@ -32,8 +38,15 @@ class AddressesViewModel @Inject constructor(
             )
         )
 
+        val item = UserAddress(
+            addrPubKey = "8heEeWszgr...VEweD8YEQ",
+            chainDrawable = R.drawable.solana_logo
+        )
+        val userAddreses = listOf(item, item, item)
+
         viewState.postValue(viewState.value?.copy(
-            supportedChains = chainList
+            supportedChains = chainList,
+            userAddresses = userAddreses
         ))
     }
 
