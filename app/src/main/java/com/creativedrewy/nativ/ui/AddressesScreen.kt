@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,23 +13,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.creativedrewy.nativ.viewmodel.AddrViewState
+import com.creativedrewy.nativ.viewmodel.AddressesViewModel
+import com.creativedrewy.nativ.viewmodel.SupportedChain
 
 @Composable
-fun AddressesScreen() {
+fun AddressesScreen(
+    viewModel: AddressesViewModel = viewModel()
+) {
+    val viewState by viewModel.viewState.observeAsState(AddrViewState())
+
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
             .padding(bottom = 64.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
+            modifier = Modifier.padding(16.dp, 0.dp, 0.dp, 0.dp)
         ) {
             Text(
                 text = "Your Addresses",
@@ -43,17 +53,18 @@ fun AddressesScreen() {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
+            modifier = Modifier.align(Alignment.BottomStart)
                 .padding(
                     start = 16.dp,
-                    end = 16.dp
+                    end = 8.dp
                 )
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
 
-            ChainSelectDropDown()
+            if (viewState.supportedChains.isNotEmpty()) {
+                ChainSelectDropDown(viewState.supportedChains)
+            }
 
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
@@ -78,11 +89,10 @@ fun AddressesScreen() {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add Address",
-                    modifier = Modifier
-                        .size(36.dp)
-                        .padding(4.dp)
+                    tint = Color.White,
+                    modifier = Modifier.size(36.dp)
                         .background(
-                            color = Color.Red,
+                            color = Color.Black,
                             shape = CircleShape
                         )
                 )
@@ -92,30 +102,35 @@ fun AddressesScreen() {
 }
 
 @Composable
-fun ChainSelectDropDown() {
+fun ChainSelectDropDown(
+    chainItems: List<SupportedChain>
+) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(0) }
 
-    val items = listOf("SOL", "ETH", "BSC")
-
     Box {
-        Text(
-            text = items[selectedIndex],
-            modifier = Modifier.background(Color.Gray)
-                .clickable { expanded = true }
+        Image(
+            modifier = Modifier.size(48.dp)
+                .padding(end = 8.dp)
+                .clickable { expanded = true },
+            painter = painterResource(
+                id = chainItems[selectedIndex].iconRes
+            ),
+            contentDescription = chainItems[selectedIndex].name
         )
+
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            items.forEachIndexed { index, s ->
+            chainItems.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     onClick = {
                         selectedIndex = index
                         expanded = false
                     }
                 ) {
-                    Text(text = s)
+                    Text(text = item.symbol)
                 }
             }
         }
