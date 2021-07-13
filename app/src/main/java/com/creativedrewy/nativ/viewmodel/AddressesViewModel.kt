@@ -1,6 +1,5 @@
 package com.creativedrewy.nativ.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,7 +31,7 @@ class AddressesViewModel @Inject constructor(
     private val addressesUseCase: UserAddressesUseCase
 ): ViewModel() {
 
-    var viewState: MutableLiveData<AddrViewState> = MutableLiveData(AddrViewState())
+    val viewState: MutableLiveData<AddrViewState> = MutableLiveData(AddrViewState())
 
     init {
         val chainList = listOf(
@@ -43,22 +42,8 @@ class AddressesViewModel @Inject constructor(
             )
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
-            val addresses = addressesUseCase.loadUserStoredAddresses()
-            addresses.forEach {
-                Log.v("SOL", "Your addr: ${ it.pubKey }")
-            }
-        }
-
-        val item = UserAddress(
-            addrPubKey = "8heEeWszgr...VEweD8YEQ",
-            chainDrawable = R.drawable.solana_logo
-        )
-        val userAddreses = listOf(item, item, item)
-
         viewState.postValue(viewState.value?.copy(
-            supportedChains = chainList,
-            userAddresses = userAddreses
+            supportedChains = chainList
         ))
     }
 
