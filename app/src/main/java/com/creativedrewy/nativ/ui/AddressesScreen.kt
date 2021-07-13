@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.creativedrewy.nativ.viewmodel.AddrViewState
 import com.creativedrewy.nativ.viewmodel.AddressesViewModel
 import com.creativedrewy.nativ.viewmodel.SupportedChain
 
@@ -34,9 +32,7 @@ import com.creativedrewy.nativ.viewmodel.SupportedChain
 fun AddressesScreen(
     viewModel: AddressesViewModel = viewModel()
 ) {
-    val viewState by viewModel.viewState.observeAsState(AddrViewState())
-
-    val addresses by viewModel.userAddressState.observeAsState()
+    val viewState = viewModel.viewState.collectAsState().value
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -51,33 +47,31 @@ fun AddressesScreen(
                 style = MaterialTheme.typography.h5,
             )
             LazyColumn() {
-                addresses?.let {
-                    items(it) { addr ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                items(viewState.userAddresses) { addr ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            modifier = Modifier.size(36.dp)
+                                .padding(end = 8.dp),
+                            painter = painterResource(
+                                id = addr.chainDrawable
+                            ),
+                            contentDescription = ""
+                        )
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.h6,
+                            text = addr.addrPubKey
+                        )
+                        IconButton(
+                            onClick = { }
                         ) {
-                            Image(
-                                modifier = Modifier.size(36.dp)
-                                    .padding(end = 8.dp),
-                                painter = painterResource(
-                                    id = addr.chainDrawable
-                                ),
-                                contentDescription = ""
+                            Icon(
+                                imageVector = Icons.Filled.DeleteOutline,
+                                contentDescription = "Delete",
+                                modifier = Modifier.size(24.dp)
                             )
-                            Text(
-                                modifier = Modifier.weight(1f),
-                                style = MaterialTheme.typography.h6,
-                                text = addr.addrPubKey
-                            )
-                            IconButton(
-                                onClick = { }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.DeleteOutline,
-                                    contentDescription = "Delete",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
                         }
                     }
                 }

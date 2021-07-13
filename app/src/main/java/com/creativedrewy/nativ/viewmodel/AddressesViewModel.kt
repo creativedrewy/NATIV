@@ -1,14 +1,14 @@
 package com.creativedrewy.nativ.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,15 +33,10 @@ class AddressesViewModel @Inject constructor(
     private val addressesUseCase: UserAddressesUseCase
 ): ViewModel() {
 
-    val viewState: MutableLiveData<AddrViewState> = MutableLiveData(AddrViewState())
+    private val _state = MutableStateFlow(AddrViewState())
 
-    val userAddressState = addressesUseCase.allUserAddresses
-        .map { list ->
-            list.map { addr ->
-                UserAddress(addr.pubKey ?: "", R.drawable.solana_logo)
-            }
-        }
-        .asLiveData()
+    val viewState: StateFlow<AddrViewState>
+        get() = _state
 
     init {
         val chainList = listOf(
@@ -52,9 +47,19 @@ class AddressesViewModel @Inject constructor(
             )
         )
 
-        viewState.postValue(viewState.value?.copy(
-            supportedChains = chainList
-        ))
+        viewModelScope.launch {
+            addressesUseCase.allUserAddresses
+                .collect { list ->
+                    val mapped = list.map { addr ->
+                        UserAddress(addr.pubKey ?: "", R.drawable.solana_logo)
+                    }
+
+                    _state.value = AddrViewState(
+                        supportedChains = chainList,
+                        userAddresses = mapped
+                    )
+                }
+        }
     }
 
     fun saveAddress(symbol: String, address: String) {
