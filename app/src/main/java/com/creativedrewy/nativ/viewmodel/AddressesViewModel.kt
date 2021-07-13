@@ -1,9 +1,14 @@
 package com.creativedrewy.nativ.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AddrViewState(
@@ -24,7 +29,7 @@ data class UserAddress(
 
 @HiltViewModel
 class AddressesViewModel @Inject constructor(
-
+    val addressesUseCase: UserAddressesUseCase
 ): ViewModel() {
 
     var viewState: MutableLiveData<AddrViewState> = MutableLiveData(AddrViewState())
@@ -37,6 +42,13 @@ class AddressesViewModel @Inject constructor(
                 iconRes = R.drawable.solana_logo
             )
         )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val addresses = addressesUseCase.loadUserStoredAddresses()
+            addresses.forEach {
+                Log.v("SOL", "Your addr: ${ it.pubKey }")
+            }
+        }
 
         val item = UserAddress(
             addrPubKey = "8heEeWszgr...VEweD8YEQ",

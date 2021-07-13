@@ -73,6 +73,9 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime-livedata:1.0.0-rc01'
     implementation 'androidx.compose.runtime:runtime-rxjava2:1.0.0-rc01'
 
+    implementation "androidx.room:room-runtime:2.3.0"
+    kapt "androidx.room:room-compiler:2.3.0"
+
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.google.code.gson:gson:2.8.7'
     implementation 'org.bitcoinj:bitcoinj-core:0.15.10'
