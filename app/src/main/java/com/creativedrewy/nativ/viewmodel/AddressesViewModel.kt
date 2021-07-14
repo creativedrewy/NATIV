@@ -57,7 +57,15 @@ class AddressesViewModel @Inject constructor(
                 .collect { list ->
                     val mapped = list.map { addr ->
                         val locatedRes = chainList.find { it.symbol == addr.blockchain }?.iconRes ?: -1
-                        UserAddress(addr.pubKey ?: "", locatedRes)
+
+                        var pubKeyAddr = addr.pubKey ?: ""
+                        pubKeyAddr = if (pubKeyAddr.length >= 20) {
+                            pubKeyAddr.take(10) + "..." +  pubKeyAddr.takeLast(10)
+                        } else {
+                            pubKeyAddr
+                        }
+
+                        UserAddress(pubKeyAddr, locatedRes)
                     }
 
                     _state.value = AddrViewState(
