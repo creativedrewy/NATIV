@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
+import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NftGalleryViewModel @Inject constructor(
     private val metaplexNftUseCase: MetaplexNftUseCase,
-    private val assetDownloadUseCase: AssetDownloadUseCase
+    private val assetDownloadUseCase: AssetDownloadUseCase,
+    private val userAddrsUseCase: UserAddressesUseCase
 ): ViewModel() {
 
     var viewState: MutableLiveData<NftGalleryViewState> = MutableLiveData(Empty())
@@ -27,7 +29,11 @@ class NftGalleryViewModel @Inject constructor(
 
             val nftProps = nftData.map { nft ->
                 return@map async {
-                    val assetBytes = assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                    val assetBytes = if (nft.properties.category == "vr") {
+                        assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                    } else {
+                        byteArrayOf()
+                    }
 
                     NftViewProps(
                         name = nft.name,
