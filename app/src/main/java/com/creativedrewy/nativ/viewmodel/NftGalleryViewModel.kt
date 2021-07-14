@@ -1,6 +1,5 @@
 package com.creativedrewy.nativ.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
@@ -10,6 +9,8 @@ import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,10 +23,13 @@ class NftGalleryViewModel @Inject constructor(
     private val openSeaQueryUseCase: OpenSeaQueryUseCase
 ): ViewModel() {
 
-    var viewState: MutableLiveData<NftGalleryViewState> = MutableLiveData(Empty())
+    private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
+
+    val viewState: StateFlow<NftGalleryViewState>
+        get() = _state
 
     fun loadNfts() {
-        viewState.postValue(Loading())
+        _state.value = Loading()
 
         viewModelScope.launch {
             userAddrsUseCase.allUserAddresses
@@ -62,7 +66,7 @@ class NftGalleryViewModel @Inject constructor(
                         allNfts.addAll(nftProps)
                     }
 
-                    viewState.postValue(Display(allNfts))
+                    _state.value = Display(allNfts)
                 }
         }
     }

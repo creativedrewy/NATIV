@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -40,7 +39,7 @@ import java.nio.ByteBuffer
 fun GalleryList(
     viewModel: NftGalleryViewModel = viewModel()
 ) {
-    val state by viewModel.viewState.observeAsState(Empty())
+    val state by viewModel.viewState.collectAsState()
 
     val isLoading = state is Loading
     LazyColumn(
