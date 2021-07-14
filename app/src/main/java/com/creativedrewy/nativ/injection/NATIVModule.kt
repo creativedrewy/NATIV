@@ -7,6 +7,7 @@ import com.creativedrewy.nativ.database.ChainAddrDao
 import com.creativedrewy.nativ.nft.NftSpecRepository
 import com.creativedrewy.solanarepository.ApiRequestClient
 import com.creativedrewy.solanarepository.accounts.AccountRepository
+import com.google.gson.Gson
 import com.solana.core.PublicKeyRule
 import com.solana.vendor.borshj.Borsh
 import dagger.Module
@@ -56,9 +57,16 @@ class NATIVModule {
         return NftSpecRepository()
     }
 
+    @ViewModelScoped
     @Provides
     fun providesApiRequestClient(): ApiRequestClient {
         return ApiRequestClient()
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun proivdesGson(): Gson {
+        return Gson()
     }
 
 }
