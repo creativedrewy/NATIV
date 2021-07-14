@@ -44,6 +44,11 @@ class AddressesViewModel @Inject constructor(
                 name = "Solana",
                 symbol = "SOL",
                 iconRes = R.drawable.solana_logo
+            ),
+            SupportedChain(
+                name = "Ethereum",
+                "ETH",
+                iconRes = R.drawable.eth_diamond_black
             )
         )
 
@@ -51,7 +56,8 @@ class AddressesViewModel @Inject constructor(
             addressesUseCase.allUserAddresses
                 .collect { list ->
                     val mapped = list.map { addr ->
-                        UserAddress(addr.pubKey ?: "", R.drawable.solana_logo)
+                        val locatedRes = chainList.find { it.symbol == addr.blockchain }?.iconRes ?: -1
+                        UserAddress(addr.pubKey ?: "", locatedRes)
                     }
 
                     _state.value = AddrViewState(

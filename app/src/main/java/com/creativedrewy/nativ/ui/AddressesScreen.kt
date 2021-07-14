@@ -1,6 +1,5 @@
 package com.creativedrewy.nativ.ui
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -88,7 +87,7 @@ fun AddressesScreen(
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
-            var selectedSymbol by remember { mutableStateOf("") }
+            var selectedSymbol by remember { mutableStateOf("none") }
 
             if (viewState.supportedChains.isNotEmpty()) {
                 ChainSelectDropDown(
@@ -118,8 +117,15 @@ fun AddressesScreen(
             )
             IconButton(
                 onClick = {
-                    Log.v("SOL", "You are inserting $selectedSymbol, ${ address.text }")
-                    viewModel.saveAddress(selectedSymbol, address.text)
+                    //This isn't ideal, but hard to get "initial" selected chain
+                    val symbol = if (selectedSymbol == "none") {
+                        viewState.supportedChains.firstOrNull()?.symbol ?: ""
+                    } else {
+                        selectedSymbol
+                    }
+
+                    viewModel.saveAddress(symbol, address.text)
+                    address = TextFieldValue("")
                 }
             ) {
                 Icon(
@@ -145,9 +151,6 @@ fun ChainSelectDropDown(
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableStateOf(0) }
 
-    //Be sure to "select" the first item in the list by default
-    onSelect(chainItems[0].symbol)
-
     Box {
         Image(
             modifier = Modifier.size(36.dp)
@@ -172,7 +175,18 @@ fun ChainSelectDropDown(
                         expanded = false
                     }
                 ) {
-                    Text(text = item.symbol)
+                    Row {
+                        Image(
+                            modifier = Modifier.size(24.dp)
+                                .padding(end = 8.dp)
+                                .clickable { expanded = true },
+                            painter = painterResource(
+                                id = item.iconRes
+                            ),
+                            contentDescription = ""
+                        )
+                        Text(text = item.name)
+                    }
                 }
             }
         }
