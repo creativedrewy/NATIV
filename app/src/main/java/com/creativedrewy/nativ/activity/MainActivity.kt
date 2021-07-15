@@ -4,7 +4,6 @@ package com.creativedrewy.nativ.activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -19,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.ui.AddressesScreen
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
-import com.creativedrewy.nativ.viewmodel.NftGalleryViewModel
 import com.google.android.filament.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -27,8 +25,6 @@ import kotlinx.coroutines.MainScope
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
-
-    private val viewModel: NftGalleryViewModel by viewModels()
 
     companion object {
         init { Utils.init() }
@@ -47,8 +43,6 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
                 }
             }
         }
-
-        viewModel.loadNfts()
     }
 }
 

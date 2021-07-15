@@ -28,6 +28,10 @@ class NftGalleryViewModel @Inject constructor(
     val viewState: StateFlow<NftGalleryViewState>
         get() = _state
 
+    init {
+        loadNfts()
+    }
+
     fun loadNfts() {
         _state.value = Loading()
 

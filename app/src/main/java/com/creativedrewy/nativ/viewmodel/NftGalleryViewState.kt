@@ -19,7 +19,7 @@ class Loading: NftGalleryViewState(
     )
 )
 
-class Display(
+data class Display(
     val items: List<NftViewProps>
 ): NftGalleryViewState(items)
 
