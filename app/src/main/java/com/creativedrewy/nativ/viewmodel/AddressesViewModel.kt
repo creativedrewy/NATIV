@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -25,7 +24,8 @@ data class SupportedChain(
 
 data class UserAddress(
     val addrPubKey: String,
-    val chainDrawable: Int
+    val chainDrawable: Int,
+    val chainSymbol: String
 )
 
 @HiltViewModel
@@ -65,7 +65,7 @@ class AddressesViewModel @Inject constructor(
                             pubKeyAddr
                         }
 
-                        UserAddress(pubKeyAddr, locatedRes)
+                        UserAddress(pubKeyAddr, locatedRes, addr.blockchain ?: "")
                     }
 
                     _state.value = AddrViewState(
@@ -77,9 +77,14 @@ class AddressesViewModel @Inject constructor(
     }
 
     fun saveAddress(symbol: String, address: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             addressesUseCase.saveNewAddress(symbol, address)
         }
     }
 
+    fun deleteAddress(chain: String, address: String) {
+        viewModelScope.launch {
+            addressesUseCase.deleteAddress(chain, address)
+        }
+    }
 }

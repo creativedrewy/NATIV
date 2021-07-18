@@ -19,4 +19,12 @@ class UserAddressesUseCase @Inject constructor(
             databaseRepository.saveAddress(addrEntity)
         }
     }
+
+    suspend fun deleteAddress(symbol: String, addr: String) {
+        withContext(Dispatchers.IO) {
+            val deleteEntry = ChainAddr(-1, addr, symbol)
+
+            databaseRepository.deleteAddress(deleteEntry)
+        }
+    }
 }

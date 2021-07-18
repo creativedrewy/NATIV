@@ -64,7 +64,7 @@ fun AddressesScreen(
                             text = addr.addrPubKey
                         )
                         IconButton(
-                            onClick = { }
+                            onClick = { viewModel.deleteAddress(addr.chainSymbol, addr.addrPubKey) }
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.DeleteOutline,

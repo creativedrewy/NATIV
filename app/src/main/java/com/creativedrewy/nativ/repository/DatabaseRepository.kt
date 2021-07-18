@@ -14,4 +14,8 @@ class DatabaseRepository @Inject constructor(
     fun saveAddress(addr: ChainAddr) {
         addressDao.insertAll(addr)
     }
+
+    fun deleteAddress(addr: ChainAddr) {
+        addressDao.delete(addr)
+    }
 }
