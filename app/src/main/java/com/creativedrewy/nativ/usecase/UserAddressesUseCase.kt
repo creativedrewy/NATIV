@@ -12,17 +12,17 @@ class UserAddressesUseCase @Inject constructor(
 
     val allUserAddresses = databaseRepository.allUserAddresses
 
-    suspend fun saveNewAddress(symbol: String, pubKey: String) {
+    suspend fun saveNewAddress(addr: String, ticker: String) {
         withContext(Dispatchers.IO) {
-            val addrEntity = ChainAddr(0, pubKey, symbol)
+            val addrEntity = ChainAddr(addr, ticker)
 
             databaseRepository.saveAddress(addrEntity)
         }
     }
 
-    suspend fun deleteAddress(symbol: String, addr: String) {
+    suspend fun deleteAddress(addr: String, ticker: String) {
         withContext(Dispatchers.IO) {
-            val deleteEntry = ChainAddr(-1, addr, symbol)
+            val deleteEntry = ChainAddr(addr, ticker)
 
             databaseRepository.deleteAddress(deleteEntry)
         }

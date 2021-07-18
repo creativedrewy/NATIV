@@ -54,17 +54,17 @@ fun AddressesScreen(
                             modifier = Modifier.size(36.dp)
                                 .padding(end = 8.dp),
                             painter = painterResource(
-                                id = addr.chainDrawable
+                                id = addr.chainLogoRes
                             ),
                             contentDescription = ""
                         )
                         Text(
                             modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.h6,
-                            text = addr.addrPubKey
+                            text = addr.address
                         )
                         IconButton(
-                            onClick = { viewModel.deleteAddress(addr.chainSymbol, addr.addrPubKey) }
+                            onClick = { viewModel.deleteAddress(addr.address) }
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.DeleteOutline,
@@ -87,13 +87,13 @@ fun AddressesScreen(
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
-            var selectedSymbol by remember { mutableStateOf("none") }
+            var selectedTicker by remember { mutableStateOf("none") }
 
             if (viewState.supportedChains.isNotEmpty()) {
                 ChainSelectDropDown(
                     chainItems = viewState.supportedChains,
                     onSelect = { selected ->
-                        selectedSymbol = selected
+                        selectedTicker = selected
                     }
                 )
             }
@@ -118,13 +118,13 @@ fun AddressesScreen(
             IconButton(
                 onClick = {
                     //This isn't ideal, but hard to get "initial" selected chain
-                    val symbol = if (selectedSymbol == "none") {
-                        viewState.supportedChains.firstOrNull()?.symbol ?: ""
+                    val ticker = if (selectedTicker == "none") {
+                        viewState.supportedChains.firstOrNull()?.ticker ?: ""
                     } else {
-                        selectedSymbol
+                        selectedTicker
                     }
 
-                    viewModel.saveAddress(symbol, address.text)
+                    viewModel.saveAddress(address.text, ticker)
                     address = TextFieldValue("")
                 }
             ) {
@@ -169,7 +169,7 @@ fun ChainSelectDropDown(
             chainItems.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     onClick = {
-                        onSelect(chainItems[index].symbol)
+                        onSelect(chainItems[index].ticker)
 
                         selectedIndex = index
                         expanded = false

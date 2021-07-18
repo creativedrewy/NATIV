@@ -18,14 +18,13 @@ data class AddrViewState(
 
 data class SupportedChain(
     val name: String,
-    val symbol: String,
+    val ticker: String,
     val iconRes: Int
 )
 
 data class UserAddress(
-    val addrPubKey: String,
-    val chainDrawable: Int,
-    val chainSymbol: String
+    val address: String,
+    val chainLogoRes: Int
 )
 
 @HiltViewModel
@@ -33,39 +32,39 @@ class AddressesViewModel @Inject constructor(
     private val addressesUseCase: UserAddressesUseCase
 ): ViewModel() {
 
+    private val chainList = listOf(
+        SupportedChain(
+            name = "Solana",
+            ticker = "SOL",
+            iconRes = R.drawable.solana_logo
+        ),
+        SupportedChain(
+            name = "Ethereum",
+            ticker = "ETH",
+            iconRes = R.drawable.eth_diamond_black
+        )
+    )
+
     private val _state = MutableStateFlow(AddrViewState())
 
     val viewState: StateFlow<AddrViewState>
         get() = _state
 
     init {
-        val chainList = listOf(
-            SupportedChain(
-                name = "Solana",
-                symbol = "SOL",
-                iconRes = R.drawable.solana_logo
-            ),
-            SupportedChain(
-                name = "Ethereum",
-                "ETH",
-                iconRes = R.drawable.eth_diamond_black
-            )
-        )
-
         viewModelScope.launch {
             addressesUseCase.allUserAddresses
                 .collect { list ->
                     val mapped = list.map { addr ->
-                        val locatedRes = chainList.find { it.symbol == addr.blockchain }?.iconRes ?: -1
+                        val locatedRes = chainList.find { it.ticker == addr.blockchain }?.iconRes ?: -1
 
-                        var pubKeyAddr = addr.pubKey ?: ""
-                        pubKeyAddr = if (pubKeyAddr.length >= 20) {
-                            pubKeyAddr.take(10) + "..." +  pubKeyAddr.takeLast(10)
-                        } else {
-                            pubKeyAddr
-                        }
+//                        var pubKeyAddr = addr.pubKey ?: ""
+//                        pubKeyAddr = if (pubKeyAddr.length >= 20) {
+//                            pubKeyAddr.take(10) + "..." +  pubKeyAddr.takeLast(10)
+//                        } else {
+//                            pubKeyAddr
+//                        }
 
-                        UserAddress(pubKeyAddr, locatedRes, addr.blockchain ?: "")
+                        UserAddress(addr.pubKey, locatedRes)
                     }
 
                     _state.value = AddrViewState(
@@ -76,15 +75,20 @@ class AddressesViewModel @Inject constructor(
         }
     }
 
-    fun saveAddress(symbol: String, address: String) {
+    fun saveAddress(address: String, ticker: String) {
         viewModelScope.launch {
-            addressesUseCase.saveNewAddress(symbol, address)
+            addressesUseCase.saveNewAddress(address, ticker)
         }
     }
 
-    fun deleteAddress(chain: String, address: String) {
+    fun deleteAddress(address: String) {
         viewModelScope.launch {
-            addressesUseCase.deleteAddress(chain, address)
+            addressesUseCase.allUserAddresses.collect { addresses ->
+                val foundChain = addresses.firstOrNull { it.pubKey == address }?.blockchain
+                foundChain?.let {
+                    addressesUseCase.deleteAddress(address, it)
+                }
+            }
         }
     }
 }
