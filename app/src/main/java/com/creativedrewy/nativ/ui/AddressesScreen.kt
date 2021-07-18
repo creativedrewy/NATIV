@@ -61,10 +61,10 @@ fun AddressesScreen(
                         Text(
                             modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.h6,
-                            text = addr.address
+                            text = formatAddress(addr.address)
                         )
                         IconButton(
-                            onClick = { viewModel.deleteAddress(addr.address) }
+                            onClick = { viewModel.deleteAddress(addr.address, addr.chainTicker) }
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.DeleteOutline,
@@ -140,6 +140,14 @@ fun AddressesScreen(
                 )
             }
         }
+    }
+}
+
+fun formatAddress(srcAddr: String): String {
+    return if (srcAddr.length >= 20) {
+        srcAddr.take(10) + "..." + srcAddr.takeLast(10)
+    } else {
+        srcAddr
     }
 }
 

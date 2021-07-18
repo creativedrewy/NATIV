@@ -24,7 +24,8 @@ data class SupportedChain(
 
 data class UserAddress(
     val address: String,
-    val chainLogoRes: Int
+    val chainLogoRes: Int,
+    val chainTicker: String
 )
 
 @HiltViewModel
@@ -55,16 +56,9 @@ class AddressesViewModel @Inject constructor(
             addressesUseCase.allUserAddresses
                 .collect { list ->
                     val mapped = list.map { addr ->
-                        val locatedRes = chainList.find { it.ticker == addr.blockchain }?.iconRes ?: -1
+                        val logoRes = chainList.find { it.ticker == addr.blockchain }?.iconRes ?: -1
 
-//                        var pubKeyAddr = addr.pubKey ?: ""
-//                        pubKeyAddr = if (pubKeyAddr.length >= 20) {
-//                            pubKeyAddr.take(10) + "..." +  pubKeyAddr.takeLast(10)
-//                        } else {
-//                            pubKeyAddr
-//                        }
-
-                        UserAddress(addr.pubKey, locatedRes)
+                        UserAddress(addr.pubKey, logoRes, addr.blockchain)
                     }
 
                     _state.value = AddrViewState(
@@ -81,14 +75,9 @@ class AddressesViewModel @Inject constructor(
         }
     }
 
-    fun deleteAddress(address: String) {
+    fun deleteAddress(address: String, ticker: String) {
         viewModelScope.launch {
-            addressesUseCase.allUserAddresses.collect { addresses ->
-                val foundChain = addresses.firstOrNull { it.pubKey == address }?.blockchain
-                foundChain?.let {
-                    addressesUseCase.deleteAddress(address, it)
-                }
-            }
+            addressesUseCase.deleteAddress(address, ticker)
         }
     }
 }
