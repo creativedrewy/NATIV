@@ -1,7 +1,9 @@
 package com.creativedrewy.nativ.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
@@ -19,13 +21,16 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
+import java.lang.Math.random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -100,7 +105,31 @@ fun AddAddressPanel(
             cells = GridCells.Fixed(count = 4)
         ) {
             items(viewState.supportedChains) { chainItem ->
-                Text(text = chainItem.name)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier.clip(CircleShape)
+                            .size(64.dp)
+                            .background(Color.Red),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(58.dp)
+                                .clip(CircleShape)
+                                .background(Color.Gray)
+                                .clickable { },
+                            painter = painterResource(
+                                id = chainItem.iconRes
+                            ),
+                            contentDescription = ""
+                        )
+                    }
+                    Text(text = chainItem.name)
+                }
             }
         }
     }
