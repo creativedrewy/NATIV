@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.creativedrewy.nativ.ui.AddressesScreen
+import com.creativedrewy.nativ.ui.AddressListScreen
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.google.android.filament.utils.Utils
@@ -87,99 +87,26 @@ fun AppScreenContent() {
         },
         content = {
             BottomDrawer(
-                //gesturesEnabled = false,
                 drawerContent = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(300.dp)
-                            .background(Color.White)
-                            .padding(
-                                top = 16.dp,
-                                start = 16.dp,
-                                end = 16.dp,
-                                bottom = 48.dp
-                            )
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            var address by remember { mutableStateOf(TextFieldValue("")) }
-                            val addressInteractionState = remember { MutableInteractionSource() }
-                            var selectedTicker by remember { mutableStateOf("none") }
-
-                            OutlinedTextField(
-                                modifier = Modifier.weight(1f),
-                                value = address,
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Filled.Link,
-                                        contentDescription = "Add Address"
-                                    )
-                                },
-                                maxLines = 1,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Done
-                                ),
-                                onValueChange = { address = it },
-                                interactionSource = addressInteractionState,
-                            )
-                            IconButton(
-                                onClick = {
-                                    //This isn't ideal, but hard to get "initial" selected chain
-//                                    val ticker = if (selectedTicker == "none") {
-//                                        viewState.supportedChains.firstOrNull()?.ticker ?: ""
-//                                    } else {
-//                                        selectedTicker
-//                                    }
-//
-//                                    viewModel.saveAddress(address.text, ticker)
-//                                    address = TextFieldValue("")
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = "Add Address",
-                                    tint = Color.White,
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .background(
-                                            color = Color.Black,
-                                            shape = CircleShape
-                                        )
-                                )
-                            }
-                        }
-                    }
+                    AddAddressPanel()
                 },
                 drawerState = drawerState
             ) {
                 when (screenState.value) {
                     Gallery.route -> GalleryList()
-                    Accounts.route -> AddressesScreen()
+                    Accounts.route -> AddressListScreen()
                 }
             }
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    scope.launch {
-                        drawerState.expand()
-                    }
-                },
-                shape = RoundedCornerShape(50),
-                backgroundColor = Color(0xFFFF8C00)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    ""
-                )
+            MainAppFab {
+                scope.launch {
+                    drawerState.expand()
+                }
             }
         },
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
-
         bottomBar = {
             BottomAppBar(
                 cutoutShape = RoundedCornerShape(50),
@@ -189,6 +116,89 @@ fun AppScreenContent() {
             )
         }
     )
+}
+
+@Composable
+fun AddAddressPanel() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .background(Color.White)
+            .padding(
+                top = 16.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 48.dp
+            )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            var address by remember { mutableStateOf(TextFieldValue("")) }
+            val addressInteractionState = remember { MutableInteractionSource() }
+            var selectedTicker by remember { mutableStateOf("none") }
+
+            OutlinedTextField(
+                modifier = Modifier.weight(1f),
+                value = address,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Link,
+                        contentDescription = "Add Address"
+                    )
+                },
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                onValueChange = { address = it },
+                interactionSource = addressInteractionState,
+            )
+            IconButton(
+                onClick = {
+                    //This isn't ideal, but hard to get "initial" selected chain
+//                                    val ticker = if (selectedTicker == "none") {
+//                                        viewState.supportedChains.firstOrNull()?.ticker ?: ""
+//                                    } else {
+//                                        selectedTicker
+//                                    }
+//
+//                                    viewModel.saveAddress(address.text, ticker)
+//                                    address = TextFieldValue("")
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add Address",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(
+                            color = Color.Black,
+                            shape = CircleShape
+                        )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MainAppFab(
+    onClick: () -> Unit
+) {
+    FloatingActionButton(
+        onClick = onClick,
+        shape = RoundedCornerShape(50),
+        backgroundColor = Color(0xFFFF8C00)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            ""
+        )
+    }
 }
 
 @Composable

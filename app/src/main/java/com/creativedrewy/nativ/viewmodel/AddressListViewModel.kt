@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AddrViewState(
-    val supportedChains: List<SupportedChain> = listOf(),
+    //val supportedChains: List<SupportedChain> = listOf(),
     val userAddresses: List<UserAddress> = listOf()
 )
 
@@ -29,7 +29,7 @@ data class UserAddress(
 )
 
 @HiltViewModel
-class AddressesViewModel @Inject constructor(
+class AddressListViewModel @Inject constructor(
     private val addressesUseCase: UserAddressesUseCase
 ): ViewModel() {
 
@@ -62,7 +62,7 @@ class AddressesViewModel @Inject constructor(
                     }
 
                     _state.value = AddrViewState(
-                        supportedChains = chainList,
+                        //supportedChains = chainList,
                         userAddresses = mapped
                     )
                 }

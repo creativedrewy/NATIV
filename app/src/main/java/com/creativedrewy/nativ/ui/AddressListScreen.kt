@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.creativedrewy.nativ.viewmodel.AddressesViewModel
+import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddressesScreen(
-    viewModel: AddressesViewModel = viewModel()
+fun AddressListScreen(
+    viewModel: AddressListViewModel = viewModel()
 ) {
     val viewState = viewModel.viewState.collectAsState().value
 
