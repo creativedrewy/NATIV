@@ -90,7 +90,13 @@ fun AppScreenContent() {
         content = {
             BottomDrawer(
                 drawerContent = {
-                    AddAddressPanel()
+                    AddAddressPanel(
+                        closePanel = {
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
+                    )
                 },
                 drawerState = drawerState,
                 gesturesEnabled = false

@@ -36,6 +36,7 @@ import java.lang.Math.random
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddAddressPanel(
+    closePanel: () -> Unit,
     viewModel: AddressListViewModel = viewModel()
 ) {
     val viewState = viewModel.viewState.collectAsState().value
@@ -81,7 +82,11 @@ fun AddAddressPanel(
                 onClick = {
                     val ticker = viewState.supportedChains[selectedIndex].ticker
                     viewModel.saveAddress(address.text, ticker)
+
+                    //TODO: Figure out how to close keyboard here
                     address = TextFieldValue("")
+                    selectedIndex = 0
+                    closePanel()
                 }
             ) {
                 Icon(
