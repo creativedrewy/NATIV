@@ -3,6 +3,7 @@ package com.creativedrewy.nativ.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,8 @@ data class UserAddress(
 
 @HiltViewModel
 class AddressListViewModel @Inject constructor(
-    private val addressesUseCase: UserAddressesUseCase
+    private val addressesUseCase: UserAddressesUseCase,
+    private val supportedChains: ISupportedChains
 ): ViewModel() {
 
     private val chainList = listOf(
