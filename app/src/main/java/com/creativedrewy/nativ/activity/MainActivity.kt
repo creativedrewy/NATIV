@@ -2,6 +2,8 @@ package com.creativedrewy.nativ.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -9,13 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.House
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.ui.AddAddressPanel
 import com.creativedrewy.nativ.ui.AddressListScreen
@@ -67,6 +67,16 @@ fun AppScreenContent() {
     val screenState = rememberSaveable { mutableStateOf(Accounts.route) }
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
 
+    //TODO: Get back handling when sheet is open working
+//    LocalOnBackPressedDispatcherOwner.current
+//        ?.onBackPressedDispatcher?.addCallback(LocalLifecycleOwner.current, object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                scope.launch {
+//                    if (drawerState.isExpanded) drawerState.close()
+//                }
+//            }
+//        })
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,7 +92,8 @@ fun AppScreenContent() {
                 drawerContent = {
                     AddAddressPanel()
                 },
-                drawerState = drawerState
+                drawerState = drawerState,
+                gesturesEnabled = false
             ) {
                 when (screenState.value) {
                     Gallery.route -> GalleryList()

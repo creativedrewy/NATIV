@@ -41,33 +41,33 @@ class NftGalleryViewModel @Inject constructor(
                     val allNfts = mutableListOf<NftViewProps>()
 
                     addresses.forEach { chainAddr ->
-//                        val nftData = if (chainAddr.blockchain == "ETH") {
-//                            openSeaQueryUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
-//                        } else {
-//                            metaplexNftUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
-//                        }
-//
-//                        val nftProps = nftData.map { nft ->
-//                            return@map async {
-//                                val assetBytes = if (nft.properties.category == "vr") {
-//                                    assetDownloadUseCase.downloadAsset(nft.properties.files.first())
-//                                } else {
-//                                    byteArrayOf()
-//                                }
-//
-//                                NftViewProps(
-//                                    name = nft.name,
-//                                    description = nft.description,
-//                                    blockchain = Solana,
-//                                    //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly
-//                                    assetType = if (nft.properties.category == "vr") Model3d else Image,
-//                                    assetUrl = if (nft.properties.category != "vr") nft.image else "",
-//                                    mediaBytes = assetBytes
-//                                )
-//                            }
-//                        }.awaitAll()
-//
-//                        allNfts.addAll(nftProps)
+                        val nftData = if (chainAddr.blockchain == "ETH") {
+                            openSeaQueryUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
+                        } else {
+                            metaplexNftUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
+                        }
+
+                        val nftProps = nftData.map { nft ->
+                            return@map async {
+                                val assetBytes = if (nft.properties.category == "vr") {
+                                    assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                                } else {
+                                    byteArrayOf()
+                                }
+
+                                NftViewProps(
+                                    name = nft.name,
+                                    description = nft.description,
+                                    blockchain = Solana,
+                                    //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
+                                    assetType = if (nft.properties.category == "vr") Model3d else Image,
+                                    assetUrl = if (nft.properties.category != "vr") nft.image else "",
+                                    mediaBytes = assetBytes
+                                )
+                            }
+                        }.awaitAll()
+
+                        allNfts.addAll(nftProps)
                     }
 
                     _state.value = Display(allNfts)

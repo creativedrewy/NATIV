@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -39,6 +40,8 @@ fun AddAddressPanel(
 ) {
     val viewState = viewModel.viewState.collectAsState().value
 
+    var selectedIndex by remember { mutableStateOf(0) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,7 +59,6 @@ fun AddAddressPanel(
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
-            var selectedTicker by remember { mutableStateOf("none") }
 
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
@@ -77,15 +79,9 @@ fun AddAddressPanel(
             )
             IconButton(
                 onClick = {
-                    //This isn't ideal, but hard to get "initial" selected chain
-//                                    val ticker = if (selectedTicker == "none") {
-//                                        viewState.supportedChains.firstOrNull()?.ticker ?: ""
-//                                    } else {
-//                                        selectedTicker
-//                                    }
-//
-//                                    viewModel.saveAddress(address.text, ticker)
-//                                    address = TextFieldValue("")
+                    val ticker = viewState.supportedChains[selectedIndex].ticker
+                    viewModel.saveAddress(address.text, ticker)
+                    address = TextFieldValue("")
                 }
             ) {
                 Icon(
@@ -101,27 +97,31 @@ fun AddAddressPanel(
                 )
             }
         }
+
         LazyVerticalGrid(
             cells = GridCells.Fixed(count = 4)
         ) {
-            items(viewState.supportedChains) { chainItem ->
+            itemsIndexed(viewState.supportedChains) { index, chainItem ->
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .clickable { selectedIndex = index },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
-                        modifier = Modifier.clip(CircleShape)
+                        modifier = Modifier
+                            .clip(CircleShape)
                             .size(64.dp)
-                            .background(Color.Red),
+                            .background(
+                                color = if (index == selectedIndex) Color.Red else Color.White
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
                             modifier = Modifier
                                 .size(58.dp)
                                 .clip(CircleShape)
-                                .background(Color.Gray)
-                                .clickable { },
+                                .background(Color.Gray),
                             painter = painterResource(
                                 id = chainItem.iconRes
                             ),
