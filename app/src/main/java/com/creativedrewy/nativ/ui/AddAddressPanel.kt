@@ -1,13 +1,18 @@
 package com.creativedrewy.nativ.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Link
@@ -19,13 +24,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AddAddressPanel() {
+fun AddAddressPanel(
+    viewModel: AddressListViewModel = viewModel()
+) {
+    val viewState = viewModel.viewState.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(450.dp)
             .background(Color.White)
             .padding(
                 top = 16.dp,
@@ -82,6 +94,13 @@ fun AddAddressPanel() {
                             shape = CircleShape
                         )
                 )
+            }
+        }
+        LazyVerticalGrid(
+            cells = GridCells.Fixed(count = 4)
+        ) {
+            items(viewState.supportedChains) { chainItem ->
+                Text(text = chainItem.name)
             }
         }
     }
