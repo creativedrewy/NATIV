@@ -92,14 +92,9 @@ fun BottomNavigationContents(
                     contentDescription = "Gallery"
                 )
             },
-            label = {
-                Text(
-                    text = "Gallery"
-                )
-            },
             selectedContentColor = Color.White,
             unselectedContentColor = Color.White.copy(0.7f),
-            alwaysShowLabel = true,
+            alwaysShowLabel = false,
             selected = screenState.value == Gallery.route,
             onClick = { screenState.value = Gallery.route }
         )
@@ -110,14 +105,9 @@ fun BottomNavigationContents(
                     contentDescription = "Addresses"
                 )
             },
-            label = {
-                Text(
-                    text = "Addresses"
-                )
-            },
             selectedContentColor = Color.White,
             unselectedContentColor = Color.White.copy(0.7f),
-            alwaysShowLabel = true,
+            alwaysShowLabel = false,
             selected = screenState.value == Accounts.route,
             onClick = { screenState.value = Accounts.route }
         )
