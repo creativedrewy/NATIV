@@ -7,6 +7,8 @@ import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
 import com.creativedrewy.nativ.opensea.OpenSeaQueryUseCase
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -36,13 +38,13 @@ class NftGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             userAddrsUseCase.allUserAddresses
                 .collect { addresses ->
-//                    val allNfts = mutableListOf<NftViewProps>()
-//
-//                    addresses.forEach { chainAddr ->
+                    val allNfts = mutableListOf<NftViewProps>()
+
+                    addresses.forEach { chainAddr ->
 //                        val nftData = if (chainAddr.blockchain == "ETH") {
-//                            openSeaQueryUseCase.getOpenSeaNftsByAddress(chainAddr.pubKey.orEmpty())
+//                            openSeaQueryUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
 //                        } else {
-//                            metaplexNftUseCase.getMetaplexNftsForAccount(chainAddr.pubKey.orEmpty())
+//                            metaplexNftUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
 //                        }
 //
 //                        val nftProps = nftData.map { nft ->
@@ -66,9 +68,9 @@ class NftGalleryViewModel @Inject constructor(
 //                        }.awaitAll()
 //
 //                        allNfts.addAll(nftProps)
-//                    }
-//
-//                    _state.value = Display(allNfts)
+                    }
+
+                    _state.value = Display(allNfts)
                 }
         }
     }

@@ -1,5 +1,9 @@
 package com.creativedrewy.nativ.chainsupport
 
 interface ISupportedChains {
-    val chainsToNftLoaderMap: Map<String, String>
+
+    val supportedChains
+        get() = chainsToNftLoadersMap.keys
+
+    val chainsToNftLoadersMap: Map<SupportedChain, IBlockchainNftLoader>
 }

@@ -1,14 +1,15 @@
 package com.creativedrewy.nativ.opensea
 
+import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.nft.NftMetadata
 import com.creativedrewy.nativ.nft.NftProperties
 import javax.inject.Inject
 
 class OpenSeaQueryUseCase @Inject constructor(
     private val openSeaRepository: OpenSeaRepository
-) {
+): IBlockchainNftLoader {
 
-    suspend fun getOpenSeaNftsByAddress(address: String): List<NftMetadata> {
+    override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
         val dtos = openSeaRepository.getNftsForAddress(address)
 
         val nftSpecResults = dtos.assets.map { asset ->

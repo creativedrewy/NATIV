@@ -1,6 +1,7 @@
 package com.creativedrewy.nativ.metaplex
 
 import android.util.Log
+import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.nft.NftMetadata
 import com.creativedrewy.nativ.nft.NftSpecRepository
 import com.creativedrewy.solanarepository.accounts.AccountRepository
@@ -14,11 +15,11 @@ class MetaplexNftUseCase @Inject constructor(
     private val accountsRepository: AccountRepository,
     private val nftSpecRepository: NftSpecRepository,
     private val borsh: Borsh
-) {
+): IBlockchainNftLoader {
 
-    suspend fun getMetaplexNftsForAccount(account: String): List<NftMetadata> {
+    override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
         val metaplexNfts = mutableListOf<NftMetadata>()
-        val accountKey = PublicKey(account)
+        val accountKey = PublicKey(address)
 
         val ownerAccounts = accountsRepository.getTokenAccountsByOwner(accountKey)
         ownerAccounts.forEach { it ->

@@ -1,6 +1,8 @@
-package com.creativedrewy.nativ.downloader
+package com.creativedrewy.nativ.injection
 
+import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
+import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
 import dagger.Module
 import dagger.Provides
@@ -18,7 +20,7 @@ class BlockchainSupportModule {
         metaplex: MetaplexNftUseCase
     ): ISupportedChains {
         return object : ISupportedChains {
-            override val chainsToNftLoaderMap: Map<String, String> = mapOf()
+            override val chainsToNftLoadersMap: Map<SupportedChain, IBlockchainNftLoader> = mapOf()
         }
     }
 

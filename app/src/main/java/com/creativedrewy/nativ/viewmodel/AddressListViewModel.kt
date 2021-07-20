@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
+import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,14 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class AddrViewState(
-    //val supportedChains: List<SupportedChain> = listOf(),
     val userAddresses: List<UserAddress> = listOf()
-)
-
-data class SupportedChain(
-    val name: String,
-    val ticker: String,
-    val iconRes: Int
 )
 
 data class UserAddress(
@@ -32,21 +26,8 @@ data class UserAddress(
 @HiltViewModel
 class AddressListViewModel @Inject constructor(
     private val addressesUseCase: UserAddressesUseCase,
-    private val supportedChains: ISupportedChains
+    private val chainSupport: ISupportedChains
 ): ViewModel() {
-
-    private val chainList = listOf(
-        SupportedChain(
-            name = "Solana",
-            ticker = "SOL",
-            iconRes = R.drawable.solana_logo
-        ),
-        SupportedChain(
-            name = "Ethereum",
-            ticker = "ETH",
-            iconRes = R.drawable.eth_diamond_black
-        )
-    )
 
     private val _state = MutableStateFlow(AddrViewState())
 
@@ -54,6 +35,8 @@ class AddressListViewModel @Inject constructor(
         get() = _state
 
     init {
+        val chainList = chainSupport.supportedChains
+
         viewModelScope.launch {
             addressesUseCase.allUserAddresses
                 .collect { list ->
@@ -64,7 +47,6 @@ class AddressListViewModel @Inject constructor(
                     }
 
                     _state.value = AddrViewState(
-                        //supportedChains = chainList,
                         userAddresses = mapped
                     )
                 }
