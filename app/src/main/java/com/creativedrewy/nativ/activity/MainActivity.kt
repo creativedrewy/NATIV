@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.ui.AddAddressPanel
 import com.creativedrewy.nativ.ui.AddressListScreen
+import com.creativedrewy.nativ.ui.BackHandler
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.google.android.filament.utils.Utils
@@ -67,16 +68,17 @@ fun AppScreenContent() {
     val screenState = rememberSaveable { mutableStateOf(Accounts.route) }
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
 
-    //TODO: Get back handling when sheet is open working
-//    LocalOnBackPressedDispatcherOwner.current
-//        ?.onBackPressedDispatcher?.addCallback(LocalLifecycleOwner.current, object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                scope.launch {
-//                    if (drawerState.isExpanded) drawerState.close()
-//                }
-//            }
-//        })
-
+    LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.let { dispatch ->
+        BackHandler(
+            backDispatcher = dispatch,
+            enabled = drawerState.isExpanded
+        ) {
+            scope.launch {
+                drawerState.close()
+            }
+        }
+    }
+    
     Scaffold(
         topBar = {
             TopAppBar(
