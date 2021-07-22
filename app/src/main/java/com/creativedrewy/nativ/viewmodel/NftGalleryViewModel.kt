@@ -4,13 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
-import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
-import com.creativedrewy.nativ.nft.NftMetadata
-import com.creativedrewy.nativ.opensea.OpenSeaQueryUseCase
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
+import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
