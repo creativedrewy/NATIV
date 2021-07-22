@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.opensea
 
+import android.util.Log
 import com.creativedrewy.solanarepository.ApiRequestClient
 import com.creativedrewy.solanarepository.Error
 import com.creativedrewy.solanarepository.Success
@@ -24,12 +25,20 @@ class OpenSeaRepository @Inject constructor(
             .build()
 
         return withContext(Dispatchers.IO) {
+            var resultString = ""
+
             when (val result = apiRequestClient.apiRequest(request)) {
                 is Success -> {
-                    val resultString = result.response.body?.string()
-                    val dto = gson.fromJson(resultString, OpenSeaResultsDto::class.java)
+                    try {
+                        resultString = result.response.body?.string() ?: ""
+                        val dto = gson.fromJson(resultString, OpenSeaResultsDto::class.java)
 
-                    dto
+                        dto
+                    } catch (e: Exception) {
+                        Log.e("Ethereum", "Error parsing OpenSea result: $resultString")
+
+                        OpenSeaResultsDto(listOf())
+                    }
                 }
                 is Error -> {
                     OpenSeaResultsDto(listOf())
