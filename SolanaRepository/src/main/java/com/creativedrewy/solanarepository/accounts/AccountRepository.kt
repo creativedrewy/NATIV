@@ -1,5 +1,6 @@
 package com.creativedrewy.solanarepository.accounts
 
+import android.util.Log
 import com.creativedrewy.solanarepository.Error
 import com.creativedrewy.solanarepository.Success
 import com.creativedrewy.solanarepository.rpcapi.Rpc20RequestDto
@@ -58,12 +59,19 @@ class AccountRepository(
         return withContext(Dispatchers.IO) {
             when (val result = rpcRequestClient.makeRequest(rpcRequest)) {
                 is Success -> {
-                    val resultString = result.response.body?.string()
+                    var resultString = ""
+                    try {
+                        resultString = result.response.body?.string() ?: ""
 
-                    val typeToken = object : TypeToken<RpcResultDto<List<AccountHolderRootDto>>>(){}.type
-                    val dto = gson.fromJson<RpcResultDto<List<AccountHolderRootDto>>>(resultString, typeToken)
+                        val typeToken = object : TypeToken<RpcResultDto<List<AccountHolderRootDto>>>(){}.type
+                        val dto = gson.fromJson<RpcResultDto<List<AccountHolderRootDto>>>(resultString, typeToken)
 
-                    dto.result.value
+                        dto.result.value
+                    } catch (e: Exception) {
+                        Log.e("Solana", "Error parsing account RPC result: $resultString")
+
+                        listOf()
+                    }
                 }
                 is Error -> {
                     listOf()
