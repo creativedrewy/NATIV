@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -21,9 +22,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 import java.lang.Math.random
 
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddAddressPanel(
@@ -60,6 +64,7 @@ fun AddAddressPanel(
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
             val addressInteractionState = remember { MutableInteractionSource() }
+            val keyboardController = LocalSoftwareKeyboardController.current
 
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
@@ -75,6 +80,9 @@ fun AddAddressPanel(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
                 ),
+                keyboardActions = KeyboardActions(
+                    onDone = { keyboardController?.hide() }
+                ),
                 onValueChange = { address = it },
                 interactionSource = addressInteractionState,
             )
@@ -84,10 +92,10 @@ fun AddAddressPanel(
                         val ticker = viewState.supportedChains[selectedIndex].ticker
                         viewModel.saveAddress(address.text, ticker)
 
-                        //TODO: Figure out how to close keyboard here
                         address = TextFieldValue("")
                         selectedIndex = 0
                         closePanel()
+                        keyboardController?.hide()
                     }
                 }
             ) {
