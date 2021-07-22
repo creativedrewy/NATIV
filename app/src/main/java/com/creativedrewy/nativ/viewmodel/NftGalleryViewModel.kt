@@ -2,6 +2,7 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
 import com.creativedrewy.nativ.opensea.OpenSeaQueryUseCase
@@ -17,10 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NftGalleryViewModel @Inject constructor(
-    private val metaplexNftUseCase: MetaplexNftUseCase,
-    private val assetDownloadUseCase: AssetDownloadUseCase,
     private val userAddrsUseCase: UserAddressesUseCase,
-    private val openSeaQueryUseCase: OpenSeaQueryUseCase
+    private val assetDownloadUseCase: AssetDownloadUseCase,
+    private val chainSupport: ISupportedChains
 ): ViewModel() {
 
     private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
@@ -41,13 +41,12 @@ class NftGalleryViewModel @Inject constructor(
                     val allNfts = mutableListOf<NftViewProps>()
 
                     addresses.forEach { chainAddr ->
-                        val nftData = if (chainAddr.blockchain == "ETH") {
-                            openSeaQueryUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
-                        } else {
-                            metaplexNftUseCase.loadNftsForAddress(chainAddr.pubKey.orEmpty())
-                        }
+                        val foundChain = chainSupport.supportedChains.firstOrNull { it.ticker == chainAddr.blockchain }
+                        val nftLoader = chainSupport.chainsToNftLoadersMap[foundChain]
 
-                        val nftProps = nftData.map { nft ->
+                        val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
+
+                        val nftProps = nftData?.map { nft ->
                             return@map async {
                                 val assetBytes = if (nft.properties.category == "vr") {
                                     assetDownloadUseCase.downloadAsset(nft.properties.files.first())
@@ -65,9 +64,9 @@ class NftGalleryViewModel @Inject constructor(
                                     mediaBytes = assetBytes
                                 )
                             }
-                        }.awaitAll()
+                        }?.awaitAll()
 
-                        allNfts.addAll(nftProps)
+                        allNfts.addAll(nftProps.orEmpty())
                     }
 
                     _state.value = Display(allNfts)
