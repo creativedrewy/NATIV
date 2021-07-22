@@ -39,6 +39,12 @@ import java.nio.ByteBuffer
 fun GalleryList(
     viewModel: NftGalleryViewModel = viewModel()
 ) {
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            viewModel.loadNfts()
+        })
+
     val state by viewModel.viewState.collectAsState()
 
     val isLoading = state is Loading

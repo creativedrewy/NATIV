@@ -80,13 +80,15 @@ fun AddAddressPanel(
             )
             IconButton(
                 onClick = {
-                    val ticker = viewState.supportedChains[selectedIndex].ticker
-                    viewModel.saveAddress(address.text, ticker)
+                    if (address.text.isNotEmpty()) {
+                        val ticker = viewState.supportedChains[selectedIndex].ticker
+                        viewModel.saveAddress(address.text, ticker)
 
-                    //TODO: Figure out how to close keyboard here
-                    address = TextFieldValue("")
-                    selectedIndex = 0
-                    closePanel()
+                        //TODO: Figure out how to close keyboard here
+                        address = TextFieldValue("")
+                        selectedIndex = 0
+                        closePanel()
+                    }
                 }
             ) {
                 Icon(
