@@ -7,3 +7,9 @@ interface ISupportedChains {
 
     val chainsToNftLoadersMap: Map<SupportedChain, IBlockchainNftLoader>
 }
+
+fun ISupportedChains.findLoaderByTicker(ticker: String): IBlockchainNftLoader? {
+    val foundChain = supportedChains.firstOrNull { it.ticker == ticker }
+
+    return chainsToNftLoadersMap[foundChain]
+}

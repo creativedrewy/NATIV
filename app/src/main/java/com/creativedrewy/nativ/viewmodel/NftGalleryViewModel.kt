@@ -3,8 +3,10 @@ package com.creativedrewy.nativ.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
+import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
+import com.creativedrewy.nativ.nft.NftMetadata
 import com.creativedrewy.nativ.opensea.OpenSeaQueryUseCase
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NftGalleryViewModel @Inject constructor(
     private val userAddrsUseCase: UserAddressesUseCase,
-    private val assetDownloadUseCase: AssetDownloadUseCase,
-    private val chainSupport: ISupportedChains
+    private val chainSupport: ISupportedChains,
+    private val viewStateMapping: GalleryViewStateMapping
 ): ViewModel() {
 
     private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
@@ -41,30 +43,10 @@ class NftGalleryViewModel @Inject constructor(
                     val allNfts = mutableListOf<NftViewProps>()
 
                     addresses.forEach { chainAddr ->
-                        val foundChain = chainSupport.supportedChains.firstOrNull { it.ticker == chainAddr.blockchain }
-                        val nftLoader = chainSupport.chainsToNftLoadersMap[foundChain]
-
+                        val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
                         val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
 
-                        val nftProps = nftData?.map { nft ->
-                            return@map async {
-                                val assetBytes = if (nft.properties.category == "vr") {
-                                    assetDownloadUseCase.downloadAsset(nft.properties.files.first())
-                                } else {
-                                    byteArrayOf()
-                                }
-
-                                NftViewProps(
-                                    name = nft.name,
-                                    description = nft.description,
-                                    blockchain = Solana,
-                                    //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
-                                    assetType = if (nft.properties.category == "vr") Model3d else Image,
-                                    assetUrl = if (nft.properties.category != "vr") nft.image else "",
-                                    mediaBytes = assetBytes
-                                )
-                            }
-                        }?.awaitAll()
+                        val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it) }?.awaitAll()
 
                         allNfts.addAll(nftProps.orEmpty())
                     }
