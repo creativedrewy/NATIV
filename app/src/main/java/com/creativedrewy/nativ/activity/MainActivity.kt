@@ -69,7 +69,7 @@ object Accounts : AppScreen("accounts")
 @Composable
 fun AppScreenContent() {
     val scope = rememberCoroutineScope()
-    val screenState = rememberSaveable { mutableStateOf(Accounts.route) }
+    val screenState = rememberSaveable { mutableStateOf(Gallery.route) }
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
 
     LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.let { dispatch ->

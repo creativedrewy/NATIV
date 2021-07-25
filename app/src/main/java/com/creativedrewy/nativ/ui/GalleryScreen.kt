@@ -4,24 +4,29 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.activity.Gallery
 import com.creativedrewy.nativ.ui.theme.ShimmerColor
 import com.creativedrewy.nativ.ui.theme.White
 import com.creativedrewy.nativ.viewmodel.*
@@ -48,14 +53,47 @@ fun GalleryList(
     val state by viewModel.viewState.collectAsState()
 
     val isLoading = state is Loading
-    LazyColumn(
-        modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
-    ) {
-        items(state.listItems) { nft ->
-            GalleryItemCard(
-                loading = isLoading,
-                nftProps = nft
-            )
+
+    val infiniteTransition = rememberInfiniteTransition()
+    val animatedOffset by infiniteTransition.animateFloat(
+        initialValue = 700f,
+        targetValue = 100f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 3000
+            ),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    when (state) {
+        is Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .background(Color.Gray)
+                    .offset(
+                        y = animatedOffset.dp
+                    ),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Box(
+                    modifier = Modifier.clip(CircleShape)
+                        .background(Color.Red)
+                        .size(100.dp)
+                )
+            }
+        }
+        else -> {
+            LazyColumn(
+                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
+            ) {
+                items(state.listItems) { nft ->
+                    GalleryItemCard(
+                        loading = false,
+                        nftProps = nft
+                    )
+                }
+            }
         }
     }
 }
