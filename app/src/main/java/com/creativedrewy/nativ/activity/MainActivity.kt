@@ -6,6 +6,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -85,13 +89,13 @@ fun AppScreenContent() {
     
     Scaffold(
         topBar = {
-            TopAppBar(
-                backgroundColor = MaterialTheme.colors.surface,
-                elevation = 0.dp,
-                title = {
-                    Text(text = "NATIV")
-                }
-            )
+             Box(
+                 modifier = Modifier.fillMaxWidth()
+                     .height(90.dp)
+                     .background(Color.Magenta)
+             ) {
+
+             }
         },
         content = {
             BottomDrawer(

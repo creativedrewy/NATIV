@@ -83,17 +83,17 @@ fun GalleryList(
                     .size(100.dp)
             )
         }
-        LazyColumn(
-            modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
-                .fillMaxSize()
-                .align(Alignment.TopStart)
-        ) {
-            items(state.listItems) { nft ->
-                GalleryItemCard(
-                    nftProps = nft
-                )
-            }
-        }
+//        LazyColumn(
+//            modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
+//                .fillMaxSize()
+//                .align(Alignment.TopStart)
+//        ) {
+//            items(state.listItems) { nft ->
+//                GalleryItemCard(
+//                    nftProps = nft
+//                )
+//            }
+//        }
     }
 }
 
