@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -55,7 +57,7 @@ fun GalleryList(
 
     val infiniteTransition = rememberInfiniteTransition()
     val animatedOffset by infiniteTransition.animateFloat(
-        initialValue = 700f,
+        initialValue = 600f,
         targetValue = 100f,
         animationSpec = infiniteRepeatable(
             animation = tween(
@@ -65,11 +67,22 @@ fun GalleryList(
         )
     )
 
-    Box{
+    Box {
+//        Image(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(
+//                    bottom = 64.dp
+//                ),
+//            painter = painterResource(
+//                id = R.drawable.place_kitten
+//            ),
+//            contentScale = ContentScale.FillHeight,
+//            contentDescription = ""
+//        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Gray)
                 .align(Alignment.TopStart)
                 .offset(
                     y = if (isLoading) animatedOffset.dp else 100.dp
@@ -83,17 +96,45 @@ fun GalleryList(
                     .size(100.dp)
             )
         }
-//        LazyColumn(
-//            modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
-//                .fillMaxSize()
-//                .align(Alignment.TopStart)
-//        ) {
-//            items(state.listItems) { nft ->
-//                GalleryItemCard(
-//                    nftProps = nft
-//                )
-//            }
-//        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(284.dp)
+                .background(Color.Red)
+                .align(Alignment.BottomCenter)
+                .padding(
+                    bottom = 64.dp
+                )
+        ) {
+//            Image(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(220.dp),
+//                painter = painterResource(
+//                    id = R.drawable.place_kitten2
+//                ),
+//                contentScale = ContentScale.FillWidth,
+//                contentDescription = ""
+//            )
+        }
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(
+                    bottom = 64.dp
+                )
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
+                    .fillMaxSize()
+                    .align(Alignment.TopStart)
+            ) {
+                items(state.listItems) { nft ->
+                    GalleryItemCard(
+                        nftProps = nft
+                    )
+                }
+            }
+        }
     }
 }
 
