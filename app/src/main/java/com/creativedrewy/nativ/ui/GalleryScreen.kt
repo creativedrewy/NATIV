@@ -6,11 +6,14 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -66,43 +69,48 @@ fun GalleryList(
             contentScale = ContentScale.FillHeight,
             contentDescription = ""
         )
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .align(Alignment.TopStart)
-//                .offset(
-//                    y = if (isLoading) animatedOffset.dp else 100.dp
-//                ),
-//            contentAlignment = Alignment.TopCenter
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .clip(CircleShape)
-//                    .background(Color.Red)
-//                    .size(100.dp)
-//            )
-//        }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(284.dp)
-//                .background(Color.Red)
-//                .align(Alignment.BottomCenter)
-//                .padding(
-//                    bottom = 64.dp
-//                )
-//        ) {
-//            Image(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(220.dp),
-//                painter = painterResource(
-//                    id = R.drawable.place_kitten2
-//                ),
-//                contentScale = ContentScale.FillWidth,
-//                contentDescription = ""
-//            )
-//        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.TopStart)
+                .offset(
+                    //y = if (isLoading) animatedOffset.dp else 100.dp
+                    y = 15.dp
+                ),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Image(
+                modifier = Modifier
+                    .width(260.dp)
+                    .height(260.dp),
+                painter = painterResource(
+                    id = R.drawable.sunset
+                ),
+                contentScale = ContentScale.FillWidth,
+                contentDescription = ""
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(284.dp)
+                .background(MaterialTheme.colors.primary)
+                .align(Alignment.BottomCenter)
+                .padding(
+                    bottom = 64.dp
+                )
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp),
+                painter = painterResource(
+                    id = R.drawable.perspective_grid
+                ),
+                contentScale = ContentScale.FillHeight,
+                contentDescription = ""
+            )
+        }
 //        Box(
 //            modifier = Modifier.fillMaxSize()
 //                .padding(
