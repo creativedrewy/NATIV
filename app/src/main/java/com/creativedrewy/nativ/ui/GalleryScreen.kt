@@ -6,36 +6,22 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.activity.Gallery
-import com.creativedrewy.nativ.ui.theme.ShimmerColor
-import com.creativedrewy.nativ.ui.theme.White
 import com.creativedrewy.nativ.viewmodel.*
 import com.google.accompanist.glide.rememberGlidePainter
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.placeholder
-import com.google.accompanist.placeholder.shimmer
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
@@ -68,44 +54,44 @@ fun GalleryList(
     )
 
     Box {
-//        Image(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(
-//                    bottom = 64.dp
-//                ),
-//            painter = painterResource(
-//                id = R.drawable.place_kitten
-//            ),
-//            contentScale = ContentScale.FillHeight,
-//            contentDescription = ""
-//        )
-        Box(
+        Image(
             modifier = Modifier
                 .fillMaxSize()
-                .align(Alignment.TopStart)
-                .offset(
-                    y = if (isLoading) animatedOffset.dp else 100.dp
-                ),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(Color.Red)
-                    .size(100.dp)
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(284.dp)
-                .background(Color.Red)
-                .align(Alignment.BottomCenter)
                 .padding(
                     bottom = 64.dp
-                )
-        ) {
+                ),
+            painter = painterResource(
+                id = R.drawable.stars_bg
+            ),
+            contentScale = ContentScale.FillHeight,
+            contentDescription = ""
+        )
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .align(Alignment.TopStart)
+//                .offset(
+//                    y = if (isLoading) animatedOffset.dp else 100.dp
+//                ),
+//            contentAlignment = Alignment.TopCenter
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//                    .background(Color.Red)
+//                    .size(100.dp)
+//            )
+//        }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(284.dp)
+//                .background(Color.Red)
+//                .align(Alignment.BottomCenter)
+//                .padding(
+//                    bottom = 64.dp
+//                )
+//        ) {
 //            Image(
 //                modifier = Modifier
 //                    .fillMaxWidth()
@@ -116,25 +102,25 @@ fun GalleryList(
 //                contentScale = ContentScale.FillWidth,
 //                contentDescription = ""
 //            )
-        }
-        Box(
-            modifier = Modifier.fillMaxSize()
-                .padding(
-                    bottom = 64.dp
-                )
-        ) {
-            LazyColumn(
-                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
-                    .fillMaxSize()
-                    .align(Alignment.TopStart)
-            ) {
-                items(state.listItems) { nft ->
-                    GalleryItemCard(
-                        nftProps = nft
-                    )
-                }
-            }
-        }
+//        }
+//        Box(
+//            modifier = Modifier.fillMaxSize()
+//                .padding(
+//                    bottom = 64.dp
+//                )
+//        ) {
+//            LazyColumn(
+//                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
+//                    .fillMaxSize()
+//                    .align(Alignment.TopStart)
+//            ) {
+//                items(state.listItems) { nft ->
+//                    GalleryItemCard(
+//                        nftProps = nft
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
