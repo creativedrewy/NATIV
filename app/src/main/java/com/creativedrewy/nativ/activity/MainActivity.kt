@@ -2,32 +2,29 @@ package com.creativedrewy.nativ.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.House
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.ui.AddAddressPanel
-import com.creativedrewy.nativ.ui.AddressListScreen
 import com.creativedrewy.nativ.ui.BackHandler
-import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.ui.theme.NavIconColor
@@ -151,12 +148,13 @@ fun MainAppFab(
     screenState: MutableState<String>,
     onClick: () -> Unit
 ) {
-    val animatedFloatState = animateFloatAsState(
-        targetValue = if (screenState.value == Gallery.route) 0f else 1.0f
-    )
+    //TODO: For some reason trying to animate the FAB freezes some devices. Revisit later.
+//    val animatedFloatState = animateFloatAsState(
+//        targetValue = if (screenState.value == Gallery.route) 0f else 1.0f
+//    )
 
     FloatingActionButton(
-        modifier = Modifier.scale(animatedFloatState.value),
+        //modifier = Modifier.scale(animatedFloatState.value),
         onClick = {
             if (screenState.value == Accounts.route) { onClick() }
         },
