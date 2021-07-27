@@ -51,7 +51,6 @@ fun GalleryList(
         })
 
     val state by viewModel.viewState.collectAsState()
-
     val isLoading = state is Loading
 
     val infiniteTransition = rememberInfiniteTransition()
@@ -66,33 +65,33 @@ fun GalleryList(
         )
     )
 
-    when (state) {
-        is Loading -> {
+    Box{
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Gray)
+                .align(Alignment.TopStart)
+                .offset(
+                    y = if (isLoading) animatedOffset.dp else 100.dp
+                ),
+            contentAlignment = Alignment.TopCenter
+        ) {
             Box(
-                modifier = Modifier.fillMaxSize()
-                    .background(Color.Gray)
-                    .offset(
-                        y = animatedOffset.dp
-                    ),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Box(
-                    modifier = Modifier.clip(CircleShape)
-                        .background(Color.Red)
-                        .size(100.dp)
-                )
-            }
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color.Red)
+                    .size(100.dp)
+            )
         }
-        else -> {
-            LazyColumn(
-                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
-            ) {
-                items(state.listItems) { nft ->
-                    GalleryItemCard(
-                        loading = false,
-                        nftProps = nft
-                    )
-                }
+        LazyColumn(
+            modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 48.dp)
+                .fillMaxSize()
+                .align(Alignment.TopStart)
+        ) {
+            items(state.listItems) { nft ->
+                GalleryItemCard(
+                    nftProps = nft
+                )
             }
         }
     }
@@ -101,7 +100,6 @@ fun GalleryList(
 @ExperimentalComposeUiApi
 @Composable
 fun GalleryItemCard(
-    loading: Boolean,
     nftProps: NftViewProps
 ) {
     Surface(
@@ -118,18 +116,13 @@ fun GalleryItemCard(
                     Model3dViewer(nftProps)
                 }
                 is Image -> {
-                    ImageViewer(loading, nftProps)
+                    ImageViewer(nftProps)
                 }
             }
             Text(
                 text = nftProps.name,
                 modifier = Modifier
                     .padding(16.dp)
-                    .placeholder(
-                        visible = loading,
-                        color = ShimmerColor,
-                        highlight = PlaceholderHighlight.shimmer(White)
-                    )
             )
         }
 
@@ -138,7 +131,6 @@ fun GalleryItemCard(
 
 @Composable
 fun ImageViewer(
-    loading: Boolean,
     nftProps: NftViewProps
 ) {
     Image(
@@ -150,11 +142,6 @@ fun ImageViewer(
             .fillMaxWidth()
             .aspectRatio(1f)
             .padding(top = 24.dp)
-            .placeholder(
-                visible = loading,
-                color = ShimmerColor,
-                highlight = PlaceholderHighlight.shimmer(White)
-            )
     )
 }
 

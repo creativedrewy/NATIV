@@ -8,16 +8,7 @@ sealed class NftGalleryViewState(
 
 class Empty: NftGalleryViewState(listOf())
 
-class Loading: NftGalleryViewState(
-    listOf(
-        NftViewProps(
-            name = "Text text text text text text text text text"
-        ),
-        NftViewProps(
-            name = "Text text text text text text text text text"
-        )
-    )
-)
+class Loading: NftGalleryViewState(listOf())
 
 data class Display(
     val items: List<NftViewProps>
