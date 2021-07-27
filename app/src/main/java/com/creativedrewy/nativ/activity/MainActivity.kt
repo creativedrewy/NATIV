@@ -7,9 +7,8 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -29,7 +28,9 @@ import com.creativedrewy.nativ.ui.AddAddressPanel
 import com.creativedrewy.nativ.ui.AddressListScreen
 import com.creativedrewy.nativ.ui.BackHandler
 import com.creativedrewy.nativ.ui.GalleryList
+import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
+import com.creativedrewy.nativ.ui.theme.NavIconColor
 import com.google.android.filament.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -92,7 +93,7 @@ fun AppScreenContent() {
              Box(
                  modifier = Modifier.fillMaxWidth()
                      .height(90.dp)
-                     .background(Color.Magenta)
+                     .background(MaterialTheme.colors.primary)
              ) {
 
              }
@@ -111,9 +112,14 @@ fun AppScreenContent() {
                 drawerState = drawerState,
                 gesturesEnabled = false
             ) {
-                when (screenState.value) {
-                    Gallery.route -> GalleryList()
-                    Accounts.route -> AddressListScreen()
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colors.primary)
+                ) {
+//                    when (screenState.value) {
+//                        Gallery.route -> GalleryList()
+//                        Accounts.route -> AddressListScreen()
+//                    }
                 }
             }
         },
@@ -130,7 +136,8 @@ fun AppScreenContent() {
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
             BottomAppBar(
-                cutoutShape = RoundedCornerShape(50),
+                backgroundColor = MaterialTheme.colors.primary,
+                cutoutShape = CutCornerShape(50),
                 content = {
                     BottomNavigationContents(screenState)
                 }
@@ -153,12 +160,13 @@ fun MainAppFab(
         onClick = {
             if (screenState.value == Accounts.route) { onClick() }
         },
-        shape = RoundedCornerShape(50),
-        backgroundColor = Color(0xFFFF8C00)
+        shape = CutCornerShape(50),
+        backgroundColor = HotPink
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
-            ""
+            tint = MaterialTheme.colors.onPrimary,
+            contentDescription = ""
         )
     }
 }
@@ -167,7 +175,9 @@ fun MainAppFab(
 fun BottomNavigationContents(
     screenState: MutableState<String>
 ) {
-    BottomNavigation {
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colors.primary
+    ) {
         BottomNavigationItem(
             icon = {
                 Icon(
@@ -175,8 +185,8 @@ fun BottomNavigationContents(
                     contentDescription = "Gallery"
                 )
             },
-            selectedContentColor = Color.White,
-            unselectedContentColor = Color.White.copy(0.7f),
+            selectedContentColor = NavIconColor,
+            unselectedContentColor = NavIconColor.copy(0.6f),
             alwaysShowLabel = false,
             selected = screenState.value == Gallery.route,
             onClick = { screenState.value = Gallery.route }
@@ -188,8 +198,8 @@ fun BottomNavigationContents(
                     contentDescription = "Addresses"
                 )
             },
-            selectedContentColor = Color.White,
-            unselectedContentColor = Color.White.copy(0.7f),
+            selectedContentColor = NavIconColor,
+            unselectedContentColor = NavIconColor.copy(0.6f),
             alwaysShowLabel = false,
             selected = screenState.value == Accounts.route,
             onClick = { screenState.value = Accounts.route }
