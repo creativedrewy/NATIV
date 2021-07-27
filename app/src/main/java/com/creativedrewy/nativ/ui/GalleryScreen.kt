@@ -8,6 +8,8 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -111,24 +113,24 @@ fun GalleryList(
                 contentDescription = ""
             )
         }
-//        Box(
-//            modifier = Modifier.fillMaxSize()
-//                .padding(
-//                    bottom = 64.dp
-//                )
-//        ) {
-//            LazyColumn(
-//                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
-//                    .fillMaxSize()
-//                    .align(Alignment.TopStart)
-//            ) {
-//                items(state.listItems) { nft ->
-//                    GalleryItemCard(
-//                        nftProps = nft
-//                    )
-//                }
-//            }
-//        }
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(
+                    bottom = 64.dp
+                )
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
+                    .fillMaxSize()
+                    .align(Alignment.TopStart)
+            ) {
+                items(state.listItems) { nft ->
+                    GalleryItemCard(
+                        nftProps = nft
+                    )
+                }
+            }
+        }
     }
 }
 

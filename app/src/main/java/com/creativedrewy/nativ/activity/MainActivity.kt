@@ -24,6 +24,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.ui.AddAddressPanel
+import com.creativedrewy.nativ.ui.AddressListScreen
 import com.creativedrewy.nativ.ui.BackHandler
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.HotPink
@@ -114,12 +115,10 @@ fun AppScreenContent() {
                     modifier = Modifier.fillMaxSize()
                         .background(MaterialTheme.colors.primary)
                 ) {
-                    GalleryList()
-
-//                    when (screenState.value) {
-//                        Gallery.route -> GalleryList()
-//                        Accounts.route -> AddressListScreen()
-//                    }
+                    when (screenState.value) {
+                        Gallery.route -> GalleryList()
+                        Accounts.route -> AddressListScreen()
+                    }
                 }
             }
         },
