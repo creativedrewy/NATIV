@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.LightPurple
+import com.creativedrewy.nativ.ui.theme.NavIconColor
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
 @ExperimentalComposeUiApi
@@ -57,13 +58,23 @@ fun AddAddressPanel(
                 )
             )
             .padding(
-                top = 28.dp,
+                top = 24.dp,
                 start = 24.dp,
                 end = 24.dp,
                 bottom = 48.dp
             )
     ) {
+        Text(
+            modifier = Modifier.padding(
+                bottom = 8.dp
+            ),
+            text = "Public Key Address:",
+            style = MaterialTheme.typography.h6
+        )
         Row(
+            modifier = Modifier.padding(
+                bottom = 16.dp
+            ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             var address by remember { mutableStateOf(TextFieldValue("")) }
@@ -139,7 +150,7 @@ fun AddAddressPanel(
                             .clip(CircleShape)
                             .size(64.dp)
                             .background(
-                                color = if (index == selectedIndex) Color.Red else Color.White
+                                color = if (index == selectedIndex) NavIconColor else LightPurple
                             ),
                         contentAlignment = Alignment.Center
                     ) {
@@ -147,14 +158,20 @@ fun AddAddressPanel(
                             modifier = Modifier
                                 .size(58.dp)
                                 .clip(CircleShape)
-                                .background(Color.Gray),
+                                .background(LightPurple),
                             painter = painterResource(
                                 id = chainItem.iconRes
                             ),
                             contentDescription = ""
                         )
                     }
-                    Text(text = chainItem.name)
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                top = 4.dp
+                            ),
+                        text = chainItem.name
+                    )
                 }
             }
         }

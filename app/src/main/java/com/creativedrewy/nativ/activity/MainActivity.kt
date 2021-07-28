@@ -141,7 +141,7 @@ fun AppScreenContent() {
                 backgroundColor = MaterialTheme.colors.primary,
                 cutoutShape = CutCornerShape(50),
                 content = {
-                    BottomNavigationContents(screenState)
+                    BottomNavigationContents(screenState, drawerState)
                 }
             )
         }
@@ -174,10 +174,14 @@ fun MainAppFab(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomNavigationContents(
-    screenState: MutableState<String>
+    screenState: MutableState<String>,
+    bottomDrawerState: BottomDrawerState
 ) {
+    val scope = rememberCoroutineScope()
+
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.primary
     ) {
@@ -192,7 +196,12 @@ fun BottomNavigationContents(
             unselectedContentColor = NavIconColor.copy(0.6f),
             alwaysShowLabel = false,
             selected = screenState.value == Gallery.route,
-            onClick = { screenState.value = Gallery.route }
+            onClick = {
+                screenState.value = Gallery.route
+                scope.launch {
+                    bottomDrawerState.close()
+                }
+            }
         )
         BottomNavigationItem(
             icon = {

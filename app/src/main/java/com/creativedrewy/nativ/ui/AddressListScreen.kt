@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.creativedrewy.nativ.ui.theme.NavIconColor
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -59,7 +60,8 @@ fun AddressListScreen(
                             Icon(
                                 imageVector = Icons.Filled.DeleteOutline,
                                 contentDescription = "Delete",
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(24.dp),
+                                tint = NavIconColor
                             )
                         }
                     }
