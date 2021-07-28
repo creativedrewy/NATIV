@@ -30,7 +30,7 @@ import com.creativedrewy.nativ.ui.BackHandler
 import com.creativedrewy.nativ.ui.GalleryList
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
-import com.creativedrewy.nativ.ui.theme.NavIconColor
+import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.google.android.filament.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -192,8 +192,8 @@ fun BottomNavigationContents(
                     contentDescription = "Gallery"
                 )
             },
-            selectedContentColor = NavIconColor,
-            unselectedContentColor = NavIconColor.copy(0.6f),
+            selectedContentColor = Turquoise,
+            unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
             selected = screenState.value == Gallery.route,
             onClick = {
@@ -210,8 +210,8 @@ fun BottomNavigationContents(
                     contentDescription = "Addresses"
                 )
             },
-            selectedContentColor = NavIconColor,
-            unselectedContentColor = NavIconColor.copy(0.6f),
+            selectedContentColor = Turquoise,
+            unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
             selected = screenState.value == Accounts.route,
             onClick = { screenState.value = Accounts.route }

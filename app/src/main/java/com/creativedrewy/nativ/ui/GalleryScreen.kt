@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -25,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.ui.theme.CardDarkBlue
+import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.viewmodel.*
 import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.filament.Skybox
@@ -119,7 +125,11 @@ fun GalleryList(
                 )
         ) {
             LazyColumn(
-                modifier = Modifier.padding(16.dp, 0.dp, 16.dp, 0.dp)
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp
+                    )
                     .fillMaxSize()
                     .align(Alignment.TopStart)
             ) {
@@ -143,22 +153,39 @@ fun GalleryItemCard(
             top = 16.dp,
             bottom = 16.dp
         ),
-        shape = RoundedCornerShape(24.dp, 24.dp, 24.dp, 24.dp),
+        shape = RoundedCornerShape(24.dp),
         elevation = 8.dp
     ) {
-        Column {
-            when (nftProps.assetType) {
-                is Model3d -> {
-                    Model3dViewer(nftProps)
-                }
-                is Image -> {
-                    ImageViewer(nftProps)
+        Column(
+            modifier = Modifier
+                .background(CardDarkBlue)
+                .padding(24.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(
+                        border = BorderStroke(2.dp, HotPink),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+            ) {
+                when (nftProps.assetType) {
+                    is Model3d -> {
+                        Model3dViewer(nftProps)
+                    }
+                    is Image -> {
+                        ImageViewer(nftProps)
+                    }
                 }
             }
             Text(
-                text = nftProps.name,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(
+                        top = 8.dp
+                    ),
+                text = nftProps.name,
+                style = MaterialTheme.typography.h5
             )
         }
 
@@ -170,6 +197,7 @@ fun ImageViewer(
     nftProps: NftViewProps
 ) {
     Image(
+        contentScale = ContentScale.FillWidth,
         painter = rememberGlidePainter(
             request = nftProps.assetUrl
         ),
@@ -177,7 +205,6 @@ fun ImageViewer(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
-            .padding(top = 24.dp)
     )
 }
 

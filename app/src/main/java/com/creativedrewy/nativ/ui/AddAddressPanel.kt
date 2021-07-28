@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.LightPurple
-import com.creativedrewy.nativ.ui.theme.NavIconColor
+import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
 @ExperimentalComposeUiApi
@@ -150,7 +150,7 @@ fun AddAddressPanel(
                             .clip(CircleShape)
                             .size(64.dp)
                             .background(
-                                color = if (index == selectedIndex) NavIconColor else LightPurple
+                                color = if (index == selectedIndex) Turquoise else LightPurple
                             ),
                         contentAlignment = Alignment.Center
                     ) {
