@@ -48,11 +48,11 @@ fun GalleryList(
 
     val infiniteTransition = rememberInfiniteTransition()
     val animatedOffset by infiniteTransition.animateFloat(
-        initialValue = 600f,
-        targetValue = 100f,
+        initialValue = 360f,
+        targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 3000
+                durationMillis = 5000
             ),
             repeatMode = RepeatMode.Restart
         )
@@ -76,15 +76,14 @@ fun GalleryList(
                 .fillMaxSize()
                 .align(Alignment.TopStart)
                 .offset(
-                    //y = if (isLoading) animatedOffset.dp else 100.dp
-                    y = 15.dp
+                    y = if (isLoading) animatedOffset.dp else 0.dp
                 ),
             contentAlignment = Alignment.TopCenter
         ) {
             Image(
                 modifier = Modifier
-                    .width(260.dp)
-                    .height(260.dp),
+                    .width(320.dp)
+                    .height(320 .dp),
                 painter = painterResource(
                     id = R.drawable.sunset
                 ),
