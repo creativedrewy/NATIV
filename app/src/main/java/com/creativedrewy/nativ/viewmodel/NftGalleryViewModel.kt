@@ -43,7 +43,7 @@ class NftGalleryViewModel @Inject constructor(
                         allNfts.addAll(nftProps.orEmpty())
                     }
 
-                    _state.value = Display(allNfts)
+//                    _state.value = Display(allNfts)
                 }
         }
     }

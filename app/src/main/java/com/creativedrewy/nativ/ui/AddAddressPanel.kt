@@ -30,6 +30,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
 @ExperimentalComposeUiApi
@@ -55,9 +57,9 @@ fun AddAddressPanel(
                 )
             )
             .padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
+                top = 28.dp,
+                start = 24.dp,
+                end = 24.dp,
                 bottom = 48.dp
             )
     ) {
@@ -71,14 +73,15 @@ fun AddAddressPanel(
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
                 value = address,
+                interactionSource = addressInteractionState,
+                singleLine = true,
+                maxLines = 1,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Link,
                         contentDescription = "Add Address"
                     )
                 },
-                singleLine = true,
-                maxLines = 1,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
@@ -87,7 +90,12 @@ fun AddAddressPanel(
                     onDone = { keyboardController?.hide() }
                 ),
                 onValueChange = { address = it },
-                interactionSource = addressInteractionState,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = HotPink,
+                    unfocusedBorderColor = LightPurple,
+                    leadingIconColor = LightPurple,
+                    cursorColor = Color.White
+                )
             )
             IconButton(
                 onClick = {
@@ -109,7 +117,7 @@ fun AddAddressPanel(
                     modifier = Modifier
                         .size(24.dp)
                         .background(
-                            color = Color.Black,
+                            color = HotPink,
                             shape = CircleShape
                         )
                 )
