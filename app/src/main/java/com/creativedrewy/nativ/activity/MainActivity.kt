@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.ui.AddAddressPanel
 import com.creativedrewy.nativ.ui.AddressListScreen
@@ -109,6 +110,8 @@ fun AppScreenContent() {
                     )
                 },
                 drawerState = drawerState,
+                scrimColor = Color.Transparent,
+                drawerBackgroundColor = Color.Transparent,
                 gesturesEnabled = false
             ) {
                 Box(
