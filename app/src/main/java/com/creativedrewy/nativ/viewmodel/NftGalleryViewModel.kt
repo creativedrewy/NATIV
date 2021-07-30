@@ -6,6 +6,7 @@ import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
+import com.google.android.filament.utils.all
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,7 +44,7 @@ class NftGalleryViewModel @Inject constructor(
     private suspend fun loadFromAddresses() {
         userAddrsUseCase.allUserAddresses
             .collect { addresses ->
-                val allNfts = mutableListOf<NftViewProps>()
+                var allNfts = mutableListOf<NftViewProps>()
 
                 addresses.forEach { chainAddr ->
                     val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
@@ -54,7 +55,9 @@ class NftGalleryViewModel @Inject constructor(
                     allNfts.addAll(nftProps.orEmpty())
                 }
 
+                allNfts = allNfts.sortedBy { it.name }.toMutableList()
                 cachedNfts = allNfts
+
                 _state.value = Display(allNfts)
             }
     }
