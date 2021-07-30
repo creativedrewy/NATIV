@@ -4,11 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,10 +18,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.AddAddressPanel
 import com.creativedrewy.nativ.ui.AddressListScreen
 import com.creativedrewy.nativ.ui.BackHandler
@@ -91,11 +93,22 @@ fun AppScreenContent() {
     Scaffold(
         topBar = {
              Box(
-                 modifier = Modifier.fillMaxWidth()
-                     .height(90.dp)
-                     .background(MaterialTheme.colors.primary)
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .height(100.dp)
+                     .background(MaterialTheme.colors.primary),
+                 contentAlignment = Alignment.BottomCenter
              ) {
-
+                 Image(
+                     modifier = Modifier
+                         .width(135.dp)
+                         .aspectRatio(1.7f),
+                     contentScale = ContentScale.Fit,
+                     painter = painterResource(
+                         id = R.drawable.nativ_logo
+                     ),
+                     contentDescription = ""
+                 )
              }
         },
         content = {
@@ -115,7 +128,8 @@ fun AppScreenContent() {
                 gesturesEnabled = false
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .background(MaterialTheme.colors.primary)
                 ) {
                     when (screenState.value) {

@@ -54,7 +54,7 @@ fun GalleryList(
 
     val infiniteTransition = rememberInfiniteTransition()
     val animatedOffset by infiniteTransition.animateFloat(
-        initialValue = 360f,
+        initialValue = 340f,
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = tween(
