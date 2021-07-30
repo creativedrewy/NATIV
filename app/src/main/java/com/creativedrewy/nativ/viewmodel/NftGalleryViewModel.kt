@@ -26,26 +26,37 @@ class NftGalleryViewModel @Inject constructor(
     val viewState: StateFlow<NftGalleryViewState>
         get() = _state
 
+    private var cachedNfts: List<NftViewProps>? = null
+
     fun loadNfts() {
         _state.value = Loading()
 
-        viewModelScope.launch {
-            userAddrsUseCase.allUserAddresses
-                .collect { addresses ->
-                    val allNfts = mutableListOf<NftViewProps>()
-
-                    addresses.forEach { chainAddr ->
-                        val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
-                        val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
-
-                        val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it) }?.awaitAll()
-
-                        allNfts.addAll(nftProps.orEmpty())
-                    }
-
-                    _state.value = Display(allNfts)
-                }
+        cachedNfts?.let {
+            _state.value = Display(it)
+        } ?: run {
+            viewModelScope.launch {
+                loadFromAddresses()
+            }
         }
+    }
+
+    private suspend fun loadFromAddresses() {
+        userAddrsUseCase.allUserAddresses
+            .collect { addresses ->
+                val allNfts = mutableListOf<NftViewProps>()
+
+                addresses.forEach { chainAddr ->
+                    val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
+                    val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
+
+                    val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it) }?.awaitAll()
+
+                    allNfts.addAll(nftProps.orEmpty())
+                }
+
+                cachedNfts = allNfts
+                _state.value = Display(allNfts)
+            }
     }
 
 }
