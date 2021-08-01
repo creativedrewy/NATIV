@@ -202,7 +202,10 @@ fun BottomNavigationContents(
         BottomNavigationItem(
             icon = {
                 Icon(
-                    imageVector = Icons.Filled.House,
+                    modifier = Modifier.size(30.dp),
+                    painter = painterResource(
+                        id = R.drawable.ic_gallery_icon_src
+                    ),
                     contentDescription = "Gallery"
                 )
             },
@@ -220,7 +223,10 @@ fun BottomNavigationContents(
         BottomNavigationItem(
             icon = {
                 Icon(
-                    imageVector = Icons.Filled.AccountCircle,
+                    modifier = Modifier.size(30.dp),
+                    painter = painterResource(
+                        id = R.drawable.ic_keys_icon_src
+                    ),
                     contentDescription = "Addresses"
                 )
             },
