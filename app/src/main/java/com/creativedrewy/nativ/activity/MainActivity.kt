@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -21,9 +22,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.AddAddressPanel
@@ -153,7 +160,7 @@ fun AppScreenContent() {
         bottomBar = {
             BottomAppBar(
                 backgroundColor = MaterialTheme.colors.primary,
-                cutoutShape = CutCornerShape(50),
+                cutoutShape = DiamondFabBg(),
                 content = {
                     BottomNavigationContents(screenState, drawerState)
                 }
@@ -177,13 +184,29 @@ fun MainAppFab(
         onClick = {
             if (screenState.value == Accounts.route) { onClick() }
         },
-        shape = CutCornerShape(50),
+        shape = DiamondFabBg(),
         backgroundColor = HotPink
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
             tint = MaterialTheme.colors.onPrimary,
             contentDescription = ""
+        )
+    }
+}
+
+class DiamondFabBg(): Shape {
+
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        return Outline.Generic(
+            path = Path().apply {
+                reset()
+                moveTo(0f, size.height / 2)
+                lineTo(size.width / 2, 0f)
+                lineTo(size.width, size.height / 2)
+                lineTo(size.width / 2, size.height)
+                close()
+            }
         )
     }
 }
