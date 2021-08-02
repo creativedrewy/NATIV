@@ -166,13 +166,7 @@ fun MainAppFab(
     screenState: MutableState<String>,
     onClick: () -> Unit
 ) {
-    //TODO: For some reason trying to animate the FAB freezes some devices. Revisit later.
-//    val animatedFloatState = animateFloatAsState(
-//        targetValue = if (screenState.value == Gallery.route) 0f else 1.0f
-//    )
-
     FloatingActionButton(
-        //modifier = Modifier.scale(animatedFloatState.value),
         onClick = {
             if (screenState.value == Accounts.route) { onClick() }
         },
