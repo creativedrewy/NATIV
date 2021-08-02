@@ -7,21 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.House
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
@@ -30,13 +24,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.ui.AddAddressPanel
-import com.creativedrewy.nativ.ui.AddressListScreen
-import com.creativedrewy.nativ.ui.BackHandler
-import com.creativedrewy.nativ.ui.GalleryList
+import com.creativedrewy.nativ.ui.*
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.creativedrewy.nativ.ui.theme.Turquoise
@@ -160,7 +152,7 @@ fun AppScreenContent() {
         bottomBar = {
             BottomAppBar(
                 backgroundColor = MaterialTheme.colors.primary,
-                cutoutShape = DiamondFabBg(),
+                cutoutShape = RoundedDiamondFabShape(8.dp),
                 content = {
                     BottomNavigationContents(screenState, drawerState)
                 }
@@ -184,29 +176,13 @@ fun MainAppFab(
         onClick = {
             if (screenState.value == Accounts.route) { onClick() }
         },
-        shape = DiamondFabBg(),
+        shape = RoundedDiamondFabShape(8.dp),
         backgroundColor = HotPink
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
             tint = MaterialTheme.colors.onPrimary,
             contentDescription = ""
-        )
-    }
-}
-
-class DiamondFabBg(): Shape {
-
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        return Outline.Generic(
-            path = Path().apply {
-                reset()
-                moveTo(0f, size.height / 2)
-                lineTo(size.width / 2, 0f)
-                lineTo(size.width, size.height / 2)
-                lineTo(size.width / 2, size.height)
-                close()
-            }
         )
     }
 }
