@@ -11,9 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 
@@ -25,7 +28,8 @@ fun AddressListScreen(
     val viewState = viewModel.viewState.collectAsState().value
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(bottom = 64.dp)
     ) {
         Column(
@@ -41,16 +45,16 @@ fun AddressListScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Image(
-                            modifier = Modifier.size(36.dp)
-                                .padding(end = 8.dp),
-                            painter = painterResource(
-                                id = addr.chainLogoRes
-                            ),
-                            contentDescription = ""
+                        OutlinedCircleImage(
+                            imageRes = addr.chainLogoRes,
+                            size = 36.dp,
+                            outlineWidth = 2.dp,
+                            outlineColor = Turquoise,
+                            backgroundColor = LightPurple
                         )
                         Text(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f)
+                                .padding(start = 8.dp),
                             style = MaterialTheme.typography.h6,
                             text = formatAddress(addr.address)
                         )

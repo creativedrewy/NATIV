@@ -145,26 +145,13 @@ fun AddAddressPanel(
                         .clickable { selectedIndex = index },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(64.dp)
-                            .background(
-                                color = if (index == selectedIndex) Turquoise else LightPurple
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(58.dp)
-                                .clip(CircleShape)
-                                .background(LightPurple),
-                            painter = painterResource(
-                                id = chainItem.iconRes
-                            ),
-                            contentDescription = ""
-                        )
-                    }
+                    OutlinedCircleImage(
+                        imageRes = chainItem.iconRes,
+                        size = 64.dp,
+                        outlineWidth = 4.dp,
+                        outlineColor = if (index == selectedIndex) Turquoise else LightPurple,
+                        backgroundColor = LightPurple
+                    )
                     Text(
                         modifier = Modifier
                             .padding(
