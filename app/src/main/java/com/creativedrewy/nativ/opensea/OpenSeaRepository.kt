@@ -1,9 +1,9 @@
 package com.creativedrewy.nativ.opensea
 
 import android.util.Log
-import com.creativedrewy.solanarepository.ApiRequestClient
-import com.creativedrewy.solanarepository.Error
-import com.creativedrewy.solanarepository.Success
+import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
+import com.creativedrewy.nativ.chainsupport.network.Error
+import com.creativedrewy.nativ.chainsupport.network.Success
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

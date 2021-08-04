@@ -2,10 +2,10 @@ package com.creativedrewy.nativ.injection
 
 import android.content.Context
 import androidx.room.Room
+import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
 import com.creativedrewy.nativ.database.AppDatabase
 import com.creativedrewy.nativ.database.ChainAddrDao
-import com.creativedrewy.solanarepository.ApiRequestClient
 import com.creativedrewy.solanarepository.accounts.AccountRepository
 import com.google.gson.Gson
 import com.solana.core.PublicKeyRule

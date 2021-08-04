@@ -1,7 +1,7 @@
 package com.creativedrewy.solanarepository.rpcapi
 
-import com.creativedrewy.solanarepository.ApiRequestClient
-import com.creativedrewy.solanarepository.ResponseStatus
+import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
+import com.creativedrewy.nativ.chainsupport.network.ResponseStatus
 import com.google.gson.Gson
 import com.solana.networking.RPCEndpoint
 import okhttp3.MediaType

@@ -1,8 +1,8 @@
 package com.creativedrewy.solanarepository.accounts
 
 import android.util.Log
-import com.creativedrewy.solanarepository.Error
-import com.creativedrewy.solanarepository.Success
+import com.creativedrewy.nativ.chainsupport.network.Error
+import com.creativedrewy.nativ.chainsupport.network.Success
 import com.creativedrewy.solanarepository.rpcapi.Rpc20RequestDto
 import com.creativedrewy.solanarepository.rpcapi.RpcRequestClient
 import com.google.gson.Gson

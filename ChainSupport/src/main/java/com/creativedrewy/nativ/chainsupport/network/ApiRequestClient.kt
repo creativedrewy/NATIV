@@ -1,6 +1,10 @@
-package com.creativedrewy.solanarepository
+package com.creativedrewy.nativ.chainsupport.network
 
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -9,11 +13,11 @@ sealed class ResponseStatus
 
 class Error(
     val exception: Exception
-): ResponseStatus()
+) : ResponseStatus()
 
 class Success(
     val response: Response
-): ResponseStatus()
+) : ResponseStatus()
 
 class ApiRequestClient(
     private val okHttpClient: OkHttpClient = OkHttpClient()
@@ -23,7 +27,7 @@ class ApiRequestClient(
         return suspendCoroutine { cont ->
             val call = okHttpClient.newCall(request)
 
-            call.enqueue(object: Callback {
+            call.enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     cont.resume(Error(e))
                 }
@@ -34,5 +38,4 @@ class ApiRequestClient(
             })
         }
     }
-
 }
