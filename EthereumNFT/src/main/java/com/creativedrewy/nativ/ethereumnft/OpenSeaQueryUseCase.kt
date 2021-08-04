@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.opensea
+package com.creativedrewy.nativ.ethereumnft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata

@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.opensea
+package com.creativedrewy.nativ.ethereumnft
 
 data class OpenSeaResultsDto(
     val assets: List<OpenSeaAssetDetails>

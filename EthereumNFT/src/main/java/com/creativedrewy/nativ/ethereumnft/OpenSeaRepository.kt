@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.opensea
+package com.creativedrewy.nativ.ethereumnft
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
