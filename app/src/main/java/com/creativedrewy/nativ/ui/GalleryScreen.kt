@@ -33,6 +33,8 @@ import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.viewmodel.*
 import com.google.accompanist.glide.rememberGlidePainter
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
@@ -49,8 +51,8 @@ fun GalleryList(
             viewModel.loadNfts()
         })
 
-    val state by viewModel.viewState.collectAsState()
-    val isLoading = state is Loading
+    val viewState by viewModel.viewState.collectAsState()
+    val isLoading = viewState is Loading
 
     val infiniteTransition = rememberInfiniteTransition()
     val animatedOffset by infiniteTransition.animateFloat(
@@ -125,19 +127,31 @@ fun GalleryList(
                     bottom = 64.dp
                 )
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = viewState is Loading),
+                onRefresh = { viewModel.reloadNfts() },
+                indicator = { state, trigger ->
+                    LineSwipeRefreshIndicator(
+                        swipeRefreshState = state,
+                        triggerDistance = trigger,
+                        lineColor = HotPink.copy(alpha = 0.6f)
                     )
-                    .fillMaxSize()
-                    .align(Alignment.TopStart)
+                }
             ) {
-                items(state.listItems) { nft ->
-                    GalleryItemCard(
-                        nftProps = nft
-                    )
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp
+                        )
+                        .fillMaxSize()
+                        .align(Alignment.TopStart)
+                ) {
+                    items(viewState.listItems) { nft ->
+                        GalleryItemCard(
+                            nftProps = nft
+                        )
+                    }
                 }
             }
         }

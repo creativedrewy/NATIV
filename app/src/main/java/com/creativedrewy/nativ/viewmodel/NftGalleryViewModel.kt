@@ -42,6 +42,13 @@ class NftGalleryViewModel @Inject constructor(
         }
     }
 
+    fun reloadNfts() {
+        cachedAddrCount = 0
+        cachedNfts = null
+
+        loadNfts()
+    }
+
     private suspend fun loadFromAddresses() {
         var allNfts = mutableListOf<NftViewProps>()
 

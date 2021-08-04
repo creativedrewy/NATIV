@@ -129,7 +129,7 @@ fun MainAppFab(
 ) {
     FloatingActionButton(
         onClick = {
-            if (screenState.value == Accounts.route) { onClick() }
+            onClick()
         },
         shape = RoundedDiamondFabShape(8.dp),
         backgroundColor = HotPink
