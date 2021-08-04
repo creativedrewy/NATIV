@@ -1,8 +1,8 @@
 package com.creativedrewy.nativ.viewstate
 
 import com.creativedrewy.nativ.chainsupport.SupportedChain
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.nft.NftMetadata
 import com.creativedrewy.nativ.viewmodel.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async

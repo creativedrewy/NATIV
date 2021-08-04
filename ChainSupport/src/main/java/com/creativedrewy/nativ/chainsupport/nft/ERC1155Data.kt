@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.nft
+package com.creativedrewy.nativ.chainsupport.nft
 
 data class NftMetadata(
     val name: String,

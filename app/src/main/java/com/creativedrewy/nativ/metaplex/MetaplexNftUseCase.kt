@@ -2,8 +2,8 @@ package com.creativedrewy.nativ.metaplex
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
-import com.creativedrewy.nativ.nft.NftMetadata
-import com.creativedrewy.nativ.nft.NftSpecRepository
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
 import com.creativedrewy.solanarepository.accounts.AccountRepository
 import com.solana.core.PublicKey
 import com.solana.vendor.borshj.Borsh

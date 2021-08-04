@@ -1,8 +1,8 @@
 package com.creativedrewy.nativ.opensea
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
-import com.creativedrewy.nativ.nft.NftMetadata
-import com.creativedrewy.nativ.nft.NftProperties
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import javax.inject.Inject
 
 class OpenSeaQueryUseCase @Inject constructor(

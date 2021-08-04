@@ -1,9 +1,8 @@
-package com.creativedrewy.nativ.nft
+package com.creativedrewy.nativ.chainsupport.nft
 
 import com.creativedrewy.solanarepository.ApiRequestClient
-import com.creativedrewy.solanarepository.Error
-import com.creativedrewy.solanarepository.Success
 import com.google.gson.Gson
+import com.sun.net.httpserver.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -21,7 +20,7 @@ class NftSpecRepository(
         val result = apiRequestClient.apiRequest(request)
 
         return when (result) {
-            is Success -> {
+            is Authenticator.Success -> {
                 val resString = result.response.body?.string()
 
                 gson.fromJson(resString, NftMetadata::class.java)
