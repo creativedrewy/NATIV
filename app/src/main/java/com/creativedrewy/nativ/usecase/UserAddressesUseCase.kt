@@ -12,6 +12,10 @@ class UserAddressesUseCase @Inject constructor(
 
     val allUserAddresses = databaseRepository.allUserAddresses
 
+    suspend fun loadUserAddresses() = withContext(Dispatchers.IO) {
+        databaseRepository.loadAddresses()
+    }
+
     suspend fun saveNewAddress(addr: String, ticker: String) {
         withContext(Dispatchers.IO) {
             val addrEntity = ChainAddr(addr, ticker)

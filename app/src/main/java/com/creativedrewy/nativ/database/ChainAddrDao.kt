@@ -12,6 +12,9 @@ interface ChainAddrDao {
     @Query("SELECT * FROM ChainAddr")
     fun getAllPubKeys(): Flow<List<ChainAddr>>
 
+    @Query("SELECT * FROM ChainAddr")
+    fun loadAllPubKeys(): List<ChainAddr>
+
     @Insert
     fun insertAll(vararg addrs: ChainAddr)
 

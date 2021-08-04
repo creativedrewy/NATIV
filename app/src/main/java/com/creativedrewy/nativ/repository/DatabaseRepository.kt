@@ -11,6 +11,8 @@ class DatabaseRepository @Inject constructor(
 
     val allUserAddresses: Flow<List<ChainAddr>> = addressDao.getAllPubKeys()
 
+    fun loadAddresses() = addressDao.loadAllPubKeys()
+
     fun saveAddress(addr: ChainAddr) {
         addressDao.insertAll(addr)
     }

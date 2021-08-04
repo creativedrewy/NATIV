@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -89,7 +88,7 @@ fun GalleryList(
             Image(
                 modifier = Modifier
                     .width(320.dp)
-                    .height(320 .dp),
+                    .height(320.dp),
                 painter = painterResource(
                     id = R.drawable.sunset
                 ),
@@ -119,7 +118,8 @@ fun GalleryList(
             )
         }
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(
                     bottom = 64.dp
                 )
@@ -162,7 +162,8 @@ fun GalleryItemCard(
                 .padding(24.dp)
         ) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .border(
@@ -187,6 +188,13 @@ fun GalleryItemCard(
                 text = nftProps.name,
                 style = MaterialTheme.typography.h5
             )
+            Row {
+//                OutlinedCircleImage(
+//                    imageRes = nftProps.,
+//                    size = 48.dp,
+//                    outlineWidth = 0.dp
+//                )
+            }
         }
 
     }
