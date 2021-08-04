@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.viewstate
 
+import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.nft.NftMetadata
 import com.creativedrewy.nativ.viewmodel.*
@@ -12,7 +13,7 @@ class GalleryViewStateMapping @Inject constructor(
     private val assetDownloadUseCase: AssetDownloadUseCase,
 ) {
 
-    suspend fun mapNftMetaToViewState(nft: NftMetadata): Deferred<NftViewProps> {
+    suspend fun mapNftMetaToViewState(nft: NftMetadata, chain: SupportedChain): Deferred<NftViewProps> {
         return coroutineScope {
             async {
                 val assetBytes = if (shouldDownloadAsset(nft)) {
@@ -21,10 +22,12 @@ class GalleryViewStateMapping @Inject constructor(
                     byteArrayOf()
                 }
 
+                val chainDetails = Blockchain(chain.ticker, chain.iconRes)
+
                 NftViewProps(
                     name = nft.name,
                     description = nft.description,
-                    blockchain = Solana,
+                    blockchain = chainDetails,
                     //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
                     assetType = determineAssetType(nft),
                     assetUrl = determineAssetUrl(nft),

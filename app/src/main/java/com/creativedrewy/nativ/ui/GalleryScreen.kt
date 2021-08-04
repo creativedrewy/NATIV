@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.viewmodel.*
 import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.filament.Skybox
@@ -188,12 +189,16 @@ fun GalleryItemCard(
                 text = nftProps.name,
                 style = MaterialTheme.typography.h5
             )
-            Row {
-//                OutlinedCircleImage(
-//                    imageRes = nftProps.,
-//                    size = 48.dp,
-//                    outlineWidth = 0.dp
-//                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                OutlinedCircleImage(
+                    imageRes = nftProps.blockchain.logoRes,
+                    size = 48.dp,
+                    outlineWidth = 0.dp,
+                    backgroundColor = LightPurple
+                )
             }
         }
 

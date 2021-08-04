@@ -6,7 +6,6 @@ import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
-import com.google.android.filament.utils.all
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,10 +46,13 @@ class NftGalleryViewModel @Inject constructor(
                 var allNfts = mutableListOf<NftViewProps>()
 
                 addresses.forEach { chainAddr ->
+                    val chain = chainSupport.supportedChains.toTypedArray().find { it.ticker == chainAddr.blockchain }
+                        ?: throw IllegalArgumentException("Could not find a supported chain match with db address; this shouldn't happen")
+
                     val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
                     val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
 
-                    val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it) }?.awaitAll()
+                    val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it, chain) }?.awaitAll()
 
                     allNfts.addAll(nftProps.orEmpty())
                 }

@@ -12,17 +12,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.creativedrewy.nativ.ui.theme.LightPurple
-import com.creativedrewy.nativ.ui.theme.Turquoise
 
 @Composable
 fun OutlinedCircleImage(
     imageRes: Int,
     size: Dp,
     outlineWidth: Dp,
-    outlineColor: Color = Color.White,
-    backgroundColor: Color = Color.White
+    outlineColor: Color = Color.Transparent,
+    backgroundColor: Color = Color.Transparent
 ) {
     Box(
         modifier = Modifier
