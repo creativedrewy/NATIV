@@ -8,6 +8,7 @@ import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,16 +38,19 @@ class AddressListViewModel @Inject constructor(
         val chainList = chainSupport.supportedChains
 
         viewModelScope.launch {
-            val mapped = addressesUseCase.loadUserAddresses()
-                .map { addr ->
-                    val logoRes = chainList.find { it.ticker == addr.blockchain }?.iconRes ?: -1
-                    UserAddress(addr.pubKey, logoRes, addr.blockchain)
-                }
+            addressesUseCase.allUserAddresses
+                .collect { list ->
+                    val mapped = list.map { addr ->
+                        val logoRes = chainList.find { it.ticker == addr.blockchain }?.iconRes ?: -1
 
-            _state.value = AddrViewState(
-                userAddresses = mapped,
-                supportedChains = chainSupport.supportedChains.toList()
-            )
+                        UserAddress(addr.pubKey, logoRes, addr.blockchain)
+                    }
+
+                    _state.value = AddrViewState(
+                        userAddresses = mapped,
+                        supportedChains = chainSupport.supportedChains.toList()
+                    )
+                }
         }
     }
 

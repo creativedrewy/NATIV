@@ -10,7 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,42 +25,45 @@ class NftGalleryViewModel @Inject constructor(
     val viewState: StateFlow<NftGalleryViewState>
         get() = _state
 
+    private var cachedAddrCount = 0
     private var cachedNfts: List<NftViewProps>? = null
 
     fun loadNfts() {
         _state.value = Loading()
 
-        cachedNfts?.let {
-            _state.value = Display(it)
-        } ?: run {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            val addrCount = userAddrsUseCase.loadUserAddresses().size
+
+            if (addrCount == cachedAddrCount && cachedNfts != null) {
+                cachedNfts?.let { _state.value = Display(it) }
+            } else {
                 loadFromAddresses()
             }
         }
     }
 
     private suspend fun loadFromAddresses() {
-        userAddrsUseCase.allUserAddresses
-            .collect { addresses ->
-                var allNfts = mutableListOf<NftViewProps>()
+        var allNfts = mutableListOf<NftViewProps>()
 
-                addresses.forEach { chainAddr ->
-                    val chain = chainSupport.supportedChains.toTypedArray().find { it.ticker == chainAddr.blockchain }
-                        ?: throw IllegalArgumentException("Could not find a supported chain match with db address; this shouldn't happen")
+        val userAddresses = userAddrsUseCase.loadUserAddresses()
+        userAddresses.forEach { chainAddr ->
+            val chain = chainSupport.supportedChains.toTypedArray().find { it.ticker == chainAddr.blockchain }
+                ?: throw IllegalArgumentException("Could not find a supported chain match with db address; this shouldn't happen")
 
-                    val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
-                    val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
+            val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
+            val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
 
-                    val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it, chain) }?.awaitAll()
+            val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it, chain) }?.awaitAll()
 
-                    allNfts.addAll(nftProps.orEmpty())
-                }
+            allNfts.addAll(nftProps.orEmpty())
+        }
 
-                allNfts = allNfts.sortedBy { it.name }.toMutableList()
-                cachedNfts = allNfts
+        allNfts = allNfts.sortedBy { it.name }.toMutableList()
 
-                _state.value = Display(allNfts)
-            }
+        cachedAddrCount = userAddresses.size
+        cachedNfts = allNfts
+
+        _state.value = Display(allNfts)
     }
 
 }
