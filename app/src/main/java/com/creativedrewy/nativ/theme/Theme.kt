@@ -41,7 +41,7 @@ fun NATIVTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-    //For now NATIV is only dark theme
+    // For now NATIV is only dark theme
     val colors = DarkColorPalette
 
     MaterialTheme(

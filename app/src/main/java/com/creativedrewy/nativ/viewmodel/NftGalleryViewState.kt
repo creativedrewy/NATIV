@@ -6,13 +6,13 @@ sealed class NftGalleryViewState(
     val listItems: List<NftViewProps>
 )
 
-class Empty: NftGalleryViewState(listOf())
+class Empty : NftGalleryViewState(listOf())
 
-class Loading: NftGalleryViewState(listOf())
+class Loading : NftGalleryViewState(listOf())
 
 data class Display(
     val items: List<NftViewProps>
-): NftGalleryViewState(items)
+) : NftGalleryViewState(items)
 
 // Visual properties to render Nft in the UI --------------------------------------------------
 
@@ -29,7 +29,7 @@ data class NftViewProps(
 sealed class AssetType
 
 object Model3d : AssetType()
-object Image: AssetType()
+object Image : AssetType()
 
 class Blockchain(
     val ticker: String = "",

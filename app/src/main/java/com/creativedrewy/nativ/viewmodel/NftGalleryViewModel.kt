@@ -18,7 +18,7 @@ class NftGalleryViewModel @Inject constructor(
     private val userAddrsUseCase: UserAddressesUseCase,
     private val chainSupport: ISupportedChains,
     private val viewStateMapping: GalleryViewStateMapping
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
 
@@ -72,5 +72,4 @@ class NftGalleryViewModel @Inject constructor(
 
         _state.value = Display(allNfts)
     }
-
 }
