@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.LayoutDirection
 
 class RoundedDiamondFabShape(
     private val cornerRadius: Dp
-): Shape {
+) : Shape {
 
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
         return Outline.Generic(

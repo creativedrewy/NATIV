@@ -27,7 +27,7 @@ data class UserAddress(
 class AddressListViewModel @Inject constructor(
     private val addressesUseCase: UserAddressesUseCase,
     private val chainSupport: ISupportedChains
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(AddrViewState())
 

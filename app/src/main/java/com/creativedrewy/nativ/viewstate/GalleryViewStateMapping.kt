@@ -1,9 +1,13 @@
 package com.creativedrewy.nativ.viewstate
 
 import com.creativedrewy.nativ.chainsupport.SupportedChain
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.nft.NftMetadata
-import com.creativedrewy.nativ.viewmodel.*
+import com.creativedrewy.nativ.viewmodel.AssetType
+import com.creativedrewy.nativ.viewmodel.Blockchain
+import com.creativedrewy.nativ.viewmodel.Image
+import com.creativedrewy.nativ.viewmodel.Model3d
+import com.creativedrewy.nativ.viewmodel.NftViewProps
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -28,7 +32,7 @@ class GalleryViewStateMapping @Inject constructor(
                     name = nft.name,
                     description = nft.description,
                     blockchain = chainDetails,
-                    //siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
+                    // siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
                     assetType = determineAssetType(nft),
                     assetUrl = determineAssetUrl(nft),
                     mediaBytes = assetBytes
@@ -52,5 +56,4 @@ class GalleryViewStateMapping @Inject constructor(
     private fun determineAssetUrl(nft: NftMetadata): String {
         return if (nft.properties.category != "vr") nft.image else ""
     }
-
 }

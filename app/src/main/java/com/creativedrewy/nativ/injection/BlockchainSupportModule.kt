@@ -4,8 +4,8 @@ import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
-import com.creativedrewy.nativ.metaplex.MetaplexNftUseCase
-import com.creativedrewy.nativ.opensea.OpenSeaQueryUseCase
+import com.creativedrewy.nativ.ethereumnft.OpenSeaQueryUseCase
+import com.creativedrewy.solananft.metaplex.MetaplexNftUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(
     ViewModelComponent::class
 )
-@Module
+@Module()
 class BlockchainSupportModule {
 
     @Provides
@@ -37,5 +37,4 @@ class BlockchainSupportModule {
             )
         }
     }
-
 }

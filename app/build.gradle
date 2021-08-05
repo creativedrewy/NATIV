@@ -52,8 +52,9 @@ android {
 
 dependencies {
     //implementation(name: 'Solana-release', ext: 'aar')
-    implementation project(path: ':solana')
-    implementation project(path: ':SolanaRepository')
+    implementation project(path: ':SolanaNFT')
+    implementation project(path: ':ChainSupport')
+    implementation project(path: ':EthereumNFT')
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 

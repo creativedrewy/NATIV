@@ -1,8 +1,8 @@
 package com.creativedrewy.nativ.downloader
 
-import com.creativedrewy.solanarepository.ApiRequestClient
-import com.creativedrewy.solanarepository.Error
-import com.creativedrewy.solanarepository.Success
+import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
+import com.creativedrewy.nativ.chainsupport.network.Error
+import com.creativedrewy.nativ.chainsupport.network.Success
 import okhttp3.Request
 import javax.inject.Inject
 
@@ -27,5 +27,4 @@ class AssetDownloadUseCase @Inject constructor(
             }
         }
     }
-
 }
