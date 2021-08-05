@@ -46,5 +46,4 @@ class OpenSeaRepository @Inject constructor(
             }
         }
     }
-
 }

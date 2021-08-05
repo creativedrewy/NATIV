@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class OpenSeaQueryUseCase @Inject constructor(
     private val openSeaRepository: OpenSeaRepository
-): IBlockchainNftLoader {
+) : IBlockchainNftLoader {
 
     override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
         val dtos = openSeaRepository.getNftsForAddress(address)

@@ -28,5 +28,4 @@ class RpcRequestClient(
 
         return apiRequestClient.apiRequest(request)
     }
-
 }

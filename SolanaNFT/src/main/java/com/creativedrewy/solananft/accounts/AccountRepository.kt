@@ -31,7 +31,7 @@ class AccountRepository(
                 is Success -> {
                     val resultString = result.response.body?.string()
 
-                    val typeToken = object : TypeToken<RpcResultDto<SimpleDataAccountDetailsDto>>(){}.type
+                    val typeToken = object : TypeToken<RpcResultDto<SimpleDataAccountDetailsDto>>() {}.type
                     val dto = gson.fromJson<RpcResultDto<SimpleDataAccountDetailsDto>>(resultString, typeToken)
 
                     dto.result.value
@@ -44,7 +44,6 @@ class AccountRepository(
     }
 
     fun getMultipleAccounts() {
-
     }
 
     suspend fun getTokenAccountsByOwner(accountKey: PublicKey, tokenProgramKey: PublicKey = TokenProgram.PROGRAM_ID): List<AccountHolderRootDto> {
@@ -63,7 +62,7 @@ class AccountRepository(
                     try {
                         resultString = result.response.body?.string() ?: ""
 
-                        val typeToken = object : TypeToken<RpcResultDto<List<AccountHolderRootDto>>>(){}.type
+                        val typeToken = object : TypeToken<RpcResultDto<List<AccountHolderRootDto>>>() {}.type
                         val dto = gson.fromJson<RpcResultDto<List<AccountHolderRootDto>>>(resultString, typeToken)
 
                         dto.result.value
