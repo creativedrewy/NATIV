@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.metaplex
+package com.creativedrewy.solanarepository.metaplex
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
@@ -40,8 +40,7 @@ class MetaplexNftUseCase @Inject constructor(
                 val accountInfo = accountsRepository.getAccountInfo(pdaAddr.address)
                 try {
                     val borshData = Base64.getDecoder().decode(accountInfo.data[0])
-                    val metaplexData: MetaplexMeta =
-                        borsh.deserialize(borshData, MetaplexMeta::class.java)
+                    val metaplexData: MetaplexMeta = borsh.deserialize(borshData, MetaplexMeta::class.java)
 
                     val details = nftSpecRepository.getNftDetails(metaplexData.data.uri)
                     details?.let { item -> metaplexNfts.add(item) }
