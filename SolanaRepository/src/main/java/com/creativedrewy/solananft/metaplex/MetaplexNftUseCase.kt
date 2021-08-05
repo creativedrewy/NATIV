@@ -1,10 +1,10 @@
-package com.creativedrewy.solanarepository.metaplex
+package com.creativedrewy.solananft.metaplex
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
-import com.creativedrewy.solanarepository.accounts.AccountRepository
+import com.creativedrewy.solananft.accounts.AccountRepository
 import com.solana.core.PublicKey
 import com.solana.vendor.borshj.Borsh
 import org.bitcoinj.core.Base58

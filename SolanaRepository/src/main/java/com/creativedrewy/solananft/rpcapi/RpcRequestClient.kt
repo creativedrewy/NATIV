@@ -1,4 +1,4 @@
-package com.creativedrewy.solanarepository.rpcapi
+package com.creativedrewy.solananft.rpcapi
 
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.network.ResponseStatus

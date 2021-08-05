@@ -1,10 +1,10 @@
-package com.creativedrewy.solanarepository.accounts
+package com.creativedrewy.solananft.accounts
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
-import com.creativedrewy.solanarepository.rpcapi.Rpc20RequestDto
-import com.creativedrewy.solanarepository.rpcapi.RpcRequestClient
+import com.creativedrewy.solananft.rpcapi.Rpc20RequestDto
+import com.creativedrewy.solananft.rpcapi.RpcRequestClient
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.solana.core.PublicKey

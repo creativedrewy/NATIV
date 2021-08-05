@@ -1,4 +1,4 @@
-package com.creativedrewy.solanarepository.metaplex
+package com.creativedrewy.solananft.metaplex
 
 import com.solana.core.PublicKey
 import com.solana.vendor.borshj.BorshCodable

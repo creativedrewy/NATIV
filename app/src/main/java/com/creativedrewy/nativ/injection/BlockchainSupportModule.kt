@@ -6,7 +6,7 @@ import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.ethereumnft.OpenSeaQueryUseCase
 import com.creativedrewy.nativ.ethereumnft.OpenSeaRepository
-import com.creativedrewy.solanarepository.metaplex.MetaplexNftUseCase
+import com.creativedrewy.solananft.metaplex.MetaplexNftUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
