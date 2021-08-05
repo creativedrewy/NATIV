@@ -5,7 +5,6 @@ import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.ethereumnft.OpenSeaQueryUseCase
-import com.creativedrewy.nativ.ethereumnft.OpenSeaRepository
 import com.creativedrewy.solananft.metaplex.MetaplexNftUseCase
 import dagger.Module
 import dagger.Provides
@@ -17,11 +16,6 @@ import dagger.hilt.android.components.ViewModelComponent
 )
 @Module()
 class BlockchainSupportModule {
-
-    @Provides
-    fun proivdesOpenSeaUseCase(repository: OpenSeaRepository): OpenSeaQueryUseCase {
-        return OpenSeaQueryUseCase(repository)
-    }
 
     @Provides
     fun providesISupportedChains(
