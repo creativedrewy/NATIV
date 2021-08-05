@@ -37,7 +37,7 @@ android {
 
 dependencies {
     //implementation(name: 'Solana-release', ext: 'aar')
-    implementation project(path: ':solana')
+    api project(path: ':solana')
     implementation project(path: ':ChainSupport')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
