@@ -34,18 +34,17 @@ NATIV is the best NFT Gallery app for Android, written with 100% Android native 
 
 ## Take a Look
 
-A new Dawn | For NFT Apps | On Android
+A New Dawn | For NFT Apps | On Android
 --- | --- | --- |
-![](assets/device_shot_1.png) | ![](assets/device_shot_2.png) | ![](assets/device_shot_3.png)
+<img src="assets/device_shot_1.png" width="250"> | <img src="assets/device_shot_2.png" width="250"> | <img src="assets/device_shot_3.png" width="250">
 
 ## Supported Blockchains
 
-Currently NATIV will display NFTs from the following blockchains:
+<img src="EthereumNFT/src/main/res/drawable/eth_diamond_black.png" width="64"> | <img src="SolanaNFT/src/main/res/drawable/solana_logo.png" width="64">
+--- | --- |
+Ethereum | Solana |
 
-- Ethereum
-- Solana
-
-But we don't want it to stop there; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchain, see the contributing secion.
+But it won't stop there; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchain, see the contributing secion.
 
 ## Technologies
 
@@ -53,9 +52,9 @@ NATIV is built using 100% Kotlin with all of the latest and greatest Android API
 
 - 100% Jetpack Compose UI w/ Material components
 - Coroutines with Flow & StateFlow
-- Room local database
 - Hilt Dependency Injection
 - Multi-module app
+- Room local database
 - Filament for 3d model rendering
 - Blockchain APIs consumed with OkHttp
 
