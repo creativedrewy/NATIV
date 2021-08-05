@@ -7,6 +7,6 @@ import androidx.room.RoomDatabase
     entities = [ ChainAddr::class ],
     version = 1
 )
-abstract class AppDatabase: RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun chainAddrDao(): ChainAddrDao
 }

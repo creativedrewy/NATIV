@@ -15,7 +15,7 @@ class MetaplexNftUseCase @Inject constructor(
     private val accountsRepository: AccountRepository,
     private val nftSpecRepository: NftSpecRepository,
     private val borsh: Borsh
-): IBlockchainNftLoader {
+) : IBlockchainNftLoader {
 
     override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
         val metaplexNfts = mutableListOf<NftMetadata>()

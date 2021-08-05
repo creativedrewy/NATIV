@@ -68,5 +68,4 @@ class NATIVModule {
     fun proivdesGson(): Gson {
         return Gson()
     }
-
 }
