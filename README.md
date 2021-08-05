@@ -31,7 +31,31 @@ NATIV is the best NFT Gallery app for Android, written with 100% Android native 
 
 ## Supported Blockchains
 
-NATIV will display NFTs on the following blockchains:
+Currently NATIV will display NFTs from the following blockchains:
 
 - Ethereum
 - Solana
+
+But we don't want it to stop there; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchain, see the contributing secion.
+
+## Technologies
+
+NATIV is built using 100% Kotlin with all of the latest and greatest Android APIs and libraries:
+
+- 100% Jetpack Compose UI w/ Material components
+- Coroutines with Flow & StateFlow
+- Room local database
+- Hilt Dependency Injection
+- Multi-module app
+- Filament for 3d model rendering
+- Blockchain APIs consumed with OkHttp
+
+## Support
+
+An online marketplace is coming where you will be able to support NATIV's development by purchasing some exclusive NFT merchandise, but for now you can support NATIV by sending any Solana SPL crypto to:
+
+6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw
+
+## Contributing
+
+TBD
