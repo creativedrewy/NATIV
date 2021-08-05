@@ -44,7 +44,7 @@ A New Dawn | For NFT Apps | On Android
 --- | --- |
 Ethereum | Solana |
 
-But it won't stop there; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchain, see the contributing secion.
+But it won't stop here; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchains, see the contributing section.
 
 ## Technologies
 
@@ -56,13 +56,14 @@ NATIV is built using 100% Kotlin with all of the latest and greatest Android API
 - Multi-module app
 - Room local database
 - Filament for 3d model rendering
-- Blockchain APIs consumed with OkHttp
+- Blockchain APIs consumed with just OkHttp & GSon
 
-## Support
+## Support Development
 
-An online marketplace is coming where you will be able to support NATIV's development by purchasing some exclusive NFT merchandise, but for now you can support NATIV by sending any Solana SPL crypto to:
+An online marketplace is coming where you will be able to support NATIV's development by purchasing some exclusive NFT merchandise, but for now you can support NATIV by sending any crypto to:
 
-6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw
+Ethereum: 0x93E5c9cA043F00A50F28D3F5a6638172813E1a71
+Solana: 6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw
 
 ## Contributing
 
