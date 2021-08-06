@@ -1,0 +1,3 @@
+[submodule "SolanaKt"]
+	path = SolanaKt
+	url = https://github.com/ajamaica/Solana.kt.git
