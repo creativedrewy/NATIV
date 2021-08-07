@@ -24,12 +24,12 @@ class NftPropertiesDeserializer: JsonDeserializer<NftProperties> {
         val files = propsSrc.get("files").asJsonArray
         val nftFiles = if (!files.isEmpty && files[0].isJsonObject) {
             files.map {
-                context.deserialize<FileDetails>(it, FileDetails::class.java)
+                context.deserialize(it, FileDetails::class.java)
             }
         } else {
             files.map {
                 FileDetails(
-                    uri = context.deserialize<String>(it, String::class.java),
+                    uri = context.deserialize(it, String::class.java),
                     type = ""
                 )
             }
