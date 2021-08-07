@@ -18,7 +18,9 @@ class GalleryViewStateMapping @Inject constructor(
             async {
                 val assetBytes = if (shouldDownloadAsset(nft)) {
                     //assetDownloadUseCase.downloadAsset(nft.properties.files.first())
-                    assetDownloadUseCase.downloadAsset(nft.properties.files.first().uri)
+                    var uri = nft.properties.files.firstOrNull { it.type == "glb" }?.uri ?: nft.properties.files.first().uri
+
+                    assetDownloadUseCase.downloadAsset(uri)
                 } else {
                     byteArrayOf()
                 }
