@@ -12,8 +12,13 @@ data class NftMetadata(
 
 data class NftProperties(
     val category: String,
-    val files: List<String>,
+    val files: List<FileDetails>,
     val creators: List<NftCreator>
+)
+
+data class FileDetails(
+    val uri: String,
+    val type: String
 )
 
 data class NftCreator(

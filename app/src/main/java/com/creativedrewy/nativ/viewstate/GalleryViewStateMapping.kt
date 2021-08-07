@@ -3,11 +3,7 @@ package com.creativedrewy.nativ.viewstate
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.viewmodel.AssetType
-import com.creativedrewy.nativ.viewmodel.Blockchain
-import com.creativedrewy.nativ.viewmodel.Image
-import com.creativedrewy.nativ.viewmodel.Model3d
-import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.viewmodel.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -21,7 +17,8 @@ class GalleryViewStateMapping @Inject constructor(
         return coroutineScope {
             async {
                 val assetBytes = if (shouldDownloadAsset(nft)) {
-                    assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                    //assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                    assetDownloadUseCase.downloadAsset(nft.properties.files.first().uri)
                 } else {
                     byteArrayOf()
                 }
