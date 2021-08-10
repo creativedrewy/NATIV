@@ -3,6 +3,8 @@ package com.creativedrewy.nativ.ethereumnft
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OpenSeaQueryUseCase @Inject constructor(
@@ -10,7 +12,9 @@ class OpenSeaQueryUseCase @Inject constructor(
 ) : IBlockchainNftLoader {
 
     override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
-        val dtos = openSeaRepository.getNftsForAddress(address)
+        val dtos = withContext(Dispatchers.IO) {
+            openSeaRepository.getNftsForAddress(address)
+        }
 
         val nftSpecResults = dtos.assets.map { asset ->
             NftMetadata(
