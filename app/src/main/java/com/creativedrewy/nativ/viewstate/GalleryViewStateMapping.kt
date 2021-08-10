@@ -50,8 +50,9 @@ class GalleryViewStateMapping @Inject constructor(
         return when (props.category) {
             NftCategories.VR -> {
                 props.files.firstOrNull { it.type == NftFileTypes.GLB }?.uri
+                    ?: props.files.firstOrNull()?.uri
             }
-            else -> props.files.firstOrNull()?.uri
+            else -> null //We don't actually know what we want to do in other cases yet
         }
     }
 
