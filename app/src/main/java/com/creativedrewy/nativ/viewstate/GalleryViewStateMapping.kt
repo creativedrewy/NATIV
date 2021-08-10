@@ -1,13 +1,12 @@
 package com.creativedrewy.nativ.viewstate
 
 import com.creativedrewy.nativ.chainsupport.SupportedChain
+import com.creativedrewy.nativ.chainsupport.nft.NftCategories
+import com.creativedrewy.nativ.chainsupport.nft.NftFileTypes
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.viewmodel.AssetType
-import com.creativedrewy.nativ.viewmodel.Blockchain
-import com.creativedrewy.nativ.viewmodel.Image
-import com.creativedrewy.nativ.viewmodel.Model3d
-import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.viewmodel.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -21,7 +20,9 @@ class GalleryViewStateMapping @Inject constructor(
         return coroutineScope {
             async {
                 val assetBytes = if (shouldDownloadAsset(nft)) {
-                    assetDownloadUseCase.downloadAsset(nft.properties.files.first())
+                    findDownloadUri(nft.properties)?.let {
+                        assetDownloadUseCase.downloadAsset(it)
+                    } ?: byteArrayOf()
                 } else {
                     byteArrayOf()
                 }
@@ -42,11 +43,21 @@ class GalleryViewStateMapping @Inject constructor(
     }
 
     private fun shouldDownloadAsset(nft: NftMetadata): Boolean {
-        return nft.properties.category == "vr"
+        return nft.properties.category == NftCategories.VR
+    }
+
+    private fun findDownloadUri(props: NftProperties): String? {
+        return when (props.category) {
+            NftCategories.VR -> {
+                props.files.firstOrNull { it.type == NftFileTypes.GLB }?.uri
+                    ?: props.files.firstOrNull()?.uri
+            }
+            else -> null //We don't actually know what we want to do in other cases yet
+        }
     }
 
     private fun determineAssetType(nft: NftMetadata): AssetType {
-        return if (nft.properties.category == "vr") {
+        return if (nft.properties.category == NftCategories.VR) {
             Model3d
         } else {
             Image
@@ -54,6 +65,6 @@ class GalleryViewStateMapping @Inject constructor(
     }
 
     private fun determineAssetUrl(nft: NftMetadata): String {
-        return if (nft.properties.category != "vr") nft.image else ""
+        return if (nft.properties.category != NftCategories.VR) nft.image else ""
     }
 }
