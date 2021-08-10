@@ -1,6 +1,7 @@
 package com.creativedrewy.nativ.ethereumnft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
+import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,12 @@ class OpenSeaQueryUseCase @Inject constructor(
                 image = asset.image_preview_url.orEmpty(),
                 animationUrl = asset.animation_url.orEmpty(),
                 externalUrl = asset.external_link.orEmpty(),
+                attributes = asset.traits.orEmpty().map {
+                    NftAttributes(
+                        traitType = it.trait_type,
+                        value = it.value
+                    )
+                },
                 properties = NftProperties("image", listOf(), listOf())
             )
         }

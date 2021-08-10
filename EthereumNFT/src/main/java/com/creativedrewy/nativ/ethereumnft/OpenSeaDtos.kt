@@ -10,5 +10,11 @@ data class OpenSeaAssetDetails(
     val animation_url: String?,
     val name: String?,
     val description: String?,
-    val external_link: String?
+    val external_link: String?,
+    val traits: List<OpenSeaTrait>?
+)
+
+data class OpenSeaTrait(
+    val trait_type: String,
+    val value: String
 )
