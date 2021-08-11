@@ -63,7 +63,9 @@ fun AppScreenContent() {
                 onNavItemClick = { route -> navigate(route) }
             ) {
                 GalleryList(
-                    onDetailsNavigate = { }
+                    onDetailsNavigate = {
+                        animNavController.navigate(Details.route)
+                    }
                 )
             }
         }
@@ -75,7 +77,9 @@ fun AppScreenContent() {
                 AddressListScreen()
             }
         }
-        composable(Details.route) { }
+        composable(Details.route) {
+            DetailsScreen()
+        }
     }
 }
 
