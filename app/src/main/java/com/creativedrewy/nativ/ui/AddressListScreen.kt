@@ -1,18 +1,9 @@
 package com.creativedrewy.nativ.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.runtime.Composable
@@ -20,7 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
@@ -28,7 +19,7 @@ import com.creativedrewy.nativ.viewmodel.AddressListViewModel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddressListScreen(
-    viewModel: AddressListViewModel = viewModel()
+    viewModel: AddressListViewModel = hiltViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsState().value
 
@@ -58,7 +49,8 @@ fun AddressListScreen(
                             backgroundColor = LightPurple
                         )
                         Text(
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier
+                                .weight(1f)
                                 .padding(start = 8.dp),
                             style = MaterialTheme.typography.h6,
                             text = formatAddress(addr.address)

@@ -25,7 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
@@ -42,8 +42,8 @@ import java.nio.ByteBuffer
 @ExperimentalComposeUiApi
 @Composable
 fun GalleryList(
-    onDetailsNavigate: () -> Unit,
-    viewModel: NftGalleryViewModel = viewModel()
+    viewModel: NftGalleryViewModel = hiltViewModel(),
+    onDetailsNavigate: () -> Unit
 ) {
     LaunchedEffect(
         key1 = Unit,

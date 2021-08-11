@@ -1,6 +1,6 @@
 package com.creativedrewy.nativ.ui
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,10 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -22,6 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.Turquoise
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 
 sealed class AppScreen(
@@ -32,24 +32,41 @@ object Gallery : AppScreen("gallery")
 object Accounts : AppScreen("accounts")
 object Details : AppScreen("details")
 
+@ExperimentalAnimationApi
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun AppScreenContent() {
-    val scope = rememberCoroutineScope()
-    val screenState = rememberSaveable { mutableStateOf(Gallery.route) }
-    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+    val animNavController = rememberAnimatedNavController()
 
-    LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.let { dispatch ->
-        BackHandler(
-            backDispatcher = dispatch,
-            enabled = drawerState.isExpanded
-        ) {
-            scope.launch {
-                drawerState.close()
+    AnimatedNavHost(
+        navController = animNavController,
+        startDestination = "gallery"
+    ) {
+        composable("gallery") {
+            FabScreens {
+                GalleryList(
+                    onDetailsNavigate = { }
+                )
             }
         }
+        composable("addresses") {
+            FabScreens {
+                AddressListScreen()
+            }
+        }
+        composable("details") { }
     }
+}
+
+@ExperimentalComposeUiApi
+@ExperimentalMaterialApi
+@Composable
+fun FabScreens(
+    screeContent: @Composable () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
 
     Scaffold(
         topBar = {
@@ -74,9 +91,7 @@ fun AppScreenContent() {
 
         },
         floatingActionButton = {
-            MainAppFab(
-                screenState = screenState
-            ) {
+            MainAppFab {
                 scope.launch {
                     drawerState.expand()
                 }
@@ -89,7 +104,8 @@ fun AppScreenContent() {
                 backgroundColor = MaterialTheme.colors.primary,
                 cutoutShape = RoundedDiamondFabShape(8.dp),
                 content = {
-                    BottomNavigationContents(screenState, drawerState)
+                    //BottomNavigationContents(screenState, drawerState)
+                    BottomNavigationContents(drawerState)
                 }
             )
         }
@@ -114,14 +130,7 @@ fun AppScreenContent() {
                     .fillMaxSize()
                     .background(MaterialTheme.colors.primary)
             ) {
-                when (screenState.value) {
-                    Gallery.route -> GalleryList(
-                        onDetailsNavigate = {
-                            screenState.value = Details.route
-                        }
-                    )
-                    Accounts.route -> AddressListScreen()
-                }
+                screeContent()
             }
         }
     }
@@ -129,7 +138,6 @@ fun AppScreenContent() {
 
 @Composable
 fun MainAppFab(
-    screenState: MutableState<String>,
     onClick: () -> Unit
 ) {
     FloatingActionButton(
@@ -150,7 +158,7 @@ fun MainAppFab(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomNavigationContents(
-    screenState: MutableState<String>,
+    //screenState: MutableState<String>,
     bottomDrawerState: BottomDrawerState
 ) {
     val scope = rememberCoroutineScope()
@@ -171,9 +179,10 @@ fun BottomNavigationContents(
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
-            selected = screenState.value == Gallery.route,
+//            selected = screenState.value == Gallery.route,
+            selected = false,
             onClick = {
-                screenState.value = Gallery.route
+//                screenState.value = Gallery.route
                 scope.launch {
                     bottomDrawerState.close()
                 }
@@ -192,8 +201,10 @@ fun BottomNavigationContents(
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
-            selected = screenState.value == Accounts.route,
-            onClick = { screenState.value = Accounts.route }
+            selected = false,
+            onClick = { }
+//            selected = screenState.value == Accounts.route,
+//            onClick = { screenState.value = Accounts.route }
         )
     }
 }
