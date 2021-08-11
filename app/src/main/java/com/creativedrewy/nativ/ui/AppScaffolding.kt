@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.Turquoise
@@ -39,23 +40,38 @@ object Details : AppScreen("details")
 fun AppScreenContent() {
     val animNavController = rememberAnimatedNavController()
 
+    fun navigate(route: String) {
+        animNavController.navigate(route) {
+            popUpTo(animNavController.graph.findStartDestination().id) {
+                saveState = true
+            }
+
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     AnimatedNavHost(
         navController = animNavController,
-        startDestination = "gallery"
+        startDestination = Gallery.route
     ) {
-        composable("gallery") {
-            FabScreens {
+        composable(Gallery.route) {
+            FabScreens(
+                onNavItemClick = { navigate(it) }
+            ) {
                 GalleryList(
                     onDetailsNavigate = { }
                 )
             }
         }
-        composable("addresses") {
-            FabScreens {
+        composable(Accounts.route) {
+            FabScreens(
+                onNavItemClick = { navigate(it) }
+            ) {
                 AddressListScreen()
             }
         }
-        composable("details") { }
+        composable(Details.route) { }
     }
 }
 
@@ -63,6 +79,7 @@ fun AppScreenContent() {
 @ExperimentalMaterialApi
 @Composable
 fun FabScreens(
+    onNavItemClick: (String) -> Unit,
     screeContent: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -104,8 +121,7 @@ fun FabScreens(
                 backgroundColor = MaterialTheme.colors.primary,
                 cutoutShape = RoundedDiamondFabShape(8.dp),
                 content = {
-                    //BottomNavigationContents(screenState, drawerState)
-                    BottomNavigationContents(drawerState)
+                    BottomNavigationContents(drawerState, onNavItemClick)
                 }
             )
         }
@@ -158,8 +174,8 @@ fun MainAppFab(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomNavigationContents(
-    //screenState: MutableState<String>,
-    bottomDrawerState: BottomDrawerState
+    bottomDrawerState: BottomDrawerState,
+    onNavItemClick: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -182,7 +198,8 @@ fun BottomNavigationContents(
 //            selected = screenState.value == Gallery.route,
             selected = false,
             onClick = {
-//                screenState.value = Gallery.route
+                onNavItemClick(Gallery.route)
+
                 scope.launch {
                     bottomDrawerState.close()
                 }
@@ -202,9 +219,8 @@ fun BottomNavigationContents(
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
             selected = false,
-            onClick = { }
 //            selected = screenState.value == Accounts.route,
-//            onClick = { screenState.value = Accounts.route }
+            onClick = { onNavItemClick(Accounts.route) }
         )
     }
 }
