@@ -7,7 +7,7 @@ data class NftMetadata(
     val image: String,
     val animationUrl: String,
     val externalUrl: String,
-    val attributes: List<NftAttributes>,
+    val attributes: List<NftAttributes>?,
     val properties: NftProperties
 )
 

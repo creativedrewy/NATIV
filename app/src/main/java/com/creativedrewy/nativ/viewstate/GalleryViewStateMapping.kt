@@ -28,6 +28,12 @@ class GalleryViewStateMapping @Inject constructor(
                 }
 
                 val chainDetails = Blockchain(chain.ticker, chain.iconRes)
+                val attribs = nft.attributes?.map {
+                    Attribute(
+                        name = it.traitType,
+                        value = it.value
+                    )
+                } ?: listOf()
 
                 NftViewProps(
                     name = nft.name,
@@ -36,6 +42,7 @@ class GalleryViewStateMapping @Inject constructor(
                     // siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
                     assetType = determineAssetType(nft),
                     assetUrl = determineAssetUrl(nft),
+                    attributes = attribs,
                     mediaBytes = assetBytes
                 )
             }
