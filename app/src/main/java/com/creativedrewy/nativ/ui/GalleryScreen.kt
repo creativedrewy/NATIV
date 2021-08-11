@@ -8,10 +8,7 @@ import android.view.SurfaceView
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -45,6 +42,7 @@ import java.nio.ByteBuffer
 @ExperimentalComposeUiApi
 @Composable
 fun GalleryList(
+    onDetailsNavigate: () -> Unit,
     viewModel: NftGalleryViewModel = viewModel()
 ) {
     LaunchedEffect(
@@ -152,7 +150,8 @@ fun GalleryList(
                 ) {
                     items(viewState.listItems) { nft ->
                         GalleryItemCard(
-                            nftProps = nft
+                            nftProps = nft,
+                            onDetailsNavigate = onDetailsNavigate
                         )
                     }
                 }
@@ -164,13 +163,16 @@ fun GalleryList(
 @ExperimentalComposeUiApi
 @Composable
 fun GalleryItemCard(
-    nftProps: NftViewProps
+    nftProps: NftViewProps,
+    onDetailsNavigate: () -> Unit
 ) {
     Surface(
-        modifier = Modifier.padding(
-            top = 16.dp,
-            bottom = 16.dp
-        ),
+        modifier = Modifier
+            .padding(
+                top = 16.dp,
+                bottom = 16.dp
+            )
+            .clickable { onDetailsNavigate() },
         shape = RoundedCornerShape(24.dp),
         elevation = 8.dp
     ) {

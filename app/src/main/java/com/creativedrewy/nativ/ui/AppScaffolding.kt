@@ -3,28 +3,10 @@ package com.creativedrewy.nativ.ui
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.BottomDrawer
-import androidx.compose.material.BottomDrawerState
-import androidx.compose.material.BottomDrawerValue
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberBottomDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +30,7 @@ sealed class AppScreen(
 
 object Gallery : AppScreen("gallery")
 object Accounts : AppScreen("accounts")
+object Details : AppScreen("details")
 
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi
@@ -88,34 +71,7 @@ fun AppScreenContent() {
                     contentDescription = ""
                 )
             }
-        },
-        content = {
-            BottomDrawer(
-                drawerContent = {
-                    AddAddressPanel(
-                        closePanel = {
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
-                    )
-                },
-                drawerState = drawerState,
-                scrimColor = Color.Transparent,
-                drawerBackgroundColor = Color.Transparent,
-                gesturesEnabled = false
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colors.primary)
-                ) {
-                    when (screenState.value) {
-                        Gallery.route -> GalleryList()
-                        Accounts.route -> AddressListScreen()
-                    }
-                }
-            }
+
         },
         floatingActionButton = {
             MainAppFab(
@@ -137,7 +93,38 @@ fun AppScreenContent() {
                 }
             )
         }
-    )
+    ) {
+        BottomDrawer(
+            drawerContent = {
+                AddAddressPanel(
+                    closePanel = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                    }
+                )
+            },
+            drawerState = drawerState,
+            scrimColor = Color.Transparent,
+            drawerBackgroundColor = Color.Transparent,
+            gesturesEnabled = false
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.primary)
+            ) {
+                when (screenState.value) {
+                    Gallery.route -> GalleryList(
+                        onDetailsNavigate = {
+                            screenState.value = Details.route
+                        }
+                    )
+                    Accounts.route -> AddressListScreen()
+                }
+            }
+        }
+    }
 }
 
 @Composable

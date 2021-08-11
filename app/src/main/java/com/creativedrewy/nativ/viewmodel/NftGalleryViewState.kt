@@ -14,7 +14,7 @@ data class Display(
     val items: List<NftViewProps>
 ) : NftGalleryViewState(items)
 
-// Visual properties to render Nft in the UI --------------------------------------------------
+// :::::::: Visual properties to render Nft in the UI ::::::::
 
 data class NftViewProps(
     val name: String = "",

@@ -2,6 +2,7 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
@@ -34,11 +35,19 @@ class NftGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
-            if (addrCount == cachedAddrCount && cachedNfts != null) {
-                cachedNfts?.let { _state.value = Display(it) }
-            } else {
-                loadFromAddresses()
-            }
+//            if (addrCount == cachedAddrCount && cachedNfts != null) {
+//                cachedNfts?.let { _state.value = Display(it) }
+//            } else {
+//                loadFromAddresses()
+//            }
+            _state.value = Display(
+                listOf(
+                    NftViewProps(
+                        name = "This is a TEMP item",
+                        blockchain = Blockchain("TMP", R.drawable.solana_logo)
+                    )
+                )
+            )
         }
     }
 
