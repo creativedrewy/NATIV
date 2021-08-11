@@ -24,12 +24,11 @@ class NftGalleryViewModel @Inject constructor(
     private val viewStateCache: ViewStateCache
 ) : ViewModel() {
 
+    private var cachedAddrCount = 0
     private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
 
     val viewState: StateFlow<NftGalleryViewState>
         get() = _state
-
-    private var cachedAddrCount = 0
 
     fun loadNfts() {
         _state.value = Loading()
@@ -38,14 +37,16 @@ class NftGalleryViewModel @Inject constructor(
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
 //            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
-//                cachedNfts?.let { _state.value = Display(it) }
+//                _state.value = Display(viewStateCache.cachedProps)
 //            } else {
 //                loadFromAddresses()
 //            }
             val props = listOf(
                 NftViewProps(
-                    name = "This is a TEMP item",
-                    blockchain = Blockchain("TMP", R.drawable.solana_logo)
+                    name = "Corgi #3252",
+                    description = "100% Purebred Crypto Corgi. Attributes derived from block number 12826863. It was number 3252 to be claimed.",
+                    assetUrl = "https://lh3.googleusercontent.com/oBwn9vxrvZwQfWYdOqAfMx25Y-NeHjE-lTc8SVRqOe245gtPxC56iOBdZIW5DHezi2cXNFHwEsA0qoqTwtJj1hu4zimTHNBY-i_S1A=s250",
+                    blockchain = Blockchain("SOL", R.drawable.solana_logo)
                 )
             )
             viewStateCache.updateCache(props)

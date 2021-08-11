@@ -123,7 +123,6 @@ fun FabScreens(
                     contentDescription = ""
                 )
             }
-
         },
         floatingActionButton = {
             MainAppFab {
