@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.R
@@ -7,6 +8,7 @@ import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
+import com.creativedrewy.nativ.viewstate.ViewStateCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class NftGalleryViewModel @Inject constructor(
     private val userAddrsUseCase: UserAddressesUseCase,
     private val chainSupport: ISupportedChains,
-    private val viewStateMapping: GalleryViewStateMapping
+    private val viewStateMapping: GalleryViewStateMapping,
+    private val viewStateCache: ViewStateCache
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
@@ -33,6 +36,9 @@ class NftGalleryViewModel @Inject constructor(
         _state.value = Loading()
 
         viewModelScope.launch {
+            Log.v("SOL", "Your Item: ${ viewStateCache.refItem }")
+            viewStateCache.setThis = "I set this"
+
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
 //            if (addrCount == cachedAddrCount && cachedNfts != null) {
