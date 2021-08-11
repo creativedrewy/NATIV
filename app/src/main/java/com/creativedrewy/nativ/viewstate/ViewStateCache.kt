@@ -1,12 +1,25 @@
 package com.creativedrewy.nativ.viewstate
 
-import dagger.hilt.android.scopes.ActivityScoped
+import com.creativedrewy.nativ.viewmodel.NftViewProps
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ViewStateCache @Inject constructor() {
 
-    val refItem = "I $this"
-    var setThis = ""
+    private var props: List<NftViewProps> = listOf()
+
+    val hasCache: Boolean
+        get() = props.isNotEmpty()
+
+    val cachedProps: List<NftViewProps>
+        get() = props
+
+    fun clearCache() {
+        props = listOf()
+    }
+
+    fun updateCache(propsList: List<NftViewProps>) {
+        props = propsList
+    }
 }

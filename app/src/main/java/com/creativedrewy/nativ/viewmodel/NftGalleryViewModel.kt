@@ -30,36 +30,33 @@ class NftGalleryViewModel @Inject constructor(
         get() = _state
 
     private var cachedAddrCount = 0
-    private var cachedNfts: List<NftViewProps>? = null
 
     fun loadNfts() {
         _state.value = Loading()
 
         viewModelScope.launch {
-            Log.v("SOL", "Your Item: ${ viewStateCache.refItem }")
-            viewStateCache.setThis = "I set this"
-
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
-//            if (addrCount == cachedAddrCount && cachedNfts != null) {
+//            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
 //                cachedNfts?.let { _state.value = Display(it) }
 //            } else {
 //                loadFromAddresses()
 //            }
-            _state.value = Display(
-                listOf(
-                    NftViewProps(
-                        name = "This is a TEMP item",
-                        blockchain = Blockchain("TMP", R.drawable.solana_logo)
-                    )
+            val props = listOf(
+                NftViewProps(
+                    name = "This is a TEMP item",
+                    blockchain = Blockchain("TMP", R.drawable.solana_logo)
                 )
             )
+            viewStateCache.updateCache(props)
+
+            _state.value = Display(props)
         }
     }
 
     fun reloadNfts() {
         cachedAddrCount = 0
-        cachedNfts = null
+        viewStateCache.clearCache()
 
         loadNfts()
     }
@@ -83,7 +80,7 @@ class NftGalleryViewModel @Inject constructor(
         allNfts = allNfts.sortedBy { it.name }.toMutableList()
 
         cachedAddrCount = userAddresses.size
-        cachedNfts = allNfts
+        viewStateCache.updateCache(allNfts)
 
         _state.value = Display(allNfts)
     }

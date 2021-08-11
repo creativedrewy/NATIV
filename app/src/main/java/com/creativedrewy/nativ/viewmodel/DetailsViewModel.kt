@@ -11,8 +11,9 @@ class DetailsViewModel @Inject constructor(
     private val viewStateCache: ViewStateCache
 ) : ViewModel() {
 
-    init {
-        Log.v("SOL", "Your Item: ${ viewStateCache.refItem } this was set: ${ viewStateCache.setThis }")
+    fun loadNftDetails(id: String) {
+        viewStateCache.cachedProps.firstOrNull { it.hashCode().toString() == id }?.let {
+            Log.v("SOL", "You have found your item! ${ it.name }")
+        }
     }
-
 }

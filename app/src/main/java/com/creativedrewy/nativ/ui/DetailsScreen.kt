@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
@@ -15,6 +16,13 @@ fun DetailsScreen(
     nftId: String,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            viewModel.loadNftDetails(nftId)
+        }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
