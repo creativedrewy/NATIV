@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
@@ -57,7 +59,8 @@ fun AppScreenContent() {
     ) {
         composable(Gallery.route) {
             FabScreens(
-                onNavItemClick = { navigate(it) }
+                navDest = it.destination,
+                onNavItemClick = { route -> navigate(route) }
             ) {
                 GalleryList(
                     onDetailsNavigate = { }
@@ -66,7 +69,8 @@ fun AppScreenContent() {
         }
         composable(Accounts.route) {
             FabScreens(
-                onNavItemClick = { navigate(it) }
+                navDest = it.destination,
+                onNavItemClick = { route -> navigate(route) }
             ) {
                 AddressListScreen()
             }
@@ -79,6 +83,7 @@ fun AppScreenContent() {
 @ExperimentalMaterialApi
 @Composable
 fun FabScreens(
+    navDest: NavDestination?,
     onNavItemClick: (String) -> Unit,
     screeContent: @Composable () -> Unit
 ) {
@@ -121,7 +126,11 @@ fun FabScreens(
                 backgroundColor = MaterialTheme.colors.primary,
                 cutoutShape = RoundedDiamondFabShape(8.dp),
                 content = {
-                    BottomNavigationContents(drawerState, onNavItemClick)
+                    BottomNavigationContents(
+                        navDest = navDest,
+                        bottomDrawerState = drawerState,
+                        onNavItemClick = onNavItemClick
+                    )
                 }
             )
         }
@@ -174,6 +183,7 @@ fun MainAppFab(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomNavigationContents(
+    navDest: NavDestination?,
     bottomDrawerState: BottomDrawerState,
     onNavItemClick: (String) -> Unit
 ) {
@@ -195,8 +205,7 @@ fun BottomNavigationContents(
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
-//            selected = screenState.value == Gallery.route,
-            selected = false,
+            selected = navDest?.hierarchy?.any { it.route == Gallery.route } == true,
             onClick = {
                 onNavItemClick(Gallery.route)
 
@@ -218,8 +227,7 @@ fun BottomNavigationContents(
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = false,
-            selected = false,
-//            selected = screenState.value == Accounts.route,
+            selected = navDest?.hierarchy?.any { it.route == Accounts.route } == true,
             onClick = { onNavItemClick(Accounts.route) }
         )
     }
