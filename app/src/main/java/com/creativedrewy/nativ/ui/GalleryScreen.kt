@@ -43,7 +43,7 @@ import java.nio.ByteBuffer
 @Composable
 fun GalleryList(
     viewModel: NftGalleryViewModel = hiltViewModel(),
-    onDetailsNavigate: () -> Unit
+    onDetailsNavigate: (String) -> Unit
 ) {
     LaunchedEffect(
         key1 = Unit,
@@ -164,7 +164,7 @@ fun GalleryList(
 @Composable
 fun GalleryItemCard(
     nftProps: NftViewProps,
-    onDetailsNavigate: () -> Unit
+    onDetailsNavigate: (String) -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -172,7 +172,7 @@ fun GalleryItemCard(
                 top = 16.dp,
                 bottom = 16.dp
             )
-            .clickable { onDetailsNavigate() },
+            .clickable { onDetailsNavigate(nftProps.hashCode().toString()) },
         shape = RoundedCornerShape(24.dp),
         elevation = 8.dp
     ) {

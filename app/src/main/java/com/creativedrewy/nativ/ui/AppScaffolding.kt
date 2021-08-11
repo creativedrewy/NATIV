@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
+import androidx.navigation.compose.navArgument
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.Turquoise
@@ -31,9 +33,13 @@ sealed class AppScreen(
     val route: String
 )
 
+object NavArgs {
+    const val nftId = "nftId"
+}
+
 object Gallery : AppScreen("gallery")
 object Accounts : AppScreen("accounts")
-object Details : AppScreen("details")
+object Details : AppScreen("details/{${NavArgs.nftId}}")
 
 @ExperimentalAnimationApi
 @OptIn(ExperimentalMaterialApi::class)
@@ -63,8 +69,8 @@ fun AppScreenContent() {
                 onNavItemClick = { route -> navigate(route) }
             ) {
                 GalleryList(
-                    onDetailsNavigate = {
-                        animNavController.navigate(Details.route)
+                    onDetailsNavigate = { id ->
+                        animNavController.navigate("details/" + id)
                     }
                 )
             }
@@ -77,8 +83,11 @@ fun AppScreenContent() {
                 AddressListScreen()
             }
         }
-        composable(Details.route) {
-            DetailsScreen()
+        composable(
+            route = Details.route,
+            arguments = listOf(navArgument(NavArgs.nftId) { type = NavType.StringType } )
+        ) {
+            DetailsScreen(it.arguments?.getString(NavArgs.nftId) ?: "")
         }
     }
 }

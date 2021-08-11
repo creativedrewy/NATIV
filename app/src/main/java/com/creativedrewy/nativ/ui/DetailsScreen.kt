@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
 
 @Composable
-fun DetailsScreen() {
+fun DetailsScreen(
+    nftId: String
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
