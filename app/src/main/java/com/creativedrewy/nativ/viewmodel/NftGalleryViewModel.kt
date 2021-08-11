@@ -46,7 +46,14 @@ class NftGalleryViewModel @Inject constructor(
                     name = "Corgi #3252",
                     description = "100% Purebred Crypto Corgi. Attributes derived from block number 12826863. It was number 3252 to be claimed.",
                     assetUrl = "https://lh3.googleusercontent.com/oBwn9vxrvZwQfWYdOqAfMx25Y-NeHjE-lTc8SVRqOe245gtPxC56iOBdZIW5DHezi2cXNFHwEsA0qoqTwtJj1hu4zimTHNBY-i_S1A=s250",
-                    blockchain = Blockchain("SOL", R.drawable.solana_logo)
+                    blockchain = Blockchain("SOL", R.drawable.solana_logo),
+                    attributes = listOf(
+                        Attribute("Eye Color", "Blue"),
+                        Attribute("Coat", "Orange"),
+                        Attribute("Border", "Green"),
+                        Attribute("Face Covering", "Laser mask"),
+                        Attribute("Hat", "Golden Crown"),
+                    )
                 )
             )
             viewStateCache.updateCache(props)
