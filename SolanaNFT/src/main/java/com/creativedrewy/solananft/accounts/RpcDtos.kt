@@ -56,10 +56,10 @@ data class AccountInfoStateDto(
 )
 
 data class TokenAmountDetailsDto(
-    val amount: Int,
-    val decimals: Int,
+    val amount: Double,
+    val decimals: Double,
     val uiAmount: Double,
-    val uiAmountString: Int
+    val uiAmountString: Double
 )
 
 data class GlobalSupplyDto(

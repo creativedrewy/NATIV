@@ -67,7 +67,7 @@ class AccountRepository(
 
                         dto.result.value
                     } catch (e: Exception) {
-                        Log.e("Solana", "Error parsing account RPC result: $resultString")
+                        Log.e("Solana", "Error parsing account RPC result: $resultString", e)
 
                         listOf()
                     }

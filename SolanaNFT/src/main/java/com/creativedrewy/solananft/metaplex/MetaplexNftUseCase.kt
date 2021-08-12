@@ -25,7 +25,10 @@ class MetaplexNftUseCase @Inject constructor(
             val accountKey = PublicKey(address)
 
             val ownerAccounts = accountsRepository.getTokenAccountsByOwner(accountKey)
-            ownerAccounts.forEach { it ->
+            ownerAccounts.filter { acct ->
+                acct.account.data.parsed.info.tokenAmount.amount == 1.0 &&
+                    acct.account.data.parsed.info.tokenAmount.decimals == 0.0
+            }.forEach {
                 val mintAddress = it.account.data.parsed.info.mint
 
                 val pdaSeeds = listOf(
@@ -44,8 +47,11 @@ class MetaplexNftUseCase @Inject constructor(
                     val borshData = Base64.getDecoder().decode(accountInfo.data[0])
                     val metaplexData: MetaplexMeta = borsh.deserialize(borshData, MetaplexMeta::class.java)
 
+                    // Sometimes the borsh-deserialized data has NUL chars on the end, so we need to sanitize
+                    val sanitizedUri = metaplexData.data.uri.replace("\u0000", "")
+
                     val details = withContext(Dispatchers.IO) {
-                        nftSpecRepository.getNftDetails(metaplexData.data.uri)
+                        nftSpecRepository.getNftDetails(sanitizedUri)
                     }
                     details?.let { item -> metaplexNfts.add(item) }
                 } catch (e: Exception) {
