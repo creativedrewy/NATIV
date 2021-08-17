@@ -1,11 +1,8 @@
 package com.creativedrewy.nativ.ui
 
-import android.animation.ValueAnimator
 import android.content.Context
-import android.opengl.Matrix
 import android.view.LayoutInflater
 import android.view.SurfaceView
-import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -115,29 +112,29 @@ fun Model3dViewer(
                     viewer.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
                     viewer.transformToUnitCube()
 
-                    viewer.asset?.let { gltfAsset ->
-                        val tcm = viewer.engine.transformManager
-                        var lastAnimValue = 0f
-
-                        val animator = ValueAnimator.ofFloat(0.0f, 360f)
-                        animator.interpolator = LinearInterpolator()
-                        animator.duration = 20_000
-                        animator.repeatMode = ValueAnimator.RESTART
-                        animator.repeatCount = ValueAnimator.INFINITE
-                        animator.addUpdateListener { animValue ->
-                            var transformMatrix = FloatArray(16)
-                            transformMatrix = tcm.getTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
-
-                            val animAppend = (animValue.animatedValue as Float) - lastAnimValue
-
-                            Matrix.rotateM(transformMatrix, 0, animAppend, 0f, 1.0f, 0f)
-                            tcm.setTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
-
-                            lastAnimValue = animValue.animatedValue as Float
-                        }
-
-                        animator.start()
-                    }
+//                    viewer.asset?.let { gltfAsset ->
+//                        val tcm = viewer.engine.transformManager
+//                        var lastAnimValue = 0f
+//
+//                        val animator = ValueAnimator.ofFloat(0.0f, 360f)
+//                        animator.interpolator = LinearInterpolator()
+//                        animator.duration = 20_000
+//                        animator.repeatMode = ValueAnimator.RESTART
+//                        animator.repeatCount = ValueAnimator.INFINITE
+//                        animator.addUpdateListener { animValue ->
+//                            var transformMatrix = FloatArray(16)
+//                            transformMatrix = tcm.getTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
+//
+//                            val animAppend = (animValue.animatedValue as Float) - lastAnimValue
+//
+//                            Matrix.rotateM(transformMatrix, 0, animAppend, 0f, 1.0f, 0f)
+//                            tcm.setTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
+//
+//                            lastAnimValue = animValue.animatedValue as Float
+//                        }
+//
+//                        animator.start()
+//                    }
                 }
             }
         }
