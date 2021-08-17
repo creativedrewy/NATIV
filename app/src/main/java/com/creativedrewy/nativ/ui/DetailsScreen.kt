@@ -14,13 +14,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.TitleGray
 import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.DetailsViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import java.util.*
 
 @Composable
 fun DetailsScreen(
@@ -54,6 +57,7 @@ fun DetailsScreen(
                     top = 8.dp
                 ),
             text = loadedNft.name,
+            fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.onPrimary
         )
@@ -81,11 +85,14 @@ fun DetailsScreen(
                     top = 8.dp
                 ),
             text = "Attributes",
+            fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.onPrimary
         )
 
         FlowRow(
+            mainAxisSpacing = 8.dp,
+            crossAxisSpacing = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
@@ -103,10 +110,12 @@ fun DetailsScreen(
                             .padding(8.dp)
                     ) {
                         Text(
-                            text = attrib.name
+                            text = attrib.name.uppercase(Locale.getDefault()),
+                            color = TitleGray
                         )
                         Text(
-                            text = attrib.value
+                            text = attrib.value,
+                            color = MaterialTheme.colors.onPrimary
                         )
                     }
                 }
