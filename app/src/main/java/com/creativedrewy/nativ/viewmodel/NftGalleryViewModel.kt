@@ -2,7 +2,6 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
@@ -35,30 +34,11 @@ class NftGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
-//            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
-//                _state.value = Display(viewStateCache.cachedProps)
-//            } else {
-//                loadFromAddresses()
-//            }
-            val props = listOf(
-                NftViewProps(
-                    name = "Corgi #3252",
-                    description = "100% Purebred Crypto Corgi. Attributes derived from block number 12826863. It was number 3252 to be claimed.",
-                    assetUrl = "https://lh3.googleusercontent.com/oBwn9vxrvZwQfWYdOqAfMx25Y-NeHjE-lTc8SVRqOe245gtPxC56iOBdZIW5DHezi2cXNFHwEsA0qoqTwtJj1hu4zimTHNBY-i_S1A=s250",
-                    blockchain = Blockchain("ETH", R.drawable.solana_logo),
-                    siteUrl = "https://www.solanimals.com",
-                    attributes = listOf(
-                        Attribute("Eye Color", "Blue"),
-                        Attribute("Coat", "Orange"),
-                        Attribute("Border", "Green"),
-                        Attribute("Face Covering", "Laser mask"),
-                        Attribute("Hat", "Golden Crown"),
-                    )
-                )
-            )
-            viewStateCache.updateCache(props)
-
-            _state.value = Display(props)
+            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
+                _state.value = Display(viewStateCache.cachedProps)
+            } else {
+                loadFromAddresses()
+            }
         }
     }
 
