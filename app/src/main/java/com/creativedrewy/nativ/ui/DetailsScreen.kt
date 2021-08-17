@@ -26,11 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.ui.theme.HotPink
-import com.creativedrewy.nativ.ui.theme.Lexend
-import com.creativedrewy.nativ.ui.theme.TitleGray
-import com.creativedrewy.nativ.ui.theme.Turquoise
+import com.creativedrewy.nativ.ui.theme.*
 import com.creativedrewy.nativ.viewmodel.DetailsViewModel
+import com.creativedrewy.nativ.viewmodel.Ready
 import com.google.accompanist.flowlayout.FlowRow
 import java.util.*
 
@@ -47,7 +45,7 @@ fun DetailsScreen(
         }
     )
 
-    val loadedNft by viewModel.viewState.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
     val scrollState = rememberScrollState()
 
     Box(
@@ -70,154 +68,175 @@ fun DetailsScreen(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(360.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .align(Alignment.BottomCenter)
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(220.dp),
-                        painter = painterResource(
-                            id = R.drawable.perspective_grid_variant
-                        ),
-                        contentScale = ContentScale.FillHeight,
-                        contentDescription = ""
-                    )
-                }
+            if (viewState is Ready) {
+                val loadedNft = (viewState as Ready).props
 
                 Box(
                     modifier = Modifier
-                        .padding(bottom = 20.dp)
-                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(360.dp)
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(300.dp)
-                            .aspectRatio(1f)
-                            .background(Color.Transparent)
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .align(Alignment.BottomCenter)
                     ) {
-                        AssetViewer(
-                            nftProps = loadedNft,
-                            outlineColor = Turquoise
+                        Image(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(220.dp),
+                            painter = painterResource(
+                                id = R.drawable.perspective_grid_variant
+                            ),
+                            contentScale = ContentScale.FillHeight,
+                            contentDescription = ""
                         )
                     }
-                }
-            }
 
-            val uriHandler = LocalUriHandler.current
-
-            val annotatedString = buildAnnotatedString {
-                append(loadedNft.siteUrl)
-                addStyle(
-                    style = SpanStyle(
-                        textDecoration = TextDecoration.Underline,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = Lexend,
-                        color = Turquoise,
-                        fontSize = 14.sp
-                    ),
-                    start = 0,
-                    end = loadedNft.siteUrl.length
-                )
-                addStringAnnotation(
-                    tag = "URI",
-                    annotation = loadedNft.siteUrl,
-                    start = 0,
-                    end = loadedNft.siteUrl.length
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    )
-                    .verticalScroll(
-                        state = scrollState
-                    )
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            top = 8.dp
-                        ),
-                    text = loadedNft.name,
-                    fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.h4,
-                    color = MaterialTheme.colors.onPrimary
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            top = 8.dp
-                        ),
-                    text = loadedNft.description,
-                    style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onPrimary
-                )
-                ClickableText(
-                    modifier = Modifier
-                        .padding(
-                            top = 8.dp
-                        ),
-                    text = annotatedString,
-                    onClick = { position ->
-                        val annotations = annotatedString.getStringAnnotations("URI", start = position, end = position)
-                        annotations.firstOrNull()?.let {
-                            uriHandler.openUri(it.item)
-                        }
-                    },
-                    style = MaterialTheme.typography.body2,
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(
-                            top = 8.dp
-                        ),
-                    text = "Attributes",
-                    fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.h4,
-                    color = MaterialTheme.colors.onPrimary
-                )
-
-                FlowRow(
-                    mainAxisSpacing = 8.dp,
-                    crossAxisSpacing = 8.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    loadedNft.attributes.forEach { attrib ->
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 20.dp)
+                            .align(Alignment.BottomCenter)
+                    ) {
                         Box(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
-                                .border(
-                                    border = BorderStroke(2.dp, HotPink),
-                                    shape = RoundedCornerShape(16.dp)
-                                )
+                                .width(300.dp)
+                                .aspectRatio(1f)
+                                .background(Color.Transparent)
                         ) {
-                            Column(
+                            AssetViewer(
+                                nftProps = loadedNft,
+                                outlineColor = Turquoise
+                            )
+                        }
+                    }
+                }
+
+                val uriHandler = LocalUriHandler.current
+
+                val annotatedString = buildAnnotatedString {
+                    append(loadedNft.siteUrl)
+                    addStyle(
+                        style = SpanStyle(
+                            textDecoration = TextDecoration.Underline,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = Lexend,
+                            color = Turquoise,
+                            fontSize = 14.sp
+                        ),
+                        start = 0,
+                        end = loadedNft.siteUrl.length
+                    )
+                    addStringAnnotation(
+                        tag = "link",
+                        annotation = loadedNft.siteUrl,
+                        start = 0,
+                        end = loadedNft.siteUrl.length
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp
+                        )
+                        .verticalScroll(
+                            state = scrollState
+                        )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(
+                                    top = 8.dp
+                                ),
+                            text = loadedNft.name,
+                            fontWeight = FontWeight.Medium,
+                            style = MaterialTheme.typography.h4,
+                            color = MaterialTheme.colors.onPrimary
+                        )
+                        OutlinedCircleImage(
+                            imageRes = loadedNft.blockchain.logoRes,
+                            size = 48.dp,
+                            outlineWidth = 0.dp,
+                            backgroundColor = LightPurple
+                        )
+                    }
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp
+                            ),
+                        text = loadedNft.description,
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onPrimary
+                    )
+                    ClickableText(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp
+                            ),
+                        text = annotatedString,
+                        onClick = { position ->
+                            val annotations = annotatedString.getStringAnnotations(
+                                tag = "link",
+                                start = position,
+                                end = position
+                            )
+                            annotations.firstOrNull()?.let {
+                                uriHandler.openUri(it.item)
+                            }
+                        },
+                        style = MaterialTheme.typography.body2,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                top = 8.dp
+                            ),
+                        text = "Attributes",
+                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.h4,
+                        color = MaterialTheme.colors.onPrimary
+                    )
+
+                    FlowRow(
+                        mainAxisSpacing = 8.dp,
+                        crossAxisSpacing = 8.dp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        loadedNft.attributes.forEach { attrib ->
+                            Box(
                                 modifier = Modifier
-                                    .padding(8.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .border(
+                                        border = BorderStroke(2.dp, HotPink),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
                             ) {
-                                Text(
-                                    text = attrib.name.uppercase(Locale.getDefault()),
-                                    color = TitleGray
-                                )
-                                Text(
-                                    text = attrib.value,
-                                    color = MaterialTheme.colors.onPrimary
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                ) {
+                                    Text(
+                                        text = attrib.name.uppercase(Locale.getDefault()),
+                                        color = TitleGray
+                                    )
+                                    Text(
+                                        text = attrib.value,
+                                        color = MaterialTheme.colors.onPrimary
+                                    )
+                                }
                             }
                         }
                     }
