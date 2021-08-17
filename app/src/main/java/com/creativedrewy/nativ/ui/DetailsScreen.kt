@@ -3,6 +3,7 @@ package com.creativedrewy.nativ.ui
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,12 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.Lexend
 import com.creativedrewy.nativ.ui.theme.TitleGray
 import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.DetailsViewModel
@@ -51,7 +58,7 @@ fun DetailsScreen(
     ) {
         Image(
             modifier = Modifier
-                .fillMaxHeight(0.65f),
+                .fillMaxHeight(0.75f),
             painter = painterResource(
                 id = R.drawable.stars_bg_variant
             ),
@@ -66,7 +73,7 @@ fun DetailsScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(320.dp)
+                    .height(360.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -93,7 +100,7 @@ fun DetailsScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(260.dp)
+                            .width(300.dp)
                             .aspectRatio(1f)
                             .background(Color.Transparent)
                     ) {
@@ -103,6 +110,29 @@ fun DetailsScreen(
                         )
                     }
                 }
+            }
+
+            val uriHandler = LocalUriHandler.current
+
+            val annotatedString = buildAnnotatedString {
+                append(loadedNft.siteUrl)
+                addStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = Lexend,
+                        color = Turquoise,
+                        fontSize = 14.sp
+                    ),
+                    start = 0,
+                    end = loadedNft.siteUrl.length
+                )
+                addStringAnnotation(
+                    tag = "URI",
+                    annotation = loadedNft.siteUrl,
+                    start = 0,
+                    end = loadedNft.siteUrl.length
+                )
             }
 
             Column(
@@ -136,15 +166,19 @@ fun DetailsScreen(
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.onPrimary
                 )
-                Text(
+                ClickableText(
                     modifier = Modifier
                         .padding(
                             top = 8.dp
                         ),
-                    fontWeight = FontWeight.Medium,
-                    text = loadedNft.siteUrl,
+                    text = annotatedString,
+                    onClick = { position ->
+                        val annotations = annotatedString.getStringAnnotations("URI", start = position, end = position)
+                        annotations.firstOrNull()?.let {
+                            uriHandler.openUri(it.item)
+                        }
+                    },
                     style = MaterialTheme.typography.body2,
-                    color = Turquoise
                 )
                 Text(
                     modifier = Modifier
