@@ -1,9 +1,6 @@
 package com.creativedrewy.nativ.ui
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -42,6 +39,7 @@ fun DetailsScreen(
     )
 
     val loadedNft by viewModel.viewState.collectAsState()
+    val scrollState = rememberScrollState()
 
     Box(
         modifier = Modifier
@@ -99,72 +97,87 @@ fun DetailsScreen(
                     )
                 }
             }
-            Text(
-                modifier = Modifier
-                    .padding(
-                        top = 8.dp
-                    ),
-                text = loadedNft.name,
-                fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.h4,
-                color = MaterialTheme.colors.onPrimary
-            )
-            Text(
-                modifier = Modifier
-                    .padding(
-                        top = 8.dp
-                    ),
-                text = loadedNft.description,
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onPrimary
-            )
-            Text(
-                modifier = Modifier
-                    .padding(
-                        top = 8.dp
-                    ),
-                text = loadedNft.siteUrl,
-                style = MaterialTheme.typography.body2,
-                color = Turquoise
-            )
-            Text(
-                modifier = Modifier
-                    .padding(
-                        top = 8.dp
-                    ),
-                text = "Attributes",
-                fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.h4,
-                color = MaterialTheme.colors.onPrimary
-            )
 
-            FlowRow(
-                mainAxisSpacing = 8.dp,
-                crossAxisSpacing = 8.dp,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 16.dp
+                    )
+                    .verticalScroll(
+                        state = scrollState
+                    )
             ) {
-                loadedNft.attributes.forEach { attrib ->
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .border(
-                                border = BorderStroke(2.dp, HotPink),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    ) {
-                        Column(
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            top = 8.dp
+                        ),
+                    text = loadedNft.name,
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.onPrimary
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            top = 8.dp
+                        ),
+                    text = loadedNft.description,
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onPrimary
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            top = 8.dp
+                        ),
+                    fontWeight = FontWeight.Medium,
+                    text = loadedNft.siteUrl,
+                    style = MaterialTheme.typography.body2,
+                    color = Turquoise
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            top = 8.dp
+                        ),
+                    text = "Attributes",
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.onPrimary
+                )
+
+                FlowRow(
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    loadedNft.attributes.forEach { attrib ->
+                        Box(
                             modifier = Modifier
-                                .padding(8.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .border(
+                                    border = BorderStroke(2.dp, HotPink),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
                         ) {
-                            Text(
-                                text = attrib.name.uppercase(Locale.getDefault()),
-                                color = TitleGray
-                            )
-                            Text(
-                                text = attrib.value,
-                                color = MaterialTheme.colors.onPrimary
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = attrib.name.uppercase(Locale.getDefault()),
+                                    color = TitleGray
+                                )
+                                Text(
+                                    text = attrib.value,
+                                    color = MaterialTheme.colors.onPrimary
+                                )
+                            }
                         }
                     }
                 }
