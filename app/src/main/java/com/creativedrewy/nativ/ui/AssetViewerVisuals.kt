@@ -16,6 +16,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -33,7 +34,8 @@ import java.nio.ByteBuffer
 @Composable
 fun AssetViewer(
     nftProps: NftViewProps,
-    outlineColor: Color
+    outlineColor: Color,
+    userInputEnabled: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -47,7 +49,7 @@ fun AssetViewer(
     ) {
         when (nftProps.assetType) {
             is Model3d -> {
-                Model3dViewer(nftProps)
+                Model3dViewer(nftProps, userInputEnabled)
             }
             is Image -> {
                 ImageViewer(nftProps)
@@ -75,7 +77,8 @@ fun ImageViewer(
 @ExperimentalComposeUiApi
 @Composable
 fun Model3dViewer(
-    nftProp: NftViewProps
+    nftProp: NftViewProps,
+    userInputEnabled: Boolean = false
 ) {
     fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
         val input = context.assets.open(assetName)
@@ -137,6 +140,14 @@ fun Model3dViewer(
 //                    }
                 }
             }
+        },
+        modifier = if (userInputEnabled) {
+            Modifier.pointerInteropFilter {
+                modelViewer?.onTouchEvent(it)
+                true
+            }
+        } else {
+            Modifier
         }
     )
 }

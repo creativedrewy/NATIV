@@ -107,7 +107,8 @@ fun DetailsScreen(
                         ) {
                             AssetViewer(
                                 nftProps = loadedNft,
-                                outlineColor = Turquoise
+                                outlineColor = Turquoise,
+                                userInputEnabled = true
                             )
                         }
                     }
