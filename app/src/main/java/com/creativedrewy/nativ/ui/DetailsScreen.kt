@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +70,19 @@ fun DetailsScreen(
                     ),
                     contentScale = ContentScale.FillHeight,
                     contentDescription = ""
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .align(Alignment.BottomCenter)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(260.dp)
+                        .aspectRatio(1f)
+                        .background(Color.Gray)
                 )
             }
         }
