@@ -1,6 +1,7 @@
 package com.creativedrewy.nativ.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,13 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.creativedrewy.nativ.ui.theme.CardDarkBlue
+import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.TitleGray
 import com.creativedrewy.nativ.ui.theme.Turquoise
@@ -43,14 +47,33 @@ fun DetailsScreen(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(CardDarkBlue)
+            .background(MaterialTheme.colors.primaryVariant)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp)
                 .background(Color.Gray)
-        )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .background(MaterialTheme.colors.primary)
+                    .align(Alignment.BottomCenter)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp),
+                    painter = painterResource(
+                        id = R.drawable.perspective_grid
+                    ),
+                    contentScale = ContentScale.FillHeight,
+                    contentDescription = ""
+                )
+            }
+        }
         Text(
             modifier = Modifier
                 .padding(
