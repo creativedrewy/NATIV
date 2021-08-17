@@ -15,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,13 +52,12 @@ fun DetailsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp)
-                .background(Color.Gray)
+                .background(MaterialTheme.colors.primaryVariant)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
-                    .background(MaterialTheme.colors.primary)
                     .align(Alignment.BottomCenter)
             ) {
                 Image(
@@ -67,7 +65,7 @@ fun DetailsScreen(
                         .fillMaxWidth()
                         .height(220.dp),
                     painter = painterResource(
-                        id = R.drawable.perspective_grid
+                        id = R.drawable.perspective_grid_variant
                     ),
                     contentScale = ContentScale.FillHeight,
                     contentDescription = ""
