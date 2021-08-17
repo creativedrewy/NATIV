@@ -43,115 +43,129 @@ fun DetailsScreen(
 
     val loadedNft by viewModel.viewState.collectAsState()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(MaterialTheme.colors.primaryVariant)
     ) {
-        Box(
+        Image(
+            modifier = Modifier
+                .fillMaxHeight(0.65f),
+            painter = painterResource(
+                id = R.drawable.stars_bg_variant
+            ),
+            contentScale = ContentScale.FillHeight,
+            contentDescription = ""
+        )
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(320.dp)
-                .background(MaterialTheme.colors.primaryVariant)
+                .fillMaxHeight()
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
-                    .align(Alignment.BottomCenter)
+                    .height(320.dp)
             ) {
-                Image(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(220.dp),
-                    painter = painterResource(
-                        id = R.drawable.perspective_grid_variant
-                    ),
-                    contentScale = ContentScale.FillHeight,
-                    contentDescription = ""
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .align(Alignment.BottomCenter)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(260.dp)
-                        .aspectRatio(1f)
-                        .background(Color.Gray)
-                )
-            }
-        }
-        Text(
-            modifier = Modifier
-                .padding(
-                    top = 8.dp
-                ),
-            text = loadedNft.name,
-            fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.onPrimary
-        )
-        Text(
-            modifier = Modifier
-                .padding(
-                    top = 8.dp
-                ),
-            text = loadedNft.description,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.onPrimary
-        )
-        Text(
-            modifier = Modifier
-                .padding(
-                    top = 8.dp
-                ),
-            text = loadedNft.siteUrl,
-            style = MaterialTheme.typography.body2,
-            color = Turquoise
-        )
-        Text(
-            modifier = Modifier
-                .padding(
-                    top = 8.dp
-                ),
-            text = "Attributes",
-            fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.onPrimary
-        )
-
-        FlowRow(
-            mainAxisSpacing = 8.dp,
-            crossAxisSpacing = 8.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            loadedNft.attributes.forEach { attrib ->
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(
-                            border = BorderStroke(2.dp, HotPink),
-                            shape = RoundedCornerShape(16.dp)
-                        )
+                        .height(220.dp)
+                        .align(Alignment.BottomCenter)
                 ) {
-                    Column(
+                    Image(
                         modifier = Modifier
-                            .padding(8.dp)
+                            .fillMaxWidth()
+                            .height(220.dp),
+                        painter = painterResource(
+                            id = R.drawable.perspective_grid_variant
+                        ),
+                        contentScale = ContentScale.FillHeight,
+                        contentDescription = ""
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 20.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(260.dp)
+                            .aspectRatio(1f)
+                            .background(Color.Gray)
+                    )
+                }
+            }
+            Text(
+                modifier = Modifier
+                    .padding(
+                        top = 8.dp
+                    ),
+                text = loadedNft.name,
+                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.h4,
+                color = MaterialTheme.colors.onPrimary
+            )
+            Text(
+                modifier = Modifier
+                    .padding(
+                        top = 8.dp
+                    ),
+                text = loadedNft.description,
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.onPrimary
+            )
+            Text(
+                modifier = Modifier
+                    .padding(
+                        top = 8.dp
+                    ),
+                text = loadedNft.siteUrl,
+                style = MaterialTheme.typography.body2,
+                color = Turquoise
+            )
+            Text(
+                modifier = Modifier
+                    .padding(
+                        top = 8.dp
+                    ),
+                text = "Attributes",
+                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.h4,
+                color = MaterialTheme.colors.onPrimary
+            )
+
+            FlowRow(
+                mainAxisSpacing = 8.dp,
+                crossAxisSpacing = 8.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                loadedNft.attributes.forEach { attrib ->
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .border(
+                                border = BorderStroke(2.dp, HotPink),
+                                shape = RoundedCornerShape(16.dp)
+                            )
                     ) {
-                        Text(
-                            text = attrib.name.uppercase(Locale.getDefault()),
-                            color = TitleGray
-                        )
-                        Text(
-                            text = attrib.value,
-                            color = MaterialTheme.colors.onPrimary
-                        )
+                        Column(
+                            modifier = Modifier
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = attrib.name.uppercase(Locale.getDefault()),
+                                color = TitleGray
+                            )
+                            Text(
+                                text = attrib.value,
+                                color = MaterialTheme.colors.onPrimary
+                            )
+                        }
                     }
                 }
             }
