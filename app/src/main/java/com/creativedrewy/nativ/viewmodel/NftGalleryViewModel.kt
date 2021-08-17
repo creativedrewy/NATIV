@@ -6,6 +6,7 @@ import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
+import com.creativedrewy.nativ.viewstate.ViewStateCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,16 +18,15 @@ import javax.inject.Inject
 class NftGalleryViewModel @Inject constructor(
     private val userAddrsUseCase: UserAddressesUseCase,
     private val chainSupport: ISupportedChains,
-    private val viewStateMapping: GalleryViewStateMapping
+    private val viewStateMapping: GalleryViewStateMapping,
+    private val viewStateCache: ViewStateCache
 ) : ViewModel() {
 
+    private var cachedAddrCount = 0
     private val _state = MutableStateFlow<NftGalleryViewState>(Empty())
 
     val viewState: StateFlow<NftGalleryViewState>
         get() = _state
-
-    private var cachedAddrCount = 0
-    private var cachedNfts: List<NftViewProps>? = null
 
     fun loadNfts() {
         _state.value = Loading()
@@ -34,8 +34,8 @@ class NftGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
-            if (addrCount == cachedAddrCount && cachedNfts != null) {
-                cachedNfts?.let { _state.value = Display(it) }
+            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
+                _state.value = Display(viewStateCache.cachedProps)
             } else {
                 loadFromAddresses()
             }
@@ -44,7 +44,7 @@ class NftGalleryViewModel @Inject constructor(
 
     fun reloadNfts() {
         cachedAddrCount = 0
-        cachedNfts = null
+        viewStateCache.clearCache()
 
         loadNfts()
     }
@@ -68,7 +68,7 @@ class NftGalleryViewModel @Inject constructor(
         allNfts = allNfts.sortedBy { it.name }.toMutableList()
 
         cachedAddrCount = userAddresses.size
-        cachedNfts = allNfts
+        viewStateCache.updateCache(allNfts)
 
         _state.value = Display(allNfts)
     }

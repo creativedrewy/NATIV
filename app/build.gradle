@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-    //implementation(name: 'Solana-release', ext: 'aar')
     implementation project(path: ':SolanaNFT')
     implementation project(path: ':ChainSupport')
     implementation project(path: ':EthereumNFT')
@@ -74,6 +73,10 @@ dependencies {
     implementation 'androidx.compose.runtime:runtime:1.0.0'
     implementation 'androidx.compose.runtime:runtime-livedata:1.0.0'
     implementation 'androidx.compose.runtime:runtime-rxjava2:1.0.0'
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0-alpha03"
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha06"
+    implementation "com.google.accompanist:accompanist-navigation-animation:0.16.1"
+    implementation "com.google.accompanist:accompanist-flowlayout:0.16.1"
 
     implementation "androidx.room:room-ktx:2.3.0"
     implementation "androidx.room:room-runtime:2.3.0"

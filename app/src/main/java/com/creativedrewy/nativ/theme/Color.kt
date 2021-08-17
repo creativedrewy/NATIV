@@ -11,3 +11,6 @@ val LightPurple = Color(0xFF8e52f5)
 
 val ShimmerColor = Color(0.92f, 0.92f, 0.92f)
 val White = Color(1f, 1f, 1f)
+
+val TitleGray = Color(0xFF959595)
+
