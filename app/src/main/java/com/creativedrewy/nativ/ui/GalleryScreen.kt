@@ -1,14 +1,9 @@
 package com.creativedrewy.nativ.ui
 
-import android.animation.ValueAnimator
-import android.content.Context
-import android.opengl.Matrix
-import android.view.LayoutInflater
-import android.view.SurfaceView
-import android.view.animation.LinearInterpolator
-import android.widget.FrameLayout
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,28 +11,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.LightPurple
-import com.creativedrewy.nativ.viewmodel.*
-import com.google.accompanist.glide.rememberGlidePainter
+import com.creativedrewy.nativ.viewmodel.Loading
+import com.creativedrewy.nativ.viewmodel.NftGalleryViewModel
+import com.creativedrewy.nativ.viewmodel.NftViewProps
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.google.android.filament.Skybox
-import com.google.android.filament.utils.KtxLoader
-import com.google.android.filament.utils.ModelViewer
-import java.nio.ByteBuffer
 
 @ExperimentalComposeUiApi
 @Composable
@@ -172,7 +165,13 @@ fun GalleryItemCard(
                 top = 16.dp,
                 bottom = 16.dp
             )
-            .clickable { onDetailsNavigate(nftProps.hashCode().toString()) },
+            .clickable {
+                onDetailsNavigate(
+                    nftProps
+                        .hashCode()
+                        .toString()
+                )
+            },
         shape = RoundedCornerShape(24.dp),
         elevation = 8.dp
     ) {
@@ -181,25 +180,10 @@ fun GalleryItemCard(
                 .background(CardDarkBlue)
                 .padding(24.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(
-                        border = BorderStroke(2.dp, HotPink),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            ) {
-                when (nftProps.assetType) {
-                    is Model3d -> {
-                        Model3dViewer(nftProps)
-                    }
-                    is Image -> {
-                        ImageViewer(nftProps)
-                    }
-                }
-            }
+            AssetViewer(
+                nftProps = nftProps,
+                outlineColor = HotPink
+            )
             Text(
                 modifier = Modifier
                     .padding(
@@ -221,89 +205,4 @@ fun GalleryItemCard(
             }
         }
     }
-}
-
-@Composable
-fun ImageViewer(
-    nftProps: NftViewProps
-) {
-    Image(
-        contentScale = ContentScale.FillWidth,
-        painter = rememberGlidePainter(
-            request = nftProps.assetUrl
-        ),
-        contentDescription = "Nft Image",
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f)
-    )
-}
-
-@ExperimentalComposeUiApi
-@Composable
-fun Model3dViewer(
-    nftProp: NftViewProps
-) {
-    fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
-        val input = context.assets.open(assetName)
-        val bytes = ByteArray(input.available())
-        input.read(bytes)
-        return ByteBuffer.wrap(bytes)
-    }
-
-    var modelViewer by remember { mutableStateOf<ModelViewer?>(null) }
-
-    LaunchedEffect(modelViewer) {
-        while (true) {
-            withFrameNanos { frameTimeNanos ->
-                modelViewer?.render(frameTimeNanos)
-            }
-        }
-    }
-
-    AndroidView(
-        { context ->
-            LayoutInflater.from(context).inflate(
-                R.layout.filament_host, FrameLayout(context), false
-            ).apply {
-                modelViewer = ModelViewer(this as SurfaceView)
-                modelViewer?.let { viewer ->
-                    val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
-                    viewer.scene.indirectLight = KtxLoader.createIndirectLight(viewer.engine, ibl)
-                    viewer.scene.indirectLight?.intensity = 30_000.0f
-
-                    viewer.scene.skybox = Skybox.Builder()
-                        .color(0.035f, 0.035f, 0.035f, 1.0f)
-                        .build(viewer.engine)
-
-                    viewer.loadModelGlb(ByteBuffer.wrap(nftProp.mediaBytes))
-                    viewer.transformToUnitCube()
-
-                    viewer.asset?.let { gltfAsset ->
-                        val tcm = viewer.engine.transformManager
-                        var lastAnimValue = 0f
-
-                        val animator = ValueAnimator.ofFloat(0.0f, 360f)
-                        animator.interpolator = LinearInterpolator()
-                        animator.duration = 20_000
-                        animator.repeatMode = ValueAnimator.RESTART
-                        animator.repeatCount = ValueAnimator.INFINITE
-                        animator.addUpdateListener { animValue ->
-                            var transformMatrix = FloatArray(16)
-                            transformMatrix = tcm.getTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
-
-                            val animAppend = (animValue.animatedValue as Float) - lastAnimValue
-
-                            Matrix.rotateM(transformMatrix, 0, animAppend, 0f, 1.0f, 0f)
-                            tcm.setTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
-
-                            lastAnimValue = animValue.animatedValue as Float
-                        }
-
-                        animator.start()
-                    }
-                }
-            }
-        }
-    )
 }

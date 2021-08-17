@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,6 +27,7 @@ import com.creativedrewy.nativ.viewmodel.DetailsViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import java.util.*
 
+@ExperimentalComposeUiApi
 @Composable
 fun DetailsScreen(
     nftId: String,
@@ -93,8 +95,13 @@ fun DetailsScreen(
                         modifier = Modifier
                             .width(260.dp)
                             .aspectRatio(1f)
-                            .background(Color.Gray)
-                    )
+                            .background(Color.Transparent)
+                    ) {
+                        AssetViewer(
+                            nftProps = loadedNft,
+                            outlineColor = Turquoise
+                        )
+                    }
                 }
             }
 
