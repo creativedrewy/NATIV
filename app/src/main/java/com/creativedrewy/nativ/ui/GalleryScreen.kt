@@ -182,7 +182,8 @@ fun GalleryItemCard(
         ) {
             AssetViewer(
                 nftProps = nftProps,
-                outlineColor = HotPink
+                outlineColor = HotPink,
+                imageOnlyMode = true
             )
             Text(
                 modifier = Modifier

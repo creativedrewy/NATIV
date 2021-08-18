@@ -19,13 +19,14 @@ class GalleryViewStateMapping @Inject constructor(
     suspend fun mapNftMetaToViewState(nft: NftMetadata, chain: SupportedChain): Deferred<NftViewProps> {
         return coroutineScope {
             async {
-                val assetBytes = if (shouldDownloadAsset(nft)) {
-                    findDownloadUri(nft.properties)?.let {
-                        assetDownloadUseCase.downloadAsset(it)
-                    } ?: byteArrayOf()
-                } else {
-                    byteArrayOf()
-                }
+                val assetBytes = byteArrayOf()
+//                val assetBytes = if (shouldDownloadAsset(nft)) {
+//                    findDownloadUri(nft.properties)?.let {
+//                        assetDownloadUseCase.downloadAsset(it)
+//                    } ?: byteArrayOf()
+//                } else {
+//                    byteArrayOf()
+//                }
 
                 val chainDetails = Blockchain(chain.ticker, chain.iconRes)
                 val attribs = nft.attributes?.map {
@@ -41,7 +42,7 @@ class GalleryViewStateMapping @Inject constructor(
                     blockchain = chainDetails,
                     siteUrl = nft.externalUrl,
                     assetType = determineAssetType(nft),
-                    assetUrl = determineAssetUrl(nft),
+                    assetUrl = nft.image,
                     attributes = attribs,
                     mediaBytes = assetBytes
                 )
@@ -69,9 +70,5 @@ class GalleryViewStateMapping @Inject constructor(
         } else {
             Image
         }
-    }
-
-    private fun determineAssetUrl(nft: NftMetadata): String {
-        return if (nft.properties.category != NftCategories.VR) nft.image else ""
     }
 }

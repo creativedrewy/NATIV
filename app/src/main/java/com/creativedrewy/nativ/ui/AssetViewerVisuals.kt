@@ -33,7 +33,8 @@ import java.nio.ByteBuffer
 @Composable
 fun AssetViewer(
     nftProps: NftViewProps,
-    outlineColor: Color
+    outlineColor: Color,
+    imageOnlyMode: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -45,12 +46,12 @@ fun AssetViewer(
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
-        when (nftProps.assetType) {
-            is Model3d -> {
-                Model3dViewer(nftProps)
-            }
-            is Image -> {
+        when {
+            imageOnlyMode || nftProps.assetType is Image -> {
                 ImageViewer(nftProps)
+            }
+            nftProps.assetType is Model3d -> {
+                Model3dViewer(nftProps)
             }
         }
     }
