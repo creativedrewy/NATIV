@@ -2,32 +2,18 @@ package com.creativedrewy.nativ.viewstate
 
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.NftCategories
-import com.creativedrewy.nativ.chainsupport.nft.NftFileTypes
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
-import com.creativedrewy.nativ.chainsupport.nft.NftProperties
-import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.viewmodel.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
-class GalleryViewStateMapping @Inject constructor(
-    private val assetDownloadUseCase: AssetDownloadUseCase,
-) {
+class GalleryViewStateMapping @Inject constructor() {
 
     suspend fun mapNftMetaToViewState(nft: NftMetadata, chain: SupportedChain): Deferred<NftViewProps> {
         return coroutineScope {
             async {
-                val assetBytes = byteArrayOf()
-//                val assetBytes = if (shouldDownloadAsset(nft)) {
-//                    findDownloadUri(nft.properties)?.let {
-//                        assetDownloadUseCase.downloadAsset(it)
-//                    } ?: byteArrayOf()
-//                } else {
-//                    byteArrayOf()
-//                }
-
                 val chainDetails = Blockchain(chain.ticker, chain.iconRes)
                 val attribs = nft.attributes?.map {
                     Attribute(
@@ -44,23 +30,9 @@ class GalleryViewStateMapping @Inject constructor(
                     assetType = determineAssetType(nft),
                     assetUrl = nft.image,
                     attributes = attribs,
-                    mediaBytes = assetBytes
+                    mediaBytes = byteArrayOf()
                 )
             }
-        }
-    }
-
-    private fun shouldDownloadAsset(nft: NftMetadata): Boolean {
-        return nft.properties.category == NftCategories.VR
-    }
-
-    private fun findDownloadUri(props: NftProperties): String? {
-        return when (props.category) {
-            NftCategories.VR -> {
-                props.files.firstOrNull { it.type == NftFileTypes.GLB }?.uri
-                    ?: props.files.firstOrNull()?.uri
-            }
-            else -> null //We don't actually know what we want to do in other cases yet
         }
     }
 
