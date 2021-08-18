@@ -48,7 +48,7 @@ class AddressListViewModel @Inject constructor(
 
                     _state.value = AddrViewState(
                         userAddresses = mapped,
-                        supportedChains = chainSupport.supportedChains.toList()
+                        supportedChains = chainSupport.supportedChains.sortedBy { it.ticker }.toList()
                     )
                 }
         }
