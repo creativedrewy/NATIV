@@ -16,6 +16,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -122,6 +123,10 @@ fun Model3dViewer(
                     viewer.transformToUnitCube()
                 }
             }
+        },
+        modifier = Modifier.pointerInteropFilter {
+            modelViewer?.onTouchEvent(it)
+            true
         }
     )
 }
