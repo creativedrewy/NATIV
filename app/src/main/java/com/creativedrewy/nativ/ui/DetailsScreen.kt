@@ -173,7 +173,8 @@ fun DetailsScreen(
                                     start.linkTo(parent.start)
                                 }
                                 .padding(
-                                    top = 8.dp
+                                    top = 8.dp,
+                                    end = 48.dp
                                 ),
                             text = loadedNft.name,
                             fontWeight = FontWeight.Medium,
