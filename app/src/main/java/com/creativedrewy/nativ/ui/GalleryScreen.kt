@@ -167,9 +167,7 @@ fun GalleryItemCard(
             )
             .clickable {
                 onDetailsNavigate(
-                    nftProps
-                        .hashCode()
-                        .toString()
+                    nftProps.id.toString()
                 )
             },
         shape = RoundedCornerShape(24.dp),

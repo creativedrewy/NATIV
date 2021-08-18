@@ -9,6 +9,7 @@ import com.creativedrewy.nativ.viewmodel.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import java.util.*
 import javax.inject.Inject
 
 class GalleryViewStateMapping @Inject constructor() {
@@ -25,6 +26,7 @@ class GalleryViewStateMapping @Inject constructor() {
                 } ?: listOf()
 
                 NftViewProps(
+                    id = UUID.randomUUID(),
                     name = nft.name,
                     description = nft.description,
                     blockchain = chainDetails,

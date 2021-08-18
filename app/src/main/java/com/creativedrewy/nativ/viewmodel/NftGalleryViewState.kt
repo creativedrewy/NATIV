@@ -1,5 +1,7 @@
 package com.creativedrewy.nativ.viewmodel
 
+import java.util.*
+
 // Screen status state --------------------------------------------------
 
 sealed class NftGalleryViewState(
@@ -17,6 +19,7 @@ data class Display(
 // :::::::: Visual properties to render Nft in the UI ::::::::
 
 data class NftViewProps(
+    val id: UUID,
     val name: String = "",
     val description: String = "",
     val blockchain: Blockchain = Blockchain(),
