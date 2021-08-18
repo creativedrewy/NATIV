@@ -2,7 +2,9 @@ package com.creativedrewy.nativ.viewstate
 
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.NftCategories
+import com.creativedrewy.nativ.chainsupport.nft.NftFileTypes
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.creativedrewy.nativ.viewmodel.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -27,8 +29,9 @@ class GalleryViewStateMapping @Inject constructor() {
                     description = nft.description,
                     blockchain = chainDetails,
                     siteUrl = nft.externalUrl,
+                    displayImageUrl = nft.image,
                     assetType = determineAssetType(nft),
-                    assetUrl = nft.image,
+                    assetUrl = findDownloadUri(nft.properties) ?: "",
                     attributes = attribs,
                     mediaBytes = byteArrayOf()
                 )
@@ -41,6 +44,16 @@ class GalleryViewStateMapping @Inject constructor() {
             Model3d
         } else {
             Image
+        }
+    }
+
+    private fun findDownloadUri(props: NftProperties): String? {
+        return when (props.category) {
+            NftCategories.VR -> {
+                props.files.firstOrNull { it.type == NftFileTypes.GLB }?.uri
+                    ?: props.files.firstOrNull()?.uri
+            }
+            else -> null //We don't actually know what we want to do in other cases yet
         }
     }
 }

@@ -64,7 +64,7 @@ fun ImageViewer(
     Image(
         contentScale = ContentScale.FillWidth,
         painter = rememberGlidePainter(
-            request = nftProps.assetUrl
+            request = nftProps.displayImageUrl
         ),
         contentDescription = "Nft Image",
         modifier = Modifier

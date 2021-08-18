@@ -69,7 +69,8 @@ fun DetailsScreen(
                 .fillMaxHeight()
         ) {
             if (viewState is Ready) {
-                val loadedNft = (viewState as Ready).props
+                val state = viewState as Ready
+                val loadedNft = state.props
 
                 Box(
                     modifier = Modifier
@@ -107,7 +108,8 @@ fun DetailsScreen(
                         ) {
                             AssetViewer(
                                 nftProps = loadedNft,
-                                outlineColor = Turquoise
+                                outlineColor = Turquoise,
+                                imageOnlyMode = state.isLoadingAsset
                             )
                         }
                     }

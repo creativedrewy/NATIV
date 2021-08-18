@@ -21,6 +21,7 @@ data class NftViewProps(
     val description: String = "",
     val blockchain: Blockchain = Blockchain(),
     val siteUrl: String = "",
+    val displayImageUrl: String = "",
     val assetType: AssetType = Image,
     val assetUrl: String = "",
     val attributes: List<Attribute> = listOf(),
