@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -35,10 +36,12 @@ import java.nio.ByteBuffer
 fun AssetViewer(
     nftProps: NftViewProps,
     outlineColor: Color,
-    imageOnlyMode: Boolean = false
+    imageOnlyMode: Boolean = false,
+    alpha: Float = 1.0f
 ) {
     Box(
         modifier = Modifier
+            .alpha(alpha)
             .fillMaxWidth()
             .aspectRatio(1f)
             .clip(RoundedCornerShape(16.dp))

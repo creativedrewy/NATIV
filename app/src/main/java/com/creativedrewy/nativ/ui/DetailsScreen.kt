@@ -109,7 +109,8 @@ fun DetailsScreen(
                             AssetViewer(
                                 nftProps = loadedNft,
                                 outlineColor = Turquoise,
-                                imageOnlyMode = state.isLoadingAsset
+                                imageOnlyMode = state.isLoadingAsset,
+                                alpha = if (state.isLoadingAsset) 0.5f else 1f
                             )
                         }
                     }
