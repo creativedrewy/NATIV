@@ -22,4 +22,13 @@ class ViewStateCache @Inject constructor() {
     fun updateCache(propsList: List<NftViewProps>) {
         props = propsList
     }
+
+    fun updatePropItem(prop: NftViewProps) {
+        val mutableProps = props.toMutableList()
+
+        mutableProps.removeIf { it.id == prop.id }
+        mutableProps.add(prop)
+
+        props = mutableProps.sortedBy { it.name }.toList()
+    }
 }

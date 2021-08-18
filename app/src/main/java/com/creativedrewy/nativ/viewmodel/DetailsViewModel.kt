@@ -1,11 +1,13 @@
 package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class ScreenState
@@ -29,18 +31,21 @@ class DetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow<ScreenState>(NotReady)
 
     fun loadNftDetails(id: String) {
-        viewStateCache.cachedProps.firstOrNull { it.id.toString() == id }?.let { props ->
-            val shouldDownload = shouldDownloadAsset(props)
+        viewStateCache.cachedProps.firstOrNull { it.id.toString() == id }?.let { propItem ->
+            val shouldDownload = shouldDownloadAsset(propItem)
 
-            _state.value = Ready(props, shouldDownload)
+            _state.value = Ready(propItem, shouldDownload)
 
-//            if (shouldDownload) {
-//                viewModelScope.launch {
-//                    val assetBytes = assetDownloadUseCase.downloadAsset(props.assetUrl)
-//
-//                    val updatedProps = props.copy(mediaBytes = assetBytes)
-//                }
-//            }
+            if (shouldDownload) {
+                viewModelScope.launch {
+                    val assetBytes = assetDownloadUseCase.downloadAsset(propItem.assetUrl)
+
+                    val updatedProps = propItem.copy(mediaBytes = assetBytes)
+                    viewStateCache.updatePropItem(updatedProps)
+
+                    _state.value = Ready(updatedProps, false)
+                }
+            }
         }
     }
 
