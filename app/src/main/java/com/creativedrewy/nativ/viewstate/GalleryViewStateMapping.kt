@@ -39,7 +39,7 @@ class GalleryViewStateMapping @Inject constructor(
                     name = nft.name,
                     description = nft.description,
                     blockchain = chainDetails,
-                    // siteUrl = nft.externalUrl,    //TODO: Not deserializing this properly from metaplex
+                    siteUrl = nft.externalUrl,
                     assetType = determineAssetType(nft),
                     assetUrl = determineAssetUrl(nft),
                     attributes = attribs,
