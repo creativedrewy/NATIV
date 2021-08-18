@@ -34,9 +34,9 @@ NATIV is the best NFT Gallery app for Android, written with 100% Android native 
 
 ## Take a Look
 
-A New Dawn | For NFT Apps | On Android
---- | --- | --- |
-<img src="assets/device_shot_1.png" width="250"> | <img src="assets/device_shot_2.png" width="250"> | <img src="assets/device_shot_3.png" width="250">
+A New Dawn | For NFT Apps | On Android | For Free!
+--- | --- | --- | --- |
+<img src="assets/device_shot_1.png" width="250"> | <img src="assets/device_shot_2.png" width="250"> | <img src="assets/device_shot_3.png" width="250"> | <img src="assets/device_shot_4.png" width="250">
 
 ## Supported Blockchains
 
