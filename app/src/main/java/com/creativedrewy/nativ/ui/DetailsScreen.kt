@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.*
@@ -159,14 +160,18 @@ fun DetailsScreen(
                             state = scrollState
                         )
                 ) {
-                    Row(
+                    ConstraintLayout(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxWidth()
                     ) {
+                        val (title, logo) = createRefs()
+
                         Text(
                             modifier = Modifier
+                                .constrainAs(title) {
+                                    top.linkTo(parent.top)
+                                    start.linkTo(parent.start)
+                                }
                                 .padding(
                                     top = 8.dp
                                 ),
@@ -175,12 +180,24 @@ fun DetailsScreen(
                             style = MaterialTheme.typography.h4,
                             color = MaterialTheme.colors.onPrimary
                         )
-                        OutlinedCircleImage(
-                            imageRes = loadedNft.blockchain.logoRes,
-                            size = 48.dp,
-                            outlineWidth = 0.dp,
-                            backgroundColor = LightPurple
-                        )
+                        Box(
+                            modifier = Modifier
+                                .constrainAs(logo) {
+                                    top.linkTo(parent.top)
+                                    end.linkTo(parent.end)
+                                }
+                                .width(48.dp)
+                                .padding(
+                                    top = 8.dp
+                                )
+                        ) {
+                            OutlinedCircleImage(
+                                imageRes = loadedNft.blockchain.logoRes,
+                                size = 48.dp,
+                                outlineWidth = 0.dp,
+                                backgroundColor = LightPurple
+                            )
+                        }
                     }
                     Text(
                         modifier = Modifier
