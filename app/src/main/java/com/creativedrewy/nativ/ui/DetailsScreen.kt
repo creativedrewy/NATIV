@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -111,6 +112,14 @@ fun DetailsScreen(
                                 outlineColor = Turquoise,
                                 imageOnlyMode = state.isLoadingAsset,
                                 alpha = if (state.isLoadingAsset) 0.5f else 1f
+                            )
+                        }
+
+                        if (state.isLoadingAsset) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .align(Alignment.Center),
+                                color = Turquoise
                             )
                         }
                     }
