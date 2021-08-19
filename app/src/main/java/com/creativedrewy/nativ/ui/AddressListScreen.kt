@@ -53,7 +53,8 @@ fun AddressListScreen(
                                 .weight(1f)
                                 .padding(start = 8.dp),
                             style = MaterialTheme.typography.h6,
-                            text = formatAddress(addr.address)
+                            text = formatAddress(addr.address),
+                            maxLines = 1
                         )
                         IconButton(
                             onClick = { viewModel.deleteAddress(addr.address, addr.chainTicker) }
@@ -74,7 +75,7 @@ fun AddressListScreen(
 
 fun formatAddress(srcAddr: String): String {
     return if (srcAddr.length >= 20) {
-        srcAddr.take(10) + "..." + srcAddr.takeLast(10)
+        srcAddr.take(8) + "..." + srcAddr.takeLast(8)
     } else {
         srcAddr
     }
