@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -105,6 +106,14 @@ fun FabScreens(
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+
+    BackHandler(
+        enabled = drawerState.isExpanded
+    ) {
+        scope.launch {
+            drawerState.close()
+        }
+    }
 
     Scaffold(
         topBar = {
