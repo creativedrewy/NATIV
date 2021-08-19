@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -47,6 +48,7 @@ object Details : AppScreen("details/{${NavArgs.nftId}}")
 @Composable
 fun AppScreenContent() {
     val animNavController = rememberAnimatedNavController()
+    val listState = rememberLazyListState()
 
     fun navigate(route: String) {
         animNavController.navigate(route) {
@@ -71,7 +73,8 @@ fun AppScreenContent() {
                 GalleryList(
                     onDetailsNavigate = { id ->
                         animNavController.navigate("details/" + id)
-                    }
+                    },
+                    listState = listState
                 )
             }
         }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -36,7 +37,8 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun GalleryList(
     viewModel: NftGalleryViewModel = hiltViewModel(),
-    onDetailsNavigate: (String) -> Unit
+    onDetailsNavigate: (String) -> Unit,
+    listState: LazyListState
 ) {
     LaunchedEffect(
         key1 = Unit,
@@ -133,6 +135,7 @@ fun GalleryList(
                 }
             ) {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .padding(
                             start = 16.dp,

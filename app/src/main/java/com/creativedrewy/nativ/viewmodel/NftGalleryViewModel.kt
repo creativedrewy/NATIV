@@ -29,8 +29,6 @@ class NftGalleryViewModel @Inject constructor(
         get() = _state
 
     fun loadNfts() {
-        _state.value = Loading()
-
         viewModelScope.launch {
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
@@ -50,6 +48,8 @@ class NftGalleryViewModel @Inject constructor(
     }
 
     private suspend fun loadFromAddresses() {
+        _state.value = Loading()
+
         var allNfts = mutableListOf<NftViewProps>()
 
         val userAddresses = userAddrsUseCase.loadUserAddresses()
