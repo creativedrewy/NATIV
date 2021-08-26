@@ -19,6 +19,7 @@ data class NftAttributes(
 
 object NftCategories {
     const val VR = "vr"
+    const val Image = "image"
 }
 
 data class NftProperties(

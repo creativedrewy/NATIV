@@ -25,6 +25,7 @@ data class NftViewProps(
     val blockchain: Blockchain = Blockchain(),
     val siteUrl: String = "",
     val displayImageUrl: String = "",
+    val videoUrl: String = "",
     val assetType: AssetType = Image,
     val assetUrl: String = "",
     val attributes: List<Attribute> = listOf(),
@@ -40,6 +41,7 @@ sealed class AssetType
 
 object Model3d : AssetType()
 object Image : AssetType()
+object ImageAndVideo : AssetType()
 
 class Blockchain(
     val ticker: String = "",
