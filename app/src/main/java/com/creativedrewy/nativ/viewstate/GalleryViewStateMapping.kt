@@ -32,7 +32,7 @@ class GalleryViewStateMapping @Inject constructor() {
                     blockchain = chainDetails,
                     siteUrl = nft.externalUrl,
                     displayImageUrl = nft.image,
-                    videoUrl = nft.animationUrl,
+                    videoUrl = nft.animationUrl ?: "",
                     assetType = determineAssetType(nft),
                     assetUrl = findDownloadUri(nft.properties) ?: "",
                     attributes = attribs,
@@ -46,7 +46,7 @@ class GalleryViewStateMapping @Inject constructor() {
         return when {
             nft.properties.category == NftCategories.VR -> Model3d
             nft.properties.category == NftCategories.Image
-                    && nft.animationUrl.endsWith(".mp4") -> ImageAndVideo
+                    && nft.animationUrl?.endsWith(".mp4") == true -> ImageAndVideo
             else -> Image
         }
     }
