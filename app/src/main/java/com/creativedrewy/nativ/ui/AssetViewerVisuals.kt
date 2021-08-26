@@ -6,9 +6,11 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.viewmodel.Image
+import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
 import com.google.accompanist.glide.rememberGlidePainter
@@ -54,6 +57,9 @@ fun AssetViewer(
             imageOnlyMode || nftProps.assetType is Image -> {
                 ImageViewer(nftProps)
             }
+            nftProps.assetType is ImageAndVideo -> {
+                VideoViewer(nftProps)
+            }
             nftProps.assetType is Model3d -> {
                 Model3dViewer(nftProps)
             }
@@ -74,6 +80,17 @@ fun ImageViewer(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
+    )
+}
+
+@Composable
+fun VideoViewer(
+    nftProps: NftViewProps
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Red)
     )
 }
 
