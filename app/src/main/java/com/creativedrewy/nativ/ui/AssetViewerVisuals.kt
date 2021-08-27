@@ -34,7 +34,7 @@ import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
@@ -100,12 +100,11 @@ fun VideoViewer(
         val context = LocalContext.current
         val player = SimpleExoPlayer.Builder(context).build()
         player.repeatMode = Player.REPEAT_MODE_ALL
-
-        val playerView = PlayerView(context)
-        playerView.controllerAutoShow = false
-        playerView.hideController()
-
         player.setMediaItem(MediaItem.fromUri(nftProps.videoUrl))
+
+        val playerView = StyledPlayerView(context)
+        playerView.useController = false
+        playerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_ALWAYS)
         playerView.player = player
 
         val playWhenReady by rememberSaveable {
