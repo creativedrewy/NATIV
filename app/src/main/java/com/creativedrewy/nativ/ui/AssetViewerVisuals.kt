@@ -6,7 +6,6 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.creativedrewy.nativ.R
@@ -29,6 +30,9 @@ import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
 import com.google.accompanist.glide.rememberGlidePainter
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
@@ -90,8 +94,27 @@ fun VideoViewer(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Red)
-    )
+    ) {
+        val context = LocalContext.current
+        val player = SimpleExoPlayer.Builder(context).build()
+        val playerView = PlayerView(context)
+
+        player.setMediaItem(MediaItem.fromUri(nftProps.videoUrl))
+        playerView.player = player
+
+        val playWhenReady by rememberSaveable {
+            mutableStateOf(true)
+        }
+
+        LaunchedEffect(player) {
+            player.prepare()
+            player.playWhenReady = playWhenReady
+        }
+
+        AndroidView(
+            factory = { playerView }
+        )
+    }
 }
 
 @ExperimentalComposeUiApi
@@ -115,14 +138,6 @@ fun Model3dViewer(
             }
         }
     }
-
-// var transformMatrix = FloatArray(16)
-// transformMatrix = tcm.getTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
-// val animAppend = (animValue.animatedValue as Float) - lastAnimValue
-// Matrix.rotateM(transformMatrix, 0, animAppend, 0f, 1.0f, 0f)
-// tcm.setTransform(tcm.getInstance(gltfAsset.root), transformMatrix)
-//
-// lastAnimValue = animValue.animatedValue as Float
 
     AndroidView(
         { context ->
