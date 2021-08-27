@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,6 +32,7 @@ import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
 import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.filament.Skybox
@@ -97,7 +99,11 @@ fun VideoViewer(
     ) {
         val context = LocalContext.current
         val player = SimpleExoPlayer.Builder(context).build()
+        player.repeatMode = Player.REPEAT_MODE_ALL
+
         val playerView = PlayerView(context)
+        playerView.controllerAutoShow = false
+        playerView.hideController()
 
         player.setMediaItem(MediaItem.fromUri(nftProps.videoUrl))
         playerView.player = player
@@ -112,6 +118,8 @@ fun VideoViewer(
         }
 
         AndroidView(
+            modifier = Modifier
+                .align(Alignment.Center),
             factory = { playerView }
         )
     }
