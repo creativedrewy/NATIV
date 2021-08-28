@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -98,29 +97,34 @@ fun VideoViewer(
             .fillMaxSize()
     ) {
         val context = LocalContext.current
-        val player = SimpleExoPlayer.Builder(context).build()
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.setMediaItem(MediaItem.fromUri(nftProps.videoUrl))
-
-        val playerView = StyledPlayerView(context)
-        playerView.useController = false
-        playerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_ALWAYS)
-        playerView.player = player
-
-        val playWhenReady by rememberSaveable {
-            mutableStateOf(true)
+        val exoPlayer = remember {
+            SimpleExoPlayer.Builder(context).build()
         }
 
-        LaunchedEffect(player) {
-            player.prepare()
-            player.playWhenReady = playWhenReady
+        DisposableEffect(
+            AndroidView(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                factory = {
+                    StyledPlayerView(context).apply {
+                        hideController()
+                        useController = false
+                        setShowBuffering(StyledPlayerView.SHOW_BUFFERING_ALWAYS)
+
+                        player = exoPlayer
+                    }
+                }
+            )
+        ) {
+            onDispose {
+                exoPlayer.release()
+            }
         }
 
-        AndroidView(
-            modifier = Modifier
-                .align(Alignment.Center),
-            factory = { playerView }
-        )
+        exoPlayer.playWhenReady = true
+        exoPlayer.repeatMode = Player.REPEAT_MODE_ALL
+        exoPlayer.setMediaItem(MediaItem.fromUri(nftProps.videoUrl))
+        exoPlayer.prepare()
     }
 }
 
