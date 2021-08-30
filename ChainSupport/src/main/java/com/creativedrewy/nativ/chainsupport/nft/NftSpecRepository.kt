@@ -15,6 +15,7 @@ class NftSpecRepository(
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(NftProperties::class.java, NftPropertiesDeserializer())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .serializeNulls()
         .create()
 ) {
 

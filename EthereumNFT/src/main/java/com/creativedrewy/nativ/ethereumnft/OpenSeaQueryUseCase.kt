@@ -2,6 +2,7 @@ package com.creativedrewy.nativ.ethereumnft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
+import com.creativedrewy.nativ.chainsupport.nft.NftCategories
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ class OpenSeaQueryUseCase @Inject constructor(
                         value = it.value
                     )
                 },
-                properties = NftProperties("image", listOf(), listOf())
+                properties = NftProperties(NftCategories.Image, listOf(), listOf())
             )
         }
 
