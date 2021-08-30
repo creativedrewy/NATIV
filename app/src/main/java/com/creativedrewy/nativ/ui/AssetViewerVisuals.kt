@@ -106,7 +106,7 @@ fun VideoViewer(
                 modifier = Modifier
                     .align(Alignment.Center),
                 factory = {
-                    StyledPlayerView(context).apply {
+                    StyledPlayerView(it).apply {
                         hideController()
                         useController = false
                         setShowBuffering(StyledPlayerView.SHOW_BUFFERING_ALWAYS)
