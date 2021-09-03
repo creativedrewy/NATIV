@@ -5,3 +5,4 @@ include ':solana'
 project(":solana").projectDir = new File("./SolanaKt/Solana")
 include ':ChainSupport'
 include ':EthereumNFT'
+include ':HarmonyOneNFT'
