@@ -39,7 +39,7 @@ class BlockchainSupportModule {
                 SupportedChain(
                     name = "Harmony One",
                     ticker = "ONE",
-                    iconRes = R.drawable.eth_diamond_black
+                    iconRes = R.drawable.harmony_logo
                 ) to harmonyLoaderUseCase
             )
         }

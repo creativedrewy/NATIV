@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.ui.theme.HotPink
@@ -154,7 +155,8 @@ fun AddAddressPanel(
                             .padding(
                                 top = 4.dp
                             ),
-                        text = chainItem.name
+                        text = chainItem.name,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
