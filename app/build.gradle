@@ -54,6 +54,7 @@ dependencies {
     implementation project(path: ':SolanaNFT')
     implementation project(path: ':ChainSupport')
     implementation project(path: ':EthereumNFT')
+    implementation project(path: ':HarmonyOneNFT')
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 

@@ -1,10 +1,13 @@
 package com.creativedrewy.nativ.harmonyonenft
 
 import android.util.Log
+import com.creativedrewy.nativ.chainsupport.NftPropertiesDeserializer
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
+import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +16,10 @@ import javax.inject.Inject
 
 class HarmonyNftRepository @Inject constructor(
     private val apiRequestClient: ApiRequestClient,
-    private val gson: Gson
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(NftProperties::class.java, NftPropertiesDeserializer())
+        .serializeNulls()
+        .create()
 ) {
 
     companion object {
