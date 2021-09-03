@@ -2,17 +2,22 @@ package com.creativedrewy.nativ.harmonyonenft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 class HarmonyNftUseCase @Inject constructor(
-
+    private val harmonyNftRepository: HarmonyNftRepository
 ): IBlockchainNftLoader {
 
     override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
-        //val dtos = withContext(Dispatchers.IO) {
-        //  openSeaRepository.getNftsForAddress(address)
-        //}
+        val sanitizedAddr = address.lowercase(Locale.getDefault())
 
-        return listOf()
+        val dtos = withContext(Dispatchers.IO) {
+            harmonyNftRepository.getErc721Nfts(sanitizedAddr)
+        }
+
+        return dtos.map { it.meta }
     }
 }
