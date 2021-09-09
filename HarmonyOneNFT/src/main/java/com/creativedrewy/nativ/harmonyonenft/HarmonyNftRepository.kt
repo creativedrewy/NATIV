@@ -42,8 +42,21 @@ class HarmonyNftRepository @Inject constructor(
     //https://explorer-v2-api.hmny.io/v0/erc1155/address/0x93e5c9ca043f00a50f28d3f5a6638172813e1a71/balances
     //https://explorer-v2-api.hmny.io/v0/erc1155/token/0x29ff1684bf3d3dd53be4a507b83648897f9d244e/assets
 
-    suspend fun getErc155Nfts() {
+    suspend fun getErc155Nfts(addr: String): List<Erc721ResultDto> {
+        val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
 
+        val erc1155List = getRemoteList(balancesUrl, object : TypeToken<List<Erc721ResultDto>>(){})
+        val results = erc1155List.flatMap {
+            val tokenAddr = it.tokenAddress
+            val tokenId = it.tokenID
+
+            val assetsUrl = "$HARMONY_BASE$ERC1155_TOKEN$tokenAddr$ASSETS"
+            val allTokenAssets = getRemoteList(assetsUrl, object : TypeToken<List<Erc721ResultDto>>(){})
+
+            allTokenAssets.filter { it.tokenID == tokenId }
+        }
+
+        return results
     }
 
     private suspend fun <T> getRemoteList(url: String, token: TypeToken<List<T>>): List<T> {

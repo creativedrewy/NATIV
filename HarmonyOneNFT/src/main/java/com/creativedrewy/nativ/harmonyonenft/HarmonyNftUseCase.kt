@@ -14,10 +14,14 @@ class HarmonyNftUseCase @Inject constructor(
     override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
         val sanitizedAddr = address.lowercase(Locale.getDefault())
 
-        val dtos = withContext(Dispatchers.IO) {
+        val erc721Dtos = withContext(Dispatchers.IO) {
             harmonyNftRepository.getErc721Nfts(sanitizedAddr)
         }
 
-        return dtos.map { it.meta }
+        val erc1155Dtos = withContext(Dispatchers.IO) {
+            harmonyNftRepository.getErc155Nfts(sanitizedAddr)
+        }
+
+        return (erc721Dtos + erc1155Dtos).map { it.meta }
     }
 }
