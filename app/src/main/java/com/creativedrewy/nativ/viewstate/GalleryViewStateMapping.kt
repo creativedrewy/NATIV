@@ -20,8 +20,8 @@ class GalleryViewStateMapping @Inject constructor() {
                 val chainDetails = Blockchain(chain.ticker, chain.iconRes)
                 val attribs = nft.attributes?.map {
                     Attribute(
-                        name = it.traitType,
-                        value = it.value
+                        name = it.traitType ?: "",
+                        value = it.value ?: ""
                     )
                 } ?: listOf()
 
