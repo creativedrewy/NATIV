@@ -24,13 +24,29 @@ class HarmonyNftRepository @Inject constructor(
 
     companion object {
         const val HARMONY_BASE = "https://explorer-v2-api.hmny.io/v0/"
+
         const val ERC721_ADDR = "erc721/address/"
+        const val ERC1155_INDEX = "erc1155/address/"
+        const val ERC1155_TOKEN = "erc1155/token/"
+
+        const val BALANCES = "/balances"
+        const val ASSETS = "/assets"
     }
 
-    //https://explorer-v2-api.hmny.io/v0/erc721/address/0x93e5c9ca043f00a50f28d3f5a6638172813e1a71/balances
-
     suspend fun getErc721Nfts(addr: String): List<Erc721ResultDto> {
-        val url = "$HARMONY_BASE$ERC721_ADDR$addr/balances"
+        val url = "$HARMONY_BASE$ERC721_ADDR$addr$BALANCES"
+
+        return getRemoteList(url, object : TypeToken<List<Erc721ResultDto>>(){})
+    }
+
+    //https://explorer-v2-api.hmny.io/v0/erc1155/address/0x93e5c9ca043f00a50f28d3f5a6638172813e1a71/balances
+    //https://explorer-v2-api.hmny.io/v0/erc1155/token/0x29ff1684bf3d3dd53be4a507b83648897f9d244e/assets
+
+    suspend fun getErc155Nfts() {
+
+    }
+
+    private suspend fun <T> getRemoteList(url: String, token: TypeToken<List<T>>): List<T> {
         val request = Request.Builder()
             .url(url)
             .get()
@@ -42,10 +58,10 @@ class HarmonyNftRepository @Inject constructor(
             when (val result = apiRequestClient.apiRequest(request)) {
                 is Success -> {
                     try {
-                        val typeToken = object : TypeToken<List<Erc721ResultDto>>() {}.type
+                        val typeToken = token.type
 
                         resultString = result.response.body?.string() ?: ""
-                        val dto = gson.fromJson<List<Erc721ResultDto>>(resultString, typeToken)
+                        val dto = gson.fromJson<List<T>>(resultString, typeToken)
 
                         dto
                     } catch (e: Exception) {
