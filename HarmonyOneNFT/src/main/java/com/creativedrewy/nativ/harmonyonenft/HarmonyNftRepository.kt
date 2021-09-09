@@ -34,23 +34,23 @@ class HarmonyNftRepository @Inject constructor(
         const val ASSETS = "/assets"
     }
 
-    suspend fun getErc721Nfts(addr: String): List<Erc721ResultDto> {
+    suspend fun getErc721Nfts(addr: String): List<HarmonyNftResultDto> {
         val url = "$HARMONY_BASE$ERC721_ADDR$addr$BALANCES"
 
-        return getRemoteList(url, object : TypeToken<List<Erc721ResultDto>>(){})
+        return getRemoteList(url, object : TypeToken<List<HarmonyNftResultDto>>(){})
     }
 
-    suspend fun getErc155Nfts(addr: String): List<Erc721ResultDto> {
+    suspend fun getErc155Nfts(addr: String): List<HarmonyNftResultDto> {
         val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
 
-        val erc1155List = getRemoteList(balancesUrl, object : TypeToken<List<Erc721ResultDto>>() {})
+        val erc1155List = getRemoteList(balancesUrl, object : TypeToken<List<HarmonyNftResultDto>>() {})
 
         return erc1155List.flatMap {
             val tokenAddr = it.tokenAddress
             val tokenId = it.tokenID
 
             val assetsUrl = "$HARMONY_BASE$ERC1155_TOKEN$tokenAddr$ASSETS"
-            val allTokenAssets = getRemoteList(assetsUrl, object : TypeToken<List<Erc721ResultDto>>() {})
+            val allTokenAssets = getRemoteList(assetsUrl, object : TypeToken<List<HarmonyNftResultDto>>() {})
 
             allTokenAssets
                 .filter { it.tokenID == tokenId }

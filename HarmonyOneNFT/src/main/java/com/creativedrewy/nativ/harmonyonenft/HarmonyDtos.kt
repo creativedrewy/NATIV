@@ -2,7 +2,7 @@ package com.creativedrewy.nativ.harmonyonenft
 
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 
-data class Erc721ResultDto(
+data class HarmonyNftResultDto(
     val ownerAddress: String?,
     val tokenAddress: String?,
     val tokenID: String?,
