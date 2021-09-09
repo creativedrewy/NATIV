@@ -37,20 +37,20 @@ class HarmonyNftRepository @Inject constructor(
     suspend fun getErc721Nfts(addr: String): List<HarmonyNftResultDto> {
         val url = "$HARMONY_BASE$ERC721_ADDR$addr$BALANCES"
 
-        return getRemoteList(url, object : TypeToken<List<HarmonyNftResultDto>>(){})
+        return getRemoteList(url)
     }
 
     suspend fun getErc155Nfts(addr: String): List<HarmonyNftResultDto> {
         val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
 
-        val erc1155List = getRemoteList(balancesUrl, object : TypeToken<List<HarmonyNftResultDto>>() {})
+        val erc1155List = getRemoteList(balancesUrl)
 
         return erc1155List.flatMap {
             val tokenAddr = it.tokenAddress
             val tokenId = it.tokenID
 
             val assetsUrl = "$HARMONY_BASE$ERC1155_TOKEN$tokenAddr$ASSETS"
-            val allTokenAssets = getRemoteList(assetsUrl, object : TypeToken<List<HarmonyNftResultDto>>() {})
+            val allTokenAssets = getRemoteList(assetsUrl)
 
             allTokenAssets
                 .filter { it.tokenID == tokenId }
@@ -64,7 +64,7 @@ class HarmonyNftRepository @Inject constructor(
         }
     }
 
-    private suspend fun <T> getRemoteList(url: String, token: TypeToken<List<T>>): List<T> {
+    private suspend fun getRemoteList(url: String): List<HarmonyNftResultDto> {
         val request = Request.Builder()
             .url(url)
             .get()
@@ -76,10 +76,10 @@ class HarmonyNftRepository @Inject constructor(
             when (val result = apiRequestClient.apiRequest(request)) {
                 is Success -> {
                     try {
-                        val typeToken = token.type
+                        val typeToken = object : TypeToken<List<HarmonyNftResultDto>>() {}.type
 
                         resultString = result.response.body?.string() ?: ""
-                        val dto = gson.fromJson<List<T>>(resultString, typeToken)
+                        val dto = gson.fromJson<List<HarmonyNftResultDto>>(resultString, typeToken)
 
                         dto
                     } catch (e: Exception) {
