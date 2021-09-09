@@ -22,6 +22,8 @@ class HarmonyNftUseCase @Inject constructor(
             harmonyNftRepository.getErc155Nfts(sanitizedAddr)
         }
 
-        return (erc721Dtos + erc1155Dtos).map { it.meta }
+        return (erc721Dtos + erc1155Dtos)
+            .filter { it.meta != null }
+            .map { it.meta!! }
     }
 }
