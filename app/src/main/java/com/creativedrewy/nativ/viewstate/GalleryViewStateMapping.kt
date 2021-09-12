@@ -20,18 +20,18 @@ class GalleryViewStateMapping @Inject constructor() {
                 val chainDetails = Blockchain(chain.ticker, chain.iconRes)
                 val attribs = nft.attributes?.map {
                     Attribute(
-                        name = it.traitType,
-                        value = it.value
+                        name = it.traitType ?: "",
+                        value = it.value ?: ""
                     )
                 } ?: listOf()
 
                 NftViewProps(
                     id = UUID.randomUUID(),
-                    name = nft.name,
-                    description = nft.description,
+                    name = nft.name ?: "",
+                    description = nft.description ?: "",
                     blockchain = chainDetails,
-                    siteUrl = nft.externalUrl,
-                    displayImageUrl = nft.image,
+                    siteUrl = nft.externalUrl ?: "",
+                    displayImageUrl = nft.image ?: "",
                     videoUrl = nft.animationUrl ?: "",
                     assetType = determineAssetType(nft),
                     assetUrl = findDownloadUri(nft.properties) ?: "",
@@ -44,18 +44,18 @@ class GalleryViewStateMapping @Inject constructor() {
 
     private fun determineAssetType(nft: NftMetadata): AssetType {
         return when {
-            nft.properties.category == NftCategories.VR -> Model3d
-            nft.properties.category == NftCategories.Image
+            nft.properties?.category == NftCategories.VR -> Model3d
+            nft.properties?.category == NftCategories.Image
                     && nft.animationUrl?.endsWith(".mp4") == true -> ImageAndVideo
             else -> Image
         }
     }
 
-    private fun findDownloadUri(props: NftProperties): String? {
-        return when (props.category) {
+    private fun findDownloadUri(props: NftProperties?): String? {
+        return when (props?.category) {
             NftCategories.VR -> {
-                props.files.firstOrNull { it.type == NftFileTypes.GLB }?.uri
-                    ?: props.files.firstOrNull()?.uri
+                props.files?.firstOrNull { it.type == NftFileTypes.GLB }?.uri
+                    ?: props.files?.firstOrNull()?.uri
             }
             else -> null //We don't actually know what we want to do in other cases yet
         }
