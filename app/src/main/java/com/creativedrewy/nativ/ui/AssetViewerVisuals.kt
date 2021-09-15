@@ -1,6 +1,8 @@
 package com.creativedrewy.nativ.ui
 
 import android.content.Context
+import android.os.Build.VERSION.SDK_INT
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
@@ -24,12 +26,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import coil.ImageLoader
+import coil.compose.rememberImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
-import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -76,10 +81,22 @@ fun AssetViewer(
 fun ImageViewer(
     nftProps: NftViewProps
 ) {
+    Log.v("Andrew", "Your URI: ${ nftProps.displayImageUrl }")
+    val context = LocalContext.current
+
     Image(
         contentScale = ContentScale.Fit,
-        painter = rememberGlidePainter(
-            request = nftProps.displayImageUrl
+        painter = rememberImagePainter(
+            data = nftProps.displayImageUrl,
+            imageLoader = ImageLoader.Builder(context)
+                .componentRegistry {
+                    if (SDK_INT >= 28) {
+                        add(ImageDecoderDecoder(context))
+                    } else {
+                        add(GifDecoder())
+                    }
+                }
+                .build()
         ),
         contentDescription = "Nft Image",
         modifier = Modifier
