@@ -30,10 +30,8 @@ class HarmonyNftRepository @Inject constructor(
 
         const val ERC721_ADDR = "erc721/address/"
         const val ERC1155_INDEX = "erc1155/address/"
-        const val ERC1155_TOKEN = "erc1155/token/"
 
         const val BALANCES = "/balances"
-        const val ASSETS = "/assets"
     }
 
     suspend fun getErc721Nfts(addr: String): List<HarmonyNftResultDto> {
@@ -52,29 +50,19 @@ class HarmonyNftRepository @Inject constructor(
         }
     }
 
-//    suspend fun getErc155Nfts(addr: String): List<HarmonyNftResultDto> {
-//        val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
-//
-//        val erc1155List = getRemoteList(balancesUrl)
-//
-//        return erc1155List.flatMap {
-//            val tokenAddr = it.tokenAddress
-//            val tokenId = it.tokenID
-//
-//            val assetsUrl = "$HARMONY_BASE$ERC1155_TOKEN$tokenAddr$ASSETS"
-//            val allTokenAssets = getRemoteList(assetsUrl, object : TypeToken<List<HarmonyNftResultDto>>() {}.type)
-//
-//            allTokenAssets
-//                .filter { it.tokenID == tokenId }
-//                .map { dto ->
-//                    dto.copy(
-//                        meta = dto.meta?.copy(
-//                            image = "$IPFS_ASSET_BASE${dto.meta.image}"
-//                        )
-//                    )
-//                }
-//        }
-//    }
+    suspend fun getErc155Nfts(addr: String): List<HarmonyNftResultDto> {
+        val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
+
+        val erc1155List = getRemoteList<List<HarmonyNftResultDto>>(balancesUrl, object : TypeToken<List<HarmonyNftResultDto>>() {}.type) ?: listOf()
+
+        return erc1155List.map { dto ->
+            dto.copy(
+                meta = dto.meta?.copy(
+                    image = "$IPFS_ASSET_BASE${dto.meta.image}"
+                )
+            )
+        }
+    }
 
     private suspend fun <T> getRemoteList(url: String, type: Type): T? {
         val request = Request.Builder()
