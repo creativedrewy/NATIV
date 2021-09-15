@@ -5,6 +5,7 @@ import com.creativedrewy.nativ.chainsupport.NftPropertiesDeserializer
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -12,6 +13,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Request
+import java.lang.reflect.Type
 import javax.inject.Inject
 
 class HarmonyNftRepository @Inject constructor(
@@ -37,34 +39,44 @@ class HarmonyNftRepository @Inject constructor(
     suspend fun getErc721Nfts(addr: String): List<HarmonyNftResultDto> {
         val url = "$HARMONY_BASE$ERC721_ADDR$addr$BALANCES"
 
-        return getRemoteList(url)
-    }
+        val erc721Dtos = getRemoteList<List<HarmonyNftResultDto>>(url, object : TypeToken<List<HarmonyNftResultDto>>() {}.type) ?: listOf()
 
-    suspend fun getErc155Nfts(addr: String): List<HarmonyNftResultDto> {
-        val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
-
-        val erc1155List = getRemoteList(balancesUrl)
-
-        return erc1155List.flatMap {
-            val tokenAddr = it.tokenAddress
-            val tokenId = it.tokenID
-
-            val assetsUrl = "$HARMONY_BASE$ERC1155_TOKEN$tokenAddr$ASSETS"
-            val allTokenAssets = getRemoteList(assetsUrl)
-
-            allTokenAssets
-                .filter { it.tokenID == tokenId }
-                .map { dto ->
-                    dto.copy(
-                        meta = dto.meta?.copy(
-                            image = "$IPFS_ASSET_BASE${dto.meta.image}"
-                        )
-                    )
-                }
+        return erc721Dtos.map { dto ->
+            if (dto.meta?.name.isNullOrEmpty() && dto.meta?.image.isNullOrEmpty()) {
+                HarmonyNftResultDto(
+                    meta = getRemoteList<NftMetadata>(dto.tokenURI ?: "", object : TypeToken<NftMetadata>() {}.type)
+                )
+            } else {
+                dto
+            }
         }
     }
 
-    private suspend fun getRemoteList(url: String): List<HarmonyNftResultDto> {
+//    suspend fun getErc155Nfts(addr: String): List<HarmonyNftResultDto> {
+//        val balancesUrl = "$HARMONY_BASE$ERC1155_INDEX$addr$BALANCES"
+//
+//        val erc1155List = getRemoteList(balancesUrl)
+//
+//        return erc1155List.flatMap {
+//            val tokenAddr = it.tokenAddress
+//            val tokenId = it.tokenID
+//
+//            val assetsUrl = "$HARMONY_BASE$ERC1155_TOKEN$tokenAddr$ASSETS"
+//            val allTokenAssets = getRemoteList(assetsUrl, object : TypeToken<List<HarmonyNftResultDto>>() {}.type)
+//
+//            allTokenAssets
+//                .filter { it.tokenID == tokenId }
+//                .map { dto ->
+//                    dto.copy(
+//                        meta = dto.meta?.copy(
+//                            image = "$IPFS_ASSET_BASE${dto.meta.image}"
+//                        )
+//                    )
+//                }
+//        }
+//    }
+
+    private suspend fun <T> getRemoteList(url: String, type: Type): T? {
         val request = Request.Builder()
             .url(url)
             .get()
@@ -76,20 +88,17 @@ class HarmonyNftRepository @Inject constructor(
             when (val result = apiRequestClient.apiRequest(request)) {
                 is Success -> {
                     try {
-                        val typeToken = object : TypeToken<List<HarmonyNftResultDto>>() {}.type
-
                         resultString = result.response.body?.string() ?: ""
-                        val dto = gson.fromJson<List<HarmonyNftResultDto>>(resultString, typeToken)
+                        val dto = gson.fromJson<T>(resultString, type)
 
                         dto
                     } catch (e: Exception) {
                         Log.e("Harmony", "Error parsing Harmony ERC721 result: $resultString")
-
-                        listOf()
+                        null
                     }
                 }
                 is Error -> {
-                    listOf()
+                    null
                 }
             }
         }

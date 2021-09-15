@@ -18,9 +18,10 @@ class HarmonyNftUseCase @Inject constructor(
             harmonyNftRepository.getErc721Nfts(sanitizedAddr)
         }
 
-        val erc1155Dtos = withContext(Dispatchers.IO) {
-            harmonyNftRepository.getErc155Nfts(sanitizedAddr)
-        }
+        val erc1155Dtos = listOf<HarmonyNftResultDto>()
+//        val erc1155Dtos = withContext(Dispatchers.IO) {
+//            harmonyNftRepository.getErc155Nfts(sanitizedAddr)
+//        }
 
         return (erc721Dtos + erc1155Dtos)
             .filter { it.meta != null }
