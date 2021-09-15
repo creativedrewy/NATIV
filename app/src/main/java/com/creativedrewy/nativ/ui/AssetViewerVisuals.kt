@@ -1,13 +1,11 @@
 package com.creativedrewy.nativ.ui
 
 import android.content.Context
-import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,10 +24,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import coil.ImageLoader
-import coil.compose.rememberImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
@@ -42,6 +38,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
+import com.skydoves.landscapist.glide.GlideImage
 import java.nio.ByteBuffer
 
 @ExperimentalComposeUiApi
@@ -84,21 +81,13 @@ fun ImageViewer(
     Log.v("Andrew", "Your URI: ${ nftProps.displayImageUrl }")
     val context = LocalContext.current
 
-    Image(
+    GlideImage(
         contentScale = ContentScale.Fit,
-        painter = rememberImagePainter(
-            data = nftProps.displayImageUrl,
-            imageLoader = ImageLoader.Builder(context)
-                .componentRegistry {
-                    if (SDK_INT >= 28) {
-                        add(ImageDecoderDecoder(context))
-                    } else {
-                        add(GifDecoder())
-                    }
-                }
-                .build()
-        ),
+        imageModel = nftProps.displayImageUrl,
         contentDescription = "Nft Image",
+        requestOptions = RequestOptions()
+            .timeout(15000)
+            .diskCacheStrategy(DiskCacheStrategy.ALL),
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f)
