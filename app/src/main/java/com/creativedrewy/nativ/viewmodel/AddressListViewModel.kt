@@ -35,6 +35,10 @@ class AddressListViewModel @Inject constructor(
         get() = _state
 
     init {
+        loadAddresses()
+    }
+
+    fun loadAddresses() {
         val chainList = chainSupport.supportedChains
 
         viewModelScope.launch {
