@@ -1,7 +1,6 @@
 package com.creativedrewy.nativ.ui
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
@@ -78,9 +79,6 @@ fun AssetViewer(
 fun ImageViewer(
     nftProps: NftViewProps
 ) {
-    Log.v("Andrew", "Your URI: ${ nftProps.displayImageUrl }")
-    val context = LocalContext.current
-
     GlideImage(
         contentScale = ContentScale.Fit,
         imageModel = nftProps.displayImageUrl,
@@ -90,7 +88,17 @@ fun ImageViewer(
             .diskCacheStrategy(DiskCacheStrategy.ALL),
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
+            .aspectRatio(1f),
+        loading = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = HotPink
+                )
+            }
+        }
     )
 }
 
