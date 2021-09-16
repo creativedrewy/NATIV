@@ -12,6 +12,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,7 +66,9 @@ class NftGalleryViewModel @Inject constructor(
             allNfts.addAll(nftProps.orEmpty())
         }
 
-        allNfts = allNfts.sortedBy { it.name }.toMutableList()
+        allNfts = allNfts
+            .sortedBy { it.name.lowercase(Locale.getDefault()) }
+            .toMutableList()
 
         cachedAddrCount = userAddresses.size
         viewStateCache.updateCache(allNfts)
@@ -73,3 +76,4 @@ class NftGalleryViewModel @Inject constructor(
         _state.value = Display(allNfts)
     }
 }
+
