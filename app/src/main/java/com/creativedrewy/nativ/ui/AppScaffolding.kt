@@ -69,6 +69,7 @@ fun AppScreenContent() {
         composable(Gallery.route) {
             FabScreens(
                 navDest = it.destination,
+                showFab = false,
                 onNavItemClick = { route -> navigate(route) }
             ) {
                 GalleryList(
@@ -82,6 +83,7 @@ fun AppScreenContent() {
         composable(Accounts.route) {
             FabScreens(
                 navDest = it.destination,
+                showFab = true,
                 onNavItemClick = { route -> navigate(route) }
             ) {
                 AddressListScreen()
@@ -101,6 +103,7 @@ fun AppScreenContent() {
 @Composable
 fun FabScreens(
     navDest: NavDestination?,
+    showFab: Boolean,
     onNavItemClick: (String) -> Unit,
     screeContent: @Composable () -> Unit
 ) {
@@ -137,13 +140,15 @@ fun FabScreens(
             }
         },
         floatingActionButton = {
-            MainAppFab {
-                scope.launch {
-                    drawerState.expand()
+            if (showFab) {
+                MainAppFab {
+                    scope.launch {
+                        drawerState.expand()
+                    }
                 }
             }
         },
-        isFloatingActionButtonDocked = true,
+        isFloatingActionButtonDocked = showFab,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
             BottomAppBar(
