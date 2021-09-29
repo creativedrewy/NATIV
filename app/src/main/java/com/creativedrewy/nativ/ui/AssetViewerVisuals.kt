@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -24,12 +24,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
-import com.google.accompanist.glide.rememberGlidePainter
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -37,6 +39,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
+import com.skydoves.landscapist.glide.GlideImage
 import java.nio.ByteBuffer
 
 @ExperimentalComposeUiApi
@@ -76,15 +79,26 @@ fun AssetViewer(
 fun ImageViewer(
     nftProps: NftViewProps
 ) {
-    Image(
+    GlideImage(
         contentScale = ContentScale.Fit,
-        painter = rememberGlidePainter(
-            request = nftProps.displayImageUrl
-        ),
+        imageModel = nftProps.displayImageUrl,
         contentDescription = "Nft Image",
+        requestOptions = RequestOptions()
+            .timeout(15000)
+            .diskCacheStrategy(DiskCacheStrategy.ALL),
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
+            .aspectRatio(1f),
+        loading = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = HotPink
+                )
+            }
+        }
     )
 }
 

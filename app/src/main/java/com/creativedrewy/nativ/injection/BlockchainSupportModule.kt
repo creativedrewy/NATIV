@@ -5,6 +5,7 @@ import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.ethereumnft.OpenSeaQueryUseCase
+import com.creativedrewy.nativ.harmonyonenft.HarmonyNftUseCase
 import com.creativedrewy.solananft.metaplex.MetaplexNftUseCase
 import dagger.Module
 import dagger.Provides
@@ -20,7 +21,8 @@ class BlockchainSupportModule {
     @Provides
     fun providesISupportedChains(
         metaplexLoaderUseCase: MetaplexNftUseCase,
-        openSeaLoaderUseCase: OpenSeaQueryUseCase
+        openSeaLoaderUseCase: OpenSeaQueryUseCase,
+        harmonyLoaderUseCase: HarmonyNftUseCase
     ): ISupportedChains {
         return object : ISupportedChains {
             override val chainsToNftLoadersMap: Map<SupportedChain, IBlockchainNftLoader> = mapOf(
@@ -33,7 +35,12 @@ class BlockchainSupportModule {
                     name = "Ethereum",
                     ticker = "ETH",
                     iconRes = R.drawable.eth_diamond_black
-                ) to openSeaLoaderUseCase
+                ) to openSeaLoaderUseCase,
+                SupportedChain(
+                    name = "Harmony One",
+                    ticker = "ONE",
+                    iconRes = R.drawable.harmony_logo
+                ) to harmonyLoaderUseCase
             )
         }
     }
