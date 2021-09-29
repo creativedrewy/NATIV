@@ -40,9 +40,9 @@ A New Dawn | For NFT Apps | On Android | For Free!
 
 ## Supported Blockchains
 
-<img src="EthereumNFT/src/main/res/drawable/eth_diamond_black.png" width="64"> | <img src="SolanaNFT/src/main/res/drawable/solana_logo.png" width="64"> | <img src="assets/whats_next.png" width="64">
---- | --- | --- |
-Ethereum | Solana | What's Next? |
+<img src="EthereumNFT/src/main/res/drawable/eth_diamond_black.png" width="54"> | <img src="HarmonyOneNFT/src/main/res/drawable/harmony_logo.png" width="80"> | <img src="SolanaNFT/src/main/res/drawable/solana_logo.png" width="60"> | <img src="assets/whats_next.png" width="64">
+--- | --- | --- | --- |
+Ethereum | Harmony One | Solana | What's Next? |
 
 But it won't stop here; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchains, see the contributing section.
 
