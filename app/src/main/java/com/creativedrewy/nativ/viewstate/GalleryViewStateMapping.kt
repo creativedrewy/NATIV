@@ -42,10 +42,10 @@ class GalleryViewStateMapping @Inject constructor() {
         }
     }
 
-    private fun determineAssetType(nft: NftMetadata?): AssetType {
+    private fun determineAssetType(nft: NftMetadata): AssetType {
         return when {
-            nft?.properties?.category == NftCategories.VR -> Model3d
-            nft?.properties?.category == NftCategories.Image
+            nft.properties?.category == NftCategories.VR -> Model3d
+            nft.properties?.category == NftCategories.Image
                     && nft.animationUrl?.endsWith(".mp4") == true -> ImageAndVideo
             else -> Image
         }
@@ -54,8 +54,8 @@ class GalleryViewStateMapping @Inject constructor() {
     private fun findDownloadUri(props: NftProperties?): String? {
         return when (props?.category) {
             NftCategories.VR -> {
-                props.files.firstOrNull { it.type == NftFileTypes.GLB }?.uri
-                    ?: props.files.firstOrNull()?.uri
+                props.files?.firstOrNull { it.type == NftFileTypes.GLB }?.uri
+                    ?: props.files?.firstOrNull()?.uri
             }
             else -> null //We don't actually know what we want to do in other cases yet
         }

@@ -122,7 +122,6 @@ fun VideoViewer(
                 factory = {
                     StyledPlayerView(it).apply {
                         hideController()
-                        useController = false
                         setShowBuffering(StyledPlayerView.SHOW_BUFFERING_ALWAYS)
 
                         player = exoPlayer

@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,13 @@ fun AddressListScreen(
     viewModel: AddressListViewModel = hiltViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsState().value
+
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            viewModel.loadAddresses()
+        }
+    )
 
     Box(
         modifier = Modifier

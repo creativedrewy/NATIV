@@ -1,7 +1,5 @@
 package com.creativedrewy.nativ.chainsupport.nft
 
-import com.google.gson.annotations.SerializedName
-
 data class NftMetadata(
     val name: String?,
     val symbol: String?,
@@ -14,7 +12,6 @@ data class NftMetadata(
 )
 
 data class NftAttributes(
-    @SerializedName("trait_type")
     val traitType: String?,
     val value: String?,
     val traitCount: Int = 0
@@ -27,7 +24,7 @@ object NftCategories {
 
 data class NftProperties(
     val category: String?,
-    val files: List<FileDetails>,
+    val files: List<FileDetails>?,
     val creators: List<NftCreator>?
 )
 
@@ -42,6 +39,6 @@ data class FileDetails(
 
 data class NftCreator(
     val address: String?,
-    val verified: Boolean?,
+    val verified: Boolean = false,
     val share: Int = 0
 )
