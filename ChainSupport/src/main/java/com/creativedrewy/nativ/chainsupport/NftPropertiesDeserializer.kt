@@ -16,7 +16,7 @@ class NftPropertiesDeserializer: JsonDeserializer<NftProperties> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): NftProperties {
         val propsSrc = json.asJsonObject
 
-        val category = propsSrc.get("category").asString
+        val category = propsSrc.get("category")?.asString ?: ""
         val creators = propsSrc.get("creators").asJsonArray.map {
             context.deserialize<NftCreator>(it, NftCreator::class.java)
         }
