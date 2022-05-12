@@ -23,8 +23,10 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
         }
     }
 
-    @ExperimentalAnimationApi
-    @ExperimentalComposeUiApi
+    @OptIn(
+        ExperimentalAnimationApi::class,
+        ExperimentalComposeUiApi::class
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

@@ -22,7 +22,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.Turquoise
@@ -91,7 +91,7 @@ fun AppScreenContent() {
         }
         composable(
             route = Details.route,
-            arguments = listOf(navArgument(NavArgs.nftId) { type = NavType.StringType } )
+            arguments = listOf(navArgument(NavArgs.nftId) { type = NavType.StringType })
         ) {
             DetailsScreen(it.arguments?.getString(NavArgs.nftId) ?: "")
         }
