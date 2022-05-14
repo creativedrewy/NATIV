@@ -51,7 +51,8 @@ class MetaplexNftUseCase @Inject constructor(
                     val sanitizedUri = metaplexData.data.uri.replace("\u0000", "")
 
                     val details = withContext(Dispatchers.IO) {
-                        nftSpecRepository.getNftDetails(sanitizedUri)
+                        //nftSpecRepository.getNftDetails(sanitizedUri)
+                        NftMetadata(null, null, null, null, null, null, null, null)
                     }
                     details?.let { item -> metaplexNfts.add(item) }
                 } catch (e: Exception) {
