@@ -2,12 +2,14 @@ package com.creativedrewy.solananft.metaplex
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
+import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
 import com.creativedrewy.solananft.accounts.AccountRepository
 import com.solana.core.PublicKey
 import com.solana.vendor.borshj.Borsh
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import org.bitcoinj.core.Base58
 import java.util.*
@@ -64,5 +66,9 @@ class MetaplexNftUseCase @Inject constructor(
         }
 
         return metaplexNfts
+    }
+
+    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> {
+        TODO("Not yet implemented")
     }
 }

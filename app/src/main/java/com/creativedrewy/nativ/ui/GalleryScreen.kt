@@ -195,7 +195,7 @@ fun GalleryItemCard(
                     )
                     .fillMaxWidth()
                     .placeholder(
-                        visible = true,
+                        visible = nftProps.name.isBlank(),
                         color = DarkBlue,
                         shape = RoundedCornerShape(8.dp),
                         highlight = PlaceholderHighlight.shimmer(

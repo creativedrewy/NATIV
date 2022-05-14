@@ -1,5 +1,7 @@
 package com.creativedrewy.nativ.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
@@ -9,6 +11,7 @@ import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -51,7 +54,7 @@ class NftGalleryViewModel @Inject constructor(
     private suspend fun loadFromAddresses() {
         _state.value = Loading()
 
-        var allNfts = mutableListOf<NftViewProps>()
+        var allNfts = mutableStateListOf<NftViewProps>()
 
         val userAddresses = userAddrsUseCase.loadUserAddresses()
         userAddresses.forEach { chainAddr ->
@@ -67,13 +70,21 @@ class NftGalleryViewModel @Inject constructor(
         }
 
         allNfts = allNfts
-            .sortedBy { it.name.lowercase(Locale.getDefault()) }
             .toMutableList()
+            .sortedBy { it.name.lowercase(Locale.getDefault()) }
+            .toMutableStateList()
 
         cachedAddrCount = userAddresses.size
         viewStateCache.updateCache(allNfts)
 
-        _state.value = Display(allNfts)
+        _state.emit(Display(allNfts))
+
+        delay(1000)
+
+        val updateNft = allNfts[0].copy(name = "BLAH BLAH BLAH")
+        allNfts[0] = updateNft
+
+        _state.emit(Display(allNfts))
     }
 }
 

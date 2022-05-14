@@ -1,8 +1,10 @@
 package com.creativedrewy.nativ.harmonyonenft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
+import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -25,5 +27,9 @@ class HarmonyNftUseCase @Inject constructor(
         return (erc721Dtos + erc1155Dtos)
             .filter { it.meta != null }
             .map { it.meta!! }
+    }
+
+    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> {
+        TODO("Not yet implemented")
     }
 }

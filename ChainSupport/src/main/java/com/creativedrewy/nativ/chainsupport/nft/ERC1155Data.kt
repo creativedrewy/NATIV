@@ -1,5 +1,10 @@
 package com.creativedrewy.nativ.chainsupport.nft
 
+sealed class NftMetaStatus
+
+class Pending : NftMetaStatus()
+class MetaLoaded : NftMetaStatus()
+
 data class NftMetadata(
     val name: String?,
     val symbol: String?,

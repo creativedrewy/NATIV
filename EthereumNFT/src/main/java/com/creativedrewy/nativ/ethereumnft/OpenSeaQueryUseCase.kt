@@ -1,11 +1,9 @@
 package com.creativedrewy.nativ.ethereumnft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
-import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
-import com.creativedrewy.nativ.chainsupport.nft.NftCategories
-import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
-import com.creativedrewy.nativ.chainsupport.nft.NftProperties
+import com.creativedrewy.nativ.chainsupport.nft.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -37,5 +35,9 @@ class OpenSeaQueryUseCase @Inject constructor(
         }
 
         return nftSpecResults
+    }
+
+    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> {
+        TODO("Not yet implemented")
     }
 }
