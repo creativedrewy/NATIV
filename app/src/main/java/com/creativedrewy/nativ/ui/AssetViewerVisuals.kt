@@ -27,11 +27,16 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.creativedrewy.nativ.R
+import com.creativedrewy.nativ.ui.theme.DarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.ShimmerBlue
 import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.placeholder.shimmer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -48,7 +53,8 @@ fun AssetViewer(
     nftProps: NftViewProps,
     outlineColor: Color,
     imageOnlyMode: Boolean = false,
-    alpha: Float = 1.0f
+    alpha: Float = 1.0f,
+    isLoading: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -60,6 +66,14 @@ fun AssetViewer(
                 border = BorderStroke(2.dp, outlineColor),
                 shape = RoundedCornerShape(16.dp)
             )
+            .placeholder(
+                visible = isLoading,
+                color = DarkBlue,
+                //shape = RoundedCornerShape(8.dp),
+                highlight = PlaceholderHighlight.shimmer(
+                    highlightColor = ShimmerBlue,
+                ),
+            ),
     ) {
         when {
             imageOnlyMode || nftProps.assetType is Image -> {
