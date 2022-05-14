@@ -69,7 +69,6 @@ fun AssetViewer(
             .placeholder(
                 visible = isLoading,
                 color = DarkBlue,
-                //shape = RoundedCornerShape(8.dp),
                 highlight = PlaceholderHighlight.shimmer(
                     highlightColor = ShimmerBlue,
                 ),

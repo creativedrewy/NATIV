@@ -202,8 +202,7 @@ fun GalleryItemCard(
                             highlightColor = ShimmerBlue,
                         ),
                     ),
-                //text = nftProps.name,
-                text = "",
+                text = nftProps.name,
                 style = MaterialTheme.typography.h5
             )
             Row(
