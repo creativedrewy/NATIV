@@ -10,8 +10,6 @@ import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -61,12 +59,15 @@ class NftGalleryViewModel @Inject constructor(
             val chain = chainSupport.supportedChains.toTypedArray().find { it.ticker == chainAddr.blockchain }
                 ?: throw IllegalArgumentException("Could not find a supported chain match with db address; this shouldn't happen")
 
-            val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain)
-            val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
+            val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain) ?: throw IllegalArgumentException("")
+            //val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
+            nftLoader.loadNftsThenMetaForAddress(chainAddr.pubKey).collect { uriMetaMap ->
 
-            val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it, chain) }?.awaitAll()
+            }
 
-            allNfts.addAll(nftProps.orEmpty())
+            //val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it, chain) }?.awaitAll()
+
+            //allNfts.addAll(nftProps.orEmpty())
         }
 
         allNfts = allNfts
@@ -77,14 +78,14 @@ class NftGalleryViewModel @Inject constructor(
         cachedAddrCount = userAddresses.size
         viewStateCache.updateCache(allNfts)
 
-        _state.emit(Display(allNfts))
+        _state.value = Display(allNfts)
 
-        delay(1000)
-
-        val updateNft = allNfts[0].copy(name = "BLAH BLAH BLAH")
-        allNfts[0] = updateNft
-
-        _state.emit(Display(allNfts))
+//        delay(1000)
+//
+//        val updateNft = allNfts[0].copy(name = "BLAH BLAH BLAH")
+//        allNfts[0] = updateNft
+//
+//        _state.value = Display(allNfts)
     }
 }
 
