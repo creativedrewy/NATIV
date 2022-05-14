@@ -29,7 +29,8 @@ data class NftViewProps(
     val assetType: AssetType = Image,
     val assetUrl: String = "",
     val attributes: List<Attribute> = listOf(),
-    val mediaBytes: ByteArray = byteArrayOf()
+    val mediaBytes: ByteArray = byteArrayOf(),
+    val isPending: Boolean = true
 )
 
 data class Attribute(
