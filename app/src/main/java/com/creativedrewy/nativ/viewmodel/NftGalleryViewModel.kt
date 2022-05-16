@@ -36,12 +36,11 @@ class NftGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
-            //TODO: Re-implement viewstate cache
-//            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
-//                _state.value = Display(viewStateCache.cachedProps)
-//            } else {
+            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
+                _state.value = Display(viewStateCache.cachedProps)
+            } else {
                 loadFromAddresses()
-//            }
+            }
         }
     }
 
@@ -70,7 +69,7 @@ class NftGalleryViewModel @Inject constructor(
                     when (metaResult) {
                         is MetaLoaded -> {
                             val viewProp = if (nftMap.containsKey(uriKey)) {
-                                val props = nftMap[uriKey]!!    //!! Okay as we have just validated this isn't the case
+                                val props = nftMap[uriKey]!!    //Bang bang okay as we have just validated this isn't the case
 
                                 viewStateMapping.updateNftMetaIntoViewState(props, metaResult.metadata, chain)
                             } else {
@@ -93,6 +92,9 @@ class NftGalleryViewModel @Inject constructor(
                         .toMutableList()
                         .sortedBy { it.name.lowercase(Locale.getDefault()) }
                         .toMutableStateList()
+
+                    cachedAddrCount = userAddresses.size
+                    viewStateCache.updateCache(dispNfts.toList())
 
                     _state.value = Display(dispNfts)
                 }
