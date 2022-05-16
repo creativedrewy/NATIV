@@ -3,6 +3,7 @@ package com.creativedrewy.nativ.chainsupport.nft
 sealed class NftMetaStatus
 
 object Pending : NftMetaStatus()
+object Invalid : NftMetaStatus()
 
 class MetaLoaded(
     val metadata: NftMetadata

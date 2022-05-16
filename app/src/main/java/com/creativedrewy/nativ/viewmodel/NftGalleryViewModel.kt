@@ -1,11 +1,11 @@
 package com.creativedrewy.nativ.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
+import com.creativedrewy.nativ.chainsupport.nft.Invalid
 import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
 import com.creativedrewy.nativ.chainsupport.nft.Pending
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
@@ -54,8 +54,6 @@ class NftGalleryViewModel @Inject constructor(
     private suspend fun loadFromAddresses() {
         _state.value = Loading()
 
-        var allNfts = mutableStateListOf<NftViewProps>()
-
         val nftMap = mutableMapOf<String, NftViewProps>()
 
         val userAddresses = userAddrsUseCase.loadUserAddresses()
@@ -67,20 +65,22 @@ class NftGalleryViewModel @Inject constructor(
             //val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
             nftLoader.loadNftsThenMetaForAddress(chainAddr.pubKey).collect { uriMetaMap ->
                 uriMetaMap.keys.forEach { uriKey ->
-
                     val metaResult = uriMetaMap[uriKey] ?: throw IllegalArgumentException("You must include a meta result with all nft Uris")
-                    val viewProp = when (metaResult) {
+                    when (metaResult) {
                         is MetaLoaded -> {
                             val props = nftMap[uriKey] ?: throw IllegalArgumentException("")
 
-                            viewStateMapping.updateNftMetaIntoViewState(props, metaResult.metadata, chain)
+                            val viewProp = viewStateMapping.updateNftMetaIntoViewState(props, metaResult.metadata, chain)
+                            nftMap[uriKey] = viewProp
                         }
                         Pending -> {
-                            viewStateMapping.createPendingNftViewProps(chain)
+                            val viewProp = viewStateMapping.createPendingNftViewProps(chain)
+                            nftMap[uriKey] = viewProp
+                        }
+                        Invalid -> {
+                            nftMap.remove(uriKey)
                         }
                     }
-
-                    nftMap[uriKey] = viewProp
 
                     val dispNfts = nftMap.values
                         .toMutableList()
@@ -89,29 +89,8 @@ class NftGalleryViewModel @Inject constructor(
 
                     _state.value = Display(dispNfts)
                 }
-
-//                allNfts = allNfts
-//                    .toMutableList()
-//                    .sortedBy { it.name.lowercase(Locale.getDefault()) }
-//                    .toMutableStateList()
-
-                //cachedAddrCount = userAddresses.size
-                //viewStateCache.updateCache(allNfts)
-
-                //_state.value = Display(allNfts)
             }
-
-            //val nftProps = nftData?.map { viewStateMapping.mapNftMetaToViewState(it, chain) }?.awaitAll()
-
-            //allNfts.addAll(nftProps.orEmpty())
         }
-
-//        delay(1000)
-//
-//        val updateNft = allNfts[0].copy(name = "BLAH BLAH BLAH")
-//        allNfts[0] = updateNft
-//
-//        _state.value = Display(allNfts)
     }
 }
 

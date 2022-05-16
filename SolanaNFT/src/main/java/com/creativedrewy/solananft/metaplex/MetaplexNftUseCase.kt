@@ -90,7 +90,7 @@ class MetaplexNftUseCase @Inject constructor(
                 emit(statusMap)
             } catch (e: Exception) {
                 Log.e("SOL", "Attached data is not Metaplex Meta format", e)
-                statusMap.remove(uri)
+                statusMap[uri] = Invalid
             }
         }
     }
