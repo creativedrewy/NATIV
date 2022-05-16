@@ -67,6 +67,9 @@ class MetaplexNftUseCase @Inject constructor(
         return metaplexNfts
     }
 
+    /**
+     * Load and emit the full set of *possible* NFTs, then emit each NFT's metadata as it is loaded
+     */
     override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
         val metaUris = loadNftMetadataUris(address)
 
@@ -75,6 +78,7 @@ class MetaplexNftUseCase @Inject constructor(
             statusMap[uri] = Pending
         }
 
+        //First emit the uris with "pending" entries for loading status
         emit(statusMap)
 
         metaUris.forEach { uri ->
@@ -87,6 +91,7 @@ class MetaplexNftUseCase @Inject constructor(
                     statusMap[uri] = MetaLoaded(item)
                 }
 
+                //Emit each loaded & parsed metadata entry as they come in
                 emit(statusMap)
             } catch (e: Exception) {
                 Log.e("SOL", "Attached data is not Metaplex Meta format", e)
@@ -96,7 +101,7 @@ class MetaplexNftUseCase @Inject constructor(
     }
 
     /**
-     *
+     * Load the set of URIs for the account's metaplex NFTs
      */
     private suspend fun loadNftMetadataUris(address: String): List<String> {
         val nftUris = mutableListOf<String>()
