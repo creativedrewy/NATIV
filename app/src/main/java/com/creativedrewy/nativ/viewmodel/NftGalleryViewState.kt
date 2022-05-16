@@ -10,7 +10,13 @@ sealed class NftGalleryViewState(
 
 class Empty : NftGalleryViewState(listOf())
 
-class Loading : NftGalleryViewState(listOf())
+class Loading(
+    private val items: List<NftViewProps> = listOf()
+) : NftGalleryViewState(items)
+
+class Completed(
+    val items: List<NftViewProps>
+) : NftGalleryViewState(items)
 
 data class Display(
     val items: List<NftViewProps>
@@ -29,7 +35,8 @@ data class NftViewProps(
     val assetType: AssetType = Image,
     val assetUrl: String = "",
     val attributes: List<Attribute> = listOf(),
-    val mediaBytes: ByteArray = byteArrayOf()
+    val mediaBytes: ByteArray = byteArrayOf(),
+    val isPending: Boolean = true
 )
 
 data class Attribute(

@@ -1,11 +1,12 @@
 package com.creativedrewy.nativ.ethereumnft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
-import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
-import com.creativedrewy.nativ.chainsupport.nft.NftCategories
-import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
-import com.creativedrewy.nativ.chainsupport.nft.NftProperties
+import com.creativedrewy.nativ.chainsupport.LoaderNftResult
+import com.creativedrewy.nativ.chainsupport.SupportedChain
+import com.creativedrewy.nativ.chainsupport.nft.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -13,7 +14,7 @@ class OpenSeaQueryUseCase @Inject constructor(
     private val openSeaRepository: OpenSeaRepository
 ) : IBlockchainNftLoader {
 
-    override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
+    override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = flow {
         val dtos = withContext(Dispatchers.IO) {
             openSeaRepository.getNftsForAddress(address)
         }
@@ -36,6 +37,14 @@ class OpenSeaQueryUseCase @Inject constructor(
             )
         }
 
-        return nftSpecResults
+        //Opeansea doesn't currently have a special tokenUri, so we use externalUrl instead
+        val nftMap = mutableMapOf<String, NftMetaStatus>()
+        nftSpecResults
+            .filter { it.externalUrl != null }
+            .forEach { nft ->
+                nftMap[nft.externalUrl!!] = MetaLoaded(nft)
+            }
+
+        emit(LoaderNftResult(chain, nftMap))
     }
 }

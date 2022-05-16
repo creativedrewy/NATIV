@@ -24,12 +24,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.ui.theme.CardDarkBlue
-import com.creativedrewy.nativ.ui.theme.HotPink
-import com.creativedrewy.nativ.ui.theme.LightPurple
+import com.creativedrewy.nativ.ui.theme.*
 import com.creativedrewy.nativ.viewmodel.Loading
 import com.creativedrewy.nativ.viewmodel.NftGalleryViewModel
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -184,18 +185,31 @@ fun GalleryItemCard(
             AssetViewer(
                 nftProps = nftProps,
                 outlineColor = HotPink,
-                imageOnlyMode = true
+                imageOnlyMode = true,
+                isLoading = nftProps.isPending
             )
             Text(
                 modifier = Modifier
                     .padding(
                         top = 8.dp
+                    )
+                    .fillMaxWidth()
+                    .placeholder(
+                        visible = nftProps.isPending,
+                        color = DarkBlue,
+                        shape = RoundedCornerShape(8.dp),
+                        highlight = PlaceholderHighlight.shimmer(
+                            highlightColor = ShimmerBlue,
+                        ),
                     ),
                 text = nftProps.name,
                 style = MaterialTheme.typography.h5
             )
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(
+                        top = 8.dp
+                    ),
                 horizontalArrangement = Arrangement.End
             ) {
                 OutlinedCircleImage(
