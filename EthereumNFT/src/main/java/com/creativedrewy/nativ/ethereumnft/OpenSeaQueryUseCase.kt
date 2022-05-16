@@ -12,10 +12,6 @@ class OpenSeaQueryUseCase @Inject constructor(
     private val openSeaRepository: OpenSeaRepository
 ) : IBlockchainNftLoader {
 
-    override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
-        return listOf()
-    }
-
     override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
         val dtos = withContext(Dispatchers.IO) {
             openSeaRepository.getNftsForAddress(address)

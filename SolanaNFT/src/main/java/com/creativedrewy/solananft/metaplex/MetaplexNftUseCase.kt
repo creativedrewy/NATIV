@@ -20,10 +20,6 @@ class MetaplexNftUseCase @Inject constructor(
     private val borsh: Borsh
 ) : IBlockchainNftLoader {
 
-    override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
-        return listOf()
-    }
-
     /**
      * Load and emit the full set of *possible* NFTs, then emit each NFT's metadata as it is loaded
      */

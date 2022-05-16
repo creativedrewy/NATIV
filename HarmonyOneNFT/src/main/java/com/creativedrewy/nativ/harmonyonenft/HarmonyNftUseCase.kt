@@ -3,7 +3,6 @@ package com.creativedrewy.nativ.harmonyonenft
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
 import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
-import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,10 +13,6 @@ import javax.inject.Inject
 class HarmonyNftUseCase @Inject constructor(
     private val harmonyNftRepository: HarmonyNftRepository
 ): IBlockchainNftLoader {
-
-    override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
-        return listOf()
-    }
 
     override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
         val sanitizedAddr = address.lowercase(Locale.getDefault())
