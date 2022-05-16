@@ -85,11 +85,13 @@ class MetaplexNftUseCase @Inject constructor(
      *
      */
     private suspend fun loadNftMetadataUris(address: String): List<String> {
-        return try {
+        val nftUris = mutableListOf<String>()
+
+        try {
             val accountKey = PublicKey(address)
 
             val ownerAccounts = accountsRepository.getTokenAccountsByOwner(accountKey)
-            return ownerAccounts.filter { acct ->
+            ownerAccounts.filter { acct ->
                 acct.account.data.parsed.info.tokenAmount.amount == 1.0 &&
                         acct.account.data.parsed.info.tokenAmount.decimals == 0.0
             }.map {
@@ -107,21 +109,21 @@ class MetaplexNftUseCase @Inject constructor(
                 )
 
                 val accountInfo = accountsRepository.getAccountInfo(pdaAddr.address)
-                return try {
+                try {
                     val borshData = Base64.getDecoder().decode(accountInfo.data[0])
-                    val metaplexData: MetaplexMeta =
-                        borsh.deserialize(borshData, MetaplexMeta::class.java)
+                    val metaplexData: MetaplexMeta = borsh.deserialize(borshData, MetaplexMeta::class.java)
 
                     // Sometimes the borsh-deserialized data has NUL chars on the end, so we need to sanitize
-                    return@map metaplexData.data.uri.replace("\u0000", "")
+                    val uri = metaplexData.data.uri.replace("\u0000", "")
+                    nftUris.add(uri)
                 } catch (e: Exception) {
                     Log.e("SOL", "Attached data is not Metaplex Meta format", e)
-                    listOf()
                 }
             }
         } catch (e: Exception) {
             Log.e("SOL", "Error attempting to load nfts for address $address", e)
-            listOf()
         }
+
+        return nftUris
     }
 }

@@ -76,7 +76,7 @@ class NftGalleryViewModel @Inject constructor(
                             viewStateMapping.updateNftMetaIntoViewState(props, metaResult.metadata, chain)
                         }
                         Pending -> {
-                            viewStateMapping.createPendingNftViewProps()
+                            viewStateMapping.createPendingNftViewProps(chain)
                         }
                     }
 

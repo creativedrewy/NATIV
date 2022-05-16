@@ -11,9 +11,12 @@ import javax.inject.Inject
 
 class GalleryViewStateMapping @Inject constructor() {
 
-    fun createPendingNftViewProps(): NftViewProps {
+    fun createPendingNftViewProps(chain: SupportedChain): NftViewProps {
+        val chainDetails = Blockchain(chain.ticker, chain.iconRes)
+
         return NftViewProps(
             id = UUID.randomUUID(),
+            blockchain = chainDetails,
             isPending = true
         )
     }
