@@ -36,11 +36,12 @@ class NftGalleryViewModel @Inject constructor(
         viewModelScope.launch {
             val addrCount = userAddrsUseCase.loadUserAddresses().size
 
-            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
-                _state.value = Display(viewStateCache.cachedProps)
-            } else {
+            //TODO: Re-implement viewstate cache
+//            if (addrCount == cachedAddrCount && viewStateCache.hasCache) {
+//                _state.value = Display(viewStateCache.cachedProps)
+//            } else {
                 loadFromAddresses()
-            }
+//            }
         }
     }
 
@@ -62,15 +63,21 @@ class NftGalleryViewModel @Inject constructor(
                 ?: throw IllegalArgumentException("Could not find a supported chain match with db address; this shouldn't happen")
 
             val nftLoader = chainSupport.findLoaderByTicker(chainAddr.blockchain) ?: throw IllegalArgumentException("Could not find a loader for blockchain type")
-            //val nftData = nftLoader?.loadNftsForAddress(chainAddr.pubKey)
             nftLoader.loadNftsThenMetaForAddress(chainAddr.pubKey).collect { uriMetaMap ->
                 uriMetaMap.keys.forEach { uriKey ->
                     val metaResult = uriMetaMap[uriKey] ?: throw IllegalArgumentException("You must include a meta result with all nft Uris")
+
                     when (metaResult) {
                         is MetaLoaded -> {
-                            val props = nftMap[uriKey] ?: throw IllegalArgumentException("")
+                            val viewProp = if (nftMap.containsKey(uriKey)) {
+                                val props = nftMap[uriKey]!!    //!! Okay as we have just validated this isn't the case
 
-                            val viewProp = viewStateMapping.updateNftMetaIntoViewState(props, metaResult.metadata, chain)
+                                viewStateMapping.updateNftMetaIntoViewState(props, metaResult.metadata, chain)
+                            } else {
+                                val pendingProp = viewStateMapping.createPendingNftViewProps(chain)
+                                viewStateMapping.updateNftMetaIntoViewState(pendingProp, metaResult.metadata, chain)
+                            }
+
                             nftMap[uriKey] = viewProp
                         }
                         Pending -> {
