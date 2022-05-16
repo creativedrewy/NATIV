@@ -34,7 +34,7 @@ class MetaplexNftUseCase @Inject constructor(
         }
 
         //First emit the uris with "pending" entries for loading status
-        //emit(statusMap)
+        emit(LoaderNftResult(chain, statusMap))
 
         metaUris.forEach { uri ->
             try {
@@ -47,7 +47,7 @@ class MetaplexNftUseCase @Inject constructor(
                 }
 
                 //Emit each loaded & parsed metadata entry as they come in
-                //emit(statusMap)
+                emit(LoaderNftResult(chain, statusMap))
             } catch (e: Exception) {
                 Log.e("SOL", "Attached data is not Metaplex Meta format", e)
                 statusMap[uri] = Invalid
