@@ -186,7 +186,7 @@ fun GalleryItemCard(
                 nftProps = nftProps,
                 outlineColor = HotPink,
                 imageOnlyMode = true,
-                isLoading = true
+                isLoading = nftProps.isPending
             )
             Text(
                 modifier = Modifier
@@ -195,7 +195,7 @@ fun GalleryItemCard(
                     )
                     .fillMaxWidth()
                     .placeholder(
-                        visible = nftProps.name.isBlank(),
+                        visible = nftProps.isPending,
                         color = DarkBlue,
                         shape = RoundedCornerShape(8.dp),
                         highlight = PlaceholderHighlight.shimmer(

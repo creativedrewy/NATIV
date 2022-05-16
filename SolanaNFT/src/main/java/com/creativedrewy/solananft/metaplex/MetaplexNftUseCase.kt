@@ -2,10 +2,7 @@ package com.creativedrewy.solananft.metaplex
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
-import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
-import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
-import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
-import com.creativedrewy.nativ.chainsupport.nft.Pending
+import com.creativedrewy.nativ.chainsupport.nft.*
 import com.creativedrewy.solananft.accounts.AccountRepository
 import com.solana.core.PublicKey
 import com.solana.vendor.borshj.Borsh
@@ -79,6 +76,23 @@ class MetaplexNftUseCase @Inject constructor(
         }
 
         emit(statusMap)
+
+        metaUris.forEach { uri ->
+            try {
+                val details = withContext(Dispatchers.IO) {
+                    nftSpecRepository.getNftDetails(uri)
+                }
+
+                details?.let { item ->
+                    statusMap[uri] = MetaLoaded(item)
+                }
+
+                emit(statusMap)
+            } catch (e: Exception) {
+                Log.e("SOL", "Attached data is not Metaplex Meta format", e)
+                statusMap.remove(uri)
+            }
+        }
     }
 
     /**
