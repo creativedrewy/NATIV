@@ -4,6 +4,7 @@ import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.nft.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -12,6 +13,10 @@ class OpenSeaQueryUseCase @Inject constructor(
 ) : IBlockchainNftLoader {
 
     override suspend fun loadNftsForAddress(address: String): List<NftMetadata> {
+        return listOf()
+    }
+
+    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
         val dtos = withContext(Dispatchers.IO) {
             openSeaRepository.getNftsForAddress(address)
         }
@@ -34,10 +39,14 @@ class OpenSeaQueryUseCase @Inject constructor(
             )
         }
 
-        return nftSpecResults
-    }
+        //Opeansea doesn't currently have a special tokenUri, so we use externalUrl instead
+        val nftMap = mutableMapOf<String, NftMetaStatus>()
+        nftSpecResults
+            .filter { it.externalUrl != null }
+            .forEach { nft ->
+                nftMap[nft.externalUrl!!] = MetaLoaded(nft)
+            }
 
-    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> {
-        TODO("Not yet implemented")
+        emit(nftMap)
     }
 }
