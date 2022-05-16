@@ -71,7 +71,8 @@ class NftGalleryViewModel @Inject constructor(
 
         loadingFlows.merge()
             .onCompletion {
-                //TODO: Wire this up
+                val items = _state.value.listItems
+                _state.value = Completed(items)
             }
             .collect {
                 val chain = it.supportedChain
@@ -110,7 +111,7 @@ class NftGalleryViewModel @Inject constructor(
                     cachedAddrCount = userAddresses.size
                     viewStateCache.updateCache(dispNfts.toList())
 
-                    _state.value = Display(dispNfts)
+                    _state.value = Loading(dispNfts)
                 }
             }
     }
