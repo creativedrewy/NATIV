@@ -45,6 +45,6 @@ class OpenSeaQueryUseCase @Inject constructor(
                 nftMap[nft.externalUrl!!] = MetaLoaded(nft)
             }
 
-        //emit(nftMap)
+        emit(LoaderNftResult(chain, nftMap))
     }
 }
