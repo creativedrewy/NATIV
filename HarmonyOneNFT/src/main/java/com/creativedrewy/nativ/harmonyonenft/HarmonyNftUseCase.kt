@@ -1,6 +1,8 @@
 package com.creativedrewy.nativ.harmonyonenft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
+import com.creativedrewy.nativ.chainsupport.LoaderNftResult
+import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
 import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +16,7 @@ class HarmonyNftUseCase @Inject constructor(
     private val harmonyNftRepository: HarmonyNftRepository
 ): IBlockchainNftLoader {
 
-    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
+    override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = flow {
         val sanitizedAddr = address.lowercase(Locale.getDefault())
         val metaMap = mutableMapOf<String, NftMetaStatus>()
 
@@ -28,7 +30,7 @@ class HarmonyNftUseCase @Inject constructor(
             }
 
         //Emit the ERC721 NFTs
-        emit(metaMap)
+        //emit(metaMap)
 
         val erc1155Dtos = withContext(Dispatchers.IO) {
             harmonyNftRepository.getErc155Nfts(sanitizedAddr)
@@ -40,6 +42,6 @@ class HarmonyNftUseCase @Inject constructor(
             }
 
         //Emit all loaded NFTs
-        emit(metaMap)
+        //emit(metaMap)
     }
 }

@@ -1,6 +1,8 @@
 package com.creativedrewy.nativ.ethereumnft
 
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
+import com.creativedrewy.nativ.chainsupport.LoaderNftResult
+import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +14,7 @@ class OpenSeaQueryUseCase @Inject constructor(
     private val openSeaRepository: OpenSeaRepository
 ) : IBlockchainNftLoader {
 
-    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
+    override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = flow {
         val dtos = withContext(Dispatchers.IO) {
             openSeaRepository.getNftsForAddress(address)
         }
@@ -43,6 +45,6 @@ class OpenSeaQueryUseCase @Inject constructor(
                 nftMap[nft.externalUrl!!] = MetaLoaded(nft)
             }
 
-        emit(nftMap)
+        //emit(nftMap)
     }
 }

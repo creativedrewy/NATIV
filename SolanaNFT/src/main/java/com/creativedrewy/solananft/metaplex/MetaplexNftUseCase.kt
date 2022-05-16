@@ -2,6 +2,8 @@ package com.creativedrewy.solananft.metaplex
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
+import com.creativedrewy.nativ.chainsupport.LoaderNftResult
+import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.*
 import com.creativedrewy.solananft.accounts.AccountRepository
 import com.solana.core.PublicKey
@@ -23,7 +25,7 @@ class MetaplexNftUseCase @Inject constructor(
     /**
      * Load and emit the full set of *possible* NFTs, then emit each NFT's metadata as it is loaded
      */
-    override suspend fun loadNftsThenMetaForAddress(address: String): Flow<Map<String, NftMetaStatus>> = flow {
+    override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = flow {
         val metaUris = loadNftMetadataUris(address)
 
         val statusMap = mutableMapOf<String, NftMetaStatus>()
@@ -32,7 +34,7 @@ class MetaplexNftUseCase @Inject constructor(
         }
 
         //First emit the uris with "pending" entries for loading status
-        emit(statusMap)
+        //emit(statusMap)
 
         metaUris.forEach { uri ->
             try {
@@ -45,7 +47,7 @@ class MetaplexNftUseCase @Inject constructor(
                 }
 
                 //Emit each loaded & parsed metadata entry as they come in
-                emit(statusMap)
+                //emit(statusMap)
             } catch (e: Exception) {
                 Log.e("SOL", "Attached data is not Metaplex Meta format", e)
                 statusMap[uri] = Invalid
