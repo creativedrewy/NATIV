@@ -30,7 +30,7 @@ class HarmonyNftUseCase @Inject constructor(
             }
 
         //Emit the ERC721 NFTs
-        //emit(metaMap)
+        emit(LoaderNftResult(chain, metaMap))
 
         val erc1155Dtos = withContext(Dispatchers.IO) {
             harmonyNftRepository.getErc155Nfts(sanitizedAddr)
@@ -42,6 +42,6 @@ class HarmonyNftUseCase @Inject constructor(
             }
 
         //Emit all loaded NFTs
-        //emit(metaMap)
+        emit(LoaderNftResult(chain, metaMap))
     }
 }
