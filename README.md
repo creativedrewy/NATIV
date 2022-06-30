@@ -58,7 +58,7 @@ NATIV is built using 100% Kotlin with all of the latest and greatest Android API
 - Filament for 3d model rendering
 - Blockchain APIs consumed with just OkHttp & GSon
 
-## Contributing
+## Building & Running
 
 ```shell
 git clone git@github.com:creativedrewy/NATIV.git
