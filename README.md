@@ -58,17 +58,16 @@ NATIV is built using 100% Kotlin with all of the latest and greatest Android API
 - Filament for 3d model rendering
 - Blockchain APIs consumed with just OkHttp & GSon
 
-## Support Development
-
-An online marketplace is coming where you will be able to support NATIV's development by purchasing some exclusive NFT merchandise, but for now you can support NATIV by sending any crypto to:
-
-Ethereum: 0x93E5c9cA043F00A50F28D3F5a6638172813E1a71
-<br />
-Solana: 6aEBYFt9sX1R3rPsiYWiLK1QA5vj84Sj89wC2fNLYyMw
-
 ## Contributing
 
-TBD
+```shell
+git clone git@github.com:creativedrewy/NATIV.git
+cd NATIV
+git submodule init
+git submodule update
+```
+
+This should enable you to build & run the app!
 
 ## License
 
