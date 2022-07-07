@@ -16,6 +16,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+        buildConfigField "String", "OPENSEA_KEY", "\"${properties.getProperty("OPENSEA_API_KEY")}\""
     }
 
     buildTypes {

@@ -21,6 +21,7 @@ class OpenSeaRepository @Inject constructor(
     suspend fun getNftsForAddress(addr: String): OpenSeaResultsDto {
         val request = Request.Builder()
             .url(OPENSEA_BASE + addr)
+            .header("X-API-KEY", BuildConfig.OPENSEA_KEY)
             .get()
             .build()
 
