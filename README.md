@@ -67,7 +67,17 @@ git submodule init
 git submodule update
 ```
 
-This should enable you to build & run the app!
+When opening the project in Android Studio, be sure to select the `build.gradle` file from the project root.
+
+NOTE: In order load NFTs from the OpenSea API, you'll need to request an API key here: [Link](https://docs.opensea.io/reference/request-an-api-key)
+
+In the root `local.properties` file add the following line:
+
+```shell
+# ./local.properties
+
+OPENSEA_API_KEY=<Your API Key>
+```
 
 ## License
 
