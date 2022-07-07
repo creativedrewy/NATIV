@@ -8,12 +8,16 @@ import javax.inject.Singleton
 class ViewStateCache @Inject constructor() {
 
     private var props: List<NftViewProps> = listOf()
+    private var cachedMediaBytes: MutableMap<String, ByteArray> = mutableMapOf()
 
     val hasCache: Boolean
         get() = props.isNotEmpty()
 
     val cachedProps: List<NftViewProps>
         get() = props
+
+    val mediaCache: Map<String, ByteArray>
+        get() = cachedMediaBytes
 
     fun clearCache() {
         props = listOf()
@@ -23,12 +27,7 @@ class ViewStateCache @Inject constructor() {
         props = propsList
     }
 
-    fun updatePropItem(prop: NftViewProps) {
-        val mutableProps = props.toMutableList()
-
-        mutableProps.removeIf { it.id == prop.id }
-        mutableProps.add(prop)
-
-        props = mutableProps.sortedBy { it.name }.toList()
+    fun cacheMediaItem(id: String, mediaBytes: ByteArray) {
+        cachedMediaBytes[id] = mediaBytes
     }
 }

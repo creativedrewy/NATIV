@@ -30,10 +30,7 @@ import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.DarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.ShimmerBlue
-import com.creativedrewy.nativ.viewmodel.Image
-import com.creativedrewy.nativ.viewmodel.ImageAndVideo
-import com.creativedrewy.nativ.viewmodel.Model3d
-import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.viewmodel.*
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -50,7 +47,7 @@ import java.nio.ByteBuffer
 @ExperimentalComposeUiApi
 @Composable
 fun AssetViewer(
-    nftProps: NftViewProps,
+    nftProps: PropsWithMedia,
     outlineColor: Color,
     imageOnlyMode: Boolean = false,
     alpha: Float = 1.0f,
@@ -75,13 +72,13 @@ fun AssetViewer(
             ),
     ) {
         when {
-            imageOnlyMode || nftProps.assetType is Image -> {
-                ImageViewer(nftProps)
+            imageOnlyMode || nftProps.props.assetType is Image -> {
+                ImageViewer(nftProps.props)
             }
-            nftProps.assetType is ImageAndVideo -> {
-                VideoViewer(nftProps)
+            nftProps.props.assetType is ImageAndVideo -> {
+                VideoViewer(nftProps.props)
             }
-            nftProps.assetType is Model3d -> {
+            nftProps.props.assetType is Model3d -> {
                 Model3dViewer(nftProps)
             }
         }
@@ -157,7 +154,7 @@ fun VideoViewer(
 @ExperimentalComposeUiApi
 @Composable
 fun Model3dViewer(
-    nftProp: NftViewProps
+    nftProp: PropsWithMedia
 ) {
     fun readCompressedAsset(context: Context, assetName: String): ByteBuffer {
         val input = context.assets.open(assetName)

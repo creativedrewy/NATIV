@@ -28,6 +28,7 @@ import com.creativedrewy.nativ.ui.theme.*
 import com.creativedrewy.nativ.viewmodel.Loading
 import com.creativedrewy.nativ.viewmodel.NftGalleryViewModel
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.viewmodel.PropsWithMedia
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -183,7 +184,7 @@ fun GalleryItemCard(
                 .padding(24.dp)
         ) {
             AssetViewer(
-                nftProps = nftProps,
+                nftProps = PropsWithMedia(nftProps),
                 outlineColor = HotPink,
                 imageOnlyMode = true,
                 isLoading = nftProps.isPending

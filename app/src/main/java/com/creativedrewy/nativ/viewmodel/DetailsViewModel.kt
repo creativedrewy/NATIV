@@ -12,8 +12,13 @@ import javax.inject.Inject
 
 sealed class ScreenState
 
-class Ready(
+class PropsWithMedia(
     val props: NftViewProps,
+    val mediaBytes: ByteArray = byteArrayOf()
+)
+
+class Ready(
+    val item: PropsWithMedia,
     val isLoadingAsset: Boolean = true
 ): ScreenState()
 
@@ -32,24 +37,32 @@ class DetailsViewModel @Inject constructor(
 
     fun loadNftDetails(id: String) {
         viewStateCache.cachedProps.firstOrNull { it.id.toString() == id }?.let { propItem ->
-            val shouldDownload = shouldDownloadAsset(propItem)
+            val shouldDownload = shouldDownloadAsset(propItem, viewStateCache)
 
-            _state.value = Ready(propItem, shouldDownload)
+            _state.value = Ready(PropsWithMedia(propItem), shouldDownload)
 
             if (shouldDownload) {
                 viewModelScope.launch {
                     val assetBytes = assetDownloadUseCase.downloadAsset(propItem.assetUrl)
 
-                    val updatedProps = propItem.copy(mediaBytes = assetBytes)
-                    viewStateCache.updatePropItem(updatedProps)
-
-                    _state.value = Ready(updatedProps, false)
+                    viewStateCache.cacheMediaItem(propItem.id.toString(), assetBytes)
+                    updateViewState(propItem)
                 }
+            } else {
+                updateViewState(propItem)
             }
         }
     }
 
-    private fun shouldDownloadAsset(nft: NftViewProps): Boolean {
-        return nft.assetType is Model3d && nft.mediaBytes.isEmpty()
+    private fun updateViewState(nft: NftViewProps) {
+        viewStateCache.mediaCache[nft.id.toString()]?.let { mediaBytes ->
+            val displayData = PropsWithMedia(nft, mediaBytes)
+
+            _state.value = Ready(displayData, false)
+        }
+    }
+
+    private fun shouldDownloadAsset(nft: NftViewProps, cache: ViewStateCache): Boolean {
+        return nft.assetType is Model3d && !cache.mediaCache.containsKey(nft.id.toString())
     }
 }

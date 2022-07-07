@@ -40,7 +40,6 @@ class GalleryViewStateMapping @Inject constructor() {
             assetType = determineAssetType(nft),
             assetUrl = findDownloadUri(nft.properties) ?: "",
             attributes = attribs,
-            mediaBytes = byteArrayOf(),
             isPending = false
         )
     }

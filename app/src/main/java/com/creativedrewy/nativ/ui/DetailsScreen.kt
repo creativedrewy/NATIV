@@ -72,7 +72,8 @@ fun DetailsScreen(
         ) {
             if (viewState is Ready) {
                 val state = viewState as Ready
-                val loadedNft = state.props
+                val propsWithMedia = state.item
+                val loadedNft = state.item.props
 
                 Box(
                     modifier = Modifier
@@ -109,7 +110,7 @@ fun DetailsScreen(
                                 .background(Color.Transparent)
                         ) {
                             AssetViewer(
-                                nftProps = loadedNft,
+                                nftProps = propsWithMedia,
                                 outlineColor = Turquoise,
                                 imageOnlyMode = state.isLoadingAsset,
                                 alpha = if (state.isLoadingAsset) 0.5f else 1f
