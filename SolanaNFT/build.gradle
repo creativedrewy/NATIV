@@ -36,8 +36,6 @@ android {
 }
 
 dependencies {
-    //implementation(name: 'Solana-release', ext: 'aar')
-    api project(path: ':solana')
     implementation project(path: ':ChainSupport')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -47,6 +45,8 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
+
+    implementation 'com.github.metaplex-foundation:SolanaKT:1.1.5'
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.google.code.gson:gson:2.8.7'
