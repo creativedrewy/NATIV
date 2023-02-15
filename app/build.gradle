@@ -53,8 +53,6 @@ android {
 dependencies {
     implementation project(path: ':SolanaNFT')
     implementation project(path: ':ChainSupport')
-    implementation project(path: ':EthereumNFT')
-    implementation project(path: ':HarmonyOneNFT')
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"

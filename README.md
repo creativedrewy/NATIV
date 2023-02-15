@@ -32,19 +32,13 @@
 
 NATIV is the best NFT Gallery app for Android, written with 100% Android native APIs and code.
 
+<!--
 ## Take a Look
 
 A New Dawn | For NFT Apps | On Android | For Free!
 --- | --- | --- | --- |
 <img src="assets/device_shot_1.png" width="250"> | <img src="assets/device_shot_2.png" width="250"> | <img src="assets/device_shot_3.png" width="250"> | <img src="assets/device_shot_4.png" width="250">
-
-## Supported Blockchains
-
-<img src="EthereumNFT/src/main/res/drawable/eth_diamond_black.png" width="54"> | <img src="HarmonyOneNFT/src/main/res/drawable/harmony_logo.png" width="80"> | <img src="SolanaNFT/src/main/res/drawable/solana_logo.png" width="60"> | <img src="assets/whats_next.png" width="64">
---- | --- | --- | --- |
-Ethereum | Harmony One | Solana | What's Next? |
-
-But it won't stop here; NATIV aims to be the premiere NFT gallery for all blockchains. If you want to help add support for additional blockchains, see the contributing section.
+-->
 
 ## Technologies
 
@@ -63,26 +57,14 @@ NATIV is built using 100% Kotlin with all of the latest and greatest Android API
 ```shell
 git clone git@github.com:creativedrewy/NATIV.git
 cd NATIV
-git submodule init
-git submodule update
 ```
 
 When opening the project in Android Studio, be sure to select the `build.gradle` file from the project root.
 
-NOTE: In order load NFTs from the OpenSea API, you'll need to request an API key here: [Link](https://docs.opensea.io/reference/request-an-api-key)
-
-In the root `local.properties` file add the following line:
-
-```shell
-# ./local.properties
-
-OPENSEA_API_KEY=<Your API Key>
-```
-
 ## License
 
 ```
-Copyright 2021 Andrew Watson
+Copyright 2023 Andrew Watson
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
