@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -15,6 +18,14 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        val properties = Properties()
+        if (project.rootProject.file("local.properties").exists()) {
+            properties.load(FileInputStream("local.properties"))
+        }
+
+        buildConfigField("String", "RPC_API_KEY", "\"${properties.getProperty("RPC_API_KEY")}\"")
+        buildConfigField("String", "RPC_BASE_URL", "\"https://rpc.helius.xyz/?api-key=\"")
     }
 
     buildTypes {
