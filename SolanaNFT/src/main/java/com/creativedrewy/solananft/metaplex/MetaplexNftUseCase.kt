@@ -1,19 +1,94 @@
 package com.creativedrewy.solananft.metaplex
 
-import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.LoaderNftResult
 import com.creativedrewy.nativ.chainsupport.SupportedChain
-import com.creativedrewy.nativ.chainsupport.nft.*
+import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
+import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
+import com.creativedrewy.nativ.chainsupport.nft.Pending
 import com.creativedrewy.solananft.accounts.AccountRepository
+import com.metaplex.lib.Metaplex
+import com.metaplex.lib.drivers.indenty.ReadOnlyIdentityDriver
+import com.metaplex.lib.drivers.network.HttpNetworkDriver
+import com.metaplex.lib.drivers.network.HttpPostRequest
+import com.metaplex.lib.drivers.network.HttpRequest
+import com.metaplex.lib.drivers.rpc.JsonRpcDriver
+import com.metaplex.lib.drivers.rpc.RpcRequest
+import com.metaplex.lib.drivers.rpc.RpcResponse
+import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
+import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
 import com.solana.core.PublicKey
+import com.solana.networking.RPCEndpoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import org.bitcoinj.core.Base58
-import java.util.*
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.json.Json
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
+
+/**
+ * TODO: This will be removed w/ an update to metaplex sdk
+ */
+class NewJdkHttpDriver : HttpNetworkDriver {
+    override suspend fun makeHttpRequest(request: HttpRequest): String =
+        suspendCancellableCoroutine { continuation ->
+
+            with(URL(request.url).openConnection() as HttpURLConnection) {
+                // config
+                requestMethod = request.method
+                request.properties.forEach { (key, value) ->
+                    setRequestProperty(key, value)
+                }
+
+                // cancellation
+                continuation.invokeOnCancellation { disconnect() }
+
+                // send request body
+                request.body?.run {
+                    doOutput = true
+                    outputStream.write(toByteArray(Charsets.UTF_8))
+                    outputStream.flush()
+                    outputStream.close()
+                }
+
+                // read response
+                val responseString = when (responseCode) {
+                    HttpURLConnection.HTTP_OK -> inputStream.bufferedReader().use { it.readText() }
+                    else -> errorStream.bufferedReader().use { it.readText() }
+                }
+
+                continuation.resumeWith(Result.success(responseString))
+            }
+        }
+}
+
+/**
+ * TODO: This will be removed w/ an update to metaplex sdk
+ */
+class NewJdkRpcDriver(val url: String) : JsonRpcDriver {
+
+    constructor(url: URL) : this(url.toString())
+
+    private val json = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+    }
+
+    override suspend fun <R> makeRequest(request: RpcRequest, resultSerializer: KSerializer<R>): RpcResponse<R> =
+        NewJdkHttpDriver().makeHttpRequest(
+            HttpPostRequest(
+                url = url,
+                properties = mapOf("Content-Type" to "application/json; charset=utf-8"),
+                body = json.encodeToString(RpcRequest.serializer(), request)
+            )
+        ).run {
+            json.decodeFromString(RpcResponse.serializer(resultSerializer), this)
+        }
+}
 
 class MetaplexNftUseCase @Inject constructor(
     private val accountsRepository: AccountRepository,
@@ -23,79 +98,47 @@ class MetaplexNftUseCase @Inject constructor(
     /**
      * Load and emit the full set of *possible* NFTs, then emit each NFT's metadata as it is loaded
      */
-    override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = flow {
-        val metaUris = loadNftMetadataUris(address)
+    override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = channelFlow {
+        withContext(Dispatchers.IO) {
+            val ownerPublicKey = PublicKey(address)
+            val solanaConnection = SolanaConnectionDriver(NewJdkRpcDriver(RPCEndpoint.devnetSolana.url))
+            val solanaIdentityDriver = ReadOnlyIdentityDriver(ownerPublicKey, solanaConnection)
+            val storageDriver = OkHttpSharedStorageDriver()
+            val metaplex = Metaplex(solanaConnection, solanaIdentityDriver, storageDriver)
 
-        val statusMap = mutableMapOf<String, NftMetaStatus>()
-        metaUris.forEach { uri ->
-            statusMap[uri] = Pending
-        }
+            val result = metaplex.nft.findAllByOwner(ownerPublicKey)
+            val nfts = result.getOrThrow().filterNotNull()
 
-        //First emit the uris with "pending" entries for loading status
-        emit(LoaderNftResult(chain, statusMap))
-
-        metaUris.forEach { uri ->
-            try {
-                val details = withContext(Dispatchers.IO) {
-                    nftSpecRepository.getNftDetails(uri)
-                }
-
-                details?.let { item ->
-                    statusMap[uri] = MetaLoaded(item)
-                }
-
-                //Emit each loaded & parsed metadata entry as they come in
-                emit(LoaderNftResult(chain, statusMap))
-            } catch (e: Exception) {
-                Log.e("SOL", "Attached data is not Metaplex Meta format", e)
-                statusMap[uri] = Invalid
+            val statusMap = mutableMapOf<String, NftMetaStatus>()
+            nfts.map { it.uri }.forEach { uri ->
+                statusMap[uri] = Pending
             }
+
+            //First emit the uris with "pending" entries for loading status
+            send(LoaderNftResult(chain, statusMap))
         }
-    }
 
-    /**
-     * Load the set of URIs for the account's metaplex NFTs
-     */
-    private suspend fun loadNftMetadataUris(address: String): List<String> {
-        val nftUris = mutableListOf<String>()
+//        nfts.filterNotNull().forEach {
+//            val meta = it.metadata(storageDriver).getOrThrow()
+//        }
 
-        try {
-            val accountKey = PublicKey(address)
 
-            val ownerAccounts = accountsRepository.getTokenAccountsByOwner(accountKey)
-            ownerAccounts.filter { acct ->
-                acct.account.data.parsed.info.tokenAmount.amount == 1.0 &&
-                        acct.account.data.parsed.info.tokenAmount.decimals == 0.0
-            }.map {
-                val mintAddress = it.account.data.parsed.info.mint
-
-                val pdaSeeds = listOf(
-                    MetaplexContstants.METADATA_NAME.toByteArray(),
-                    Base58.decode(MetaplexContstants.METADATA_ACCOUNT_PUBKEY),
-                    Base58.decode(mintAddress)
-                )
-
-                val pdaAddr = PublicKey.findProgramAddress(
-                    pdaSeeds,
-                    PublicKey(MetaplexContstants.METADATA_ACCOUNT_PUBKEY)
-                )
-
-                val accountInfo = accountsRepository.getAccountInfo(pdaAddr.address)
-                try {
-                    val borshData = Base64.getDecoder().decode(accountInfo.data[0])
-//                    val metaplexData: MetaplexMeta = borsh.deserialize(borshData, MetaplexMeta::class.java)
+//        metaUris.forEach { uri ->
+//            try {
+//                val details = withContext(Dispatchers.IO) {
+//                    nftSpecRepository.getNftDetails(uri)
+//                }
 //
-//                    // Sometimes the borsh-deserialized data has NUL chars on the end, so we need to sanitize
-//                    val uri = metaplexData.data.uri.replace("\u0000", "")
-//                    nftUris.add(uri)
-                } catch (e: Exception) {
-                    Log.e("SOL", "Attached data is not Metaplex Meta format", e)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("SOL", "Error attempting to load nfts for address $address", e)
-        }
-
-        return nftUris
+//                details?.let { item ->
+//                    statusMap[uri] = MetaLoaded(item)
+//                }
+//
+//                //Emit each loaded & parsed metadata entry as they come in
+//                emit(LoaderNftResult(chain, statusMap))
+//            } catch (e: Exception) {
+//                Log.e("SOL", "Attached data is not Metaplex Meta format", e)
+//                statusMap[uri] = Invalid
+//            }
+//        }
     }
 }
