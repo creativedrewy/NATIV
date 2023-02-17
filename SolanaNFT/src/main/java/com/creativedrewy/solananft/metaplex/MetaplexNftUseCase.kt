@@ -7,7 +7,6 @@ import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.*
 import com.creativedrewy.solananft.accounts.AccountRepository
 import com.solana.core.PublicKey
-import com.solana.vendor.borshj.Borsh
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -18,8 +17,7 @@ import javax.inject.Inject
 
 class MetaplexNftUseCase @Inject constructor(
     private val accountsRepository: AccountRepository,
-    private val nftSpecRepository: NftSpecRepository,
-    private val borsh: Borsh
+    private val nftSpecRepository: NftSpecRepository
 ) : IBlockchainNftLoader {
 
     /**
@@ -85,11 +83,11 @@ class MetaplexNftUseCase @Inject constructor(
                 val accountInfo = accountsRepository.getAccountInfo(pdaAddr.address)
                 try {
                     val borshData = Base64.getDecoder().decode(accountInfo.data[0])
-                    val metaplexData: MetaplexMeta = borsh.deserialize(borshData, MetaplexMeta::class.java)
-
-                    // Sometimes the borsh-deserialized data has NUL chars on the end, so we need to sanitize
-                    val uri = metaplexData.data.uri.replace("\u0000", "")
-                    nftUris.add(uri)
+//                    val metaplexData: MetaplexMeta = borsh.deserialize(borshData, MetaplexMeta::class.java)
+//
+//                    // Sometimes the borsh-deserialized data has NUL chars on the end, so we need to sanitize
+//                    val uri = metaplexData.data.uri.replace("\u0000", "")
+//                    nftUris.add(uri)
                 } catch (e: Exception) {
                     Log.e("SOL", "Attached data is not Metaplex Meta format", e)
                 }

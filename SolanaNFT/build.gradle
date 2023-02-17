@@ -41,7 +41,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-    implementation("com.github.metaplex-foundation:SolanaKT:1.1.5")
+    implementation("com.github.metaplex-foundation:metaplex-android:1.4.1") {
+        exclude group: 'com.github.metaplex-foundation.kborsh', module: 'kborsh-jvm'
+    }
 
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation("com.google.code.gson:gson:2.9.0")
