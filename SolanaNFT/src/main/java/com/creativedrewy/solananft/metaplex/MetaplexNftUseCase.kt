@@ -6,7 +6,6 @@ import com.creativedrewy.nativ.chainsupport.LoaderNftResult
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.*
 import com.creativedrewy.solananft.BuildConfig
-import com.creativedrewy.solananft.accounts.AccountRepository
 import com.metaplex.lib.Metaplex
 import com.metaplex.lib.drivers.indenty.ReadOnlyIdentityDriver
 import com.metaplex.lib.drivers.network.HttpNetworkDriver
@@ -17,9 +16,6 @@ import com.metaplex.lib.drivers.rpc.RpcRequest
 import com.metaplex.lib.drivers.rpc.RpcResponse
 import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
 import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
-import com.metaplex.lib.modules.nfts.models.JsonMetadata
-import com.metaplex.lib.modules.nfts.models.NFT
-import com.metaplex.lib.modules.token.models.metadata
 import com.solana.core.PublicKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -31,8 +27,6 @@ import kotlinx.serialization.json.Json
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * TODO: This will be removed w/ an update to metaplex sdk
@@ -95,7 +89,6 @@ class NewJdkRpcDriver(val url: String) : JsonRpcDriver {
 }
 
 class MetaplexNftUseCase @Inject constructor(
-    private val accountsRepository: AccountRepository,
     private val nftSpecRepository: NftSpecRepository
 ) : IBlockchainNftLoader {
 
@@ -123,30 +116,29 @@ class MetaplexNftUseCase @Inject constructor(
         send(LoaderNftResult(chain, statusMap))
 
         nfts.forEach { nft ->
-            withContext(Dispatchers.IO) {
-                val details = nft.metadata(OkHttpSharedStorageDriver()).getOrThrow()
-
-                val mappedDetails = mapJsonMetaToNftMeta(details)
-                statusMap[nft.uri] = MetaLoaded(mappedDetails)
-
-                Log.v("Andrew", "Emitting an updated NFT")
-//                send(LoaderNftResult(chain, statusMap))
+            val details = withContext(Dispatchers.IO) {
+                nftSpecRepository.getNftDetails(nft.uri)
             }
+
+            val mappedDetails = mapToIntermediaryMeta(details!!)
+            statusMap[nft.uri] = MetaLoaded(mappedDetails)
+
+            Log.v("Andrew", "Emitting an updated NFT ${ details.name }")
+            send(LoaderNftResult(chain, statusMap))
         }
     }
 
-    private fun mapJsonMetaToNftMeta(metadata: JsonMetadata): NftMetadata {
+    private fun mapToIntermediaryMeta(metadata: NativJsonMetadata): NftMetadata {
         return NftMetadata(
-            name = metadata.name.orEmpty(),
-            symbol = metadata.symbol.orEmpty(),
-            description = metadata.description.orEmpty(),
-            image = metadata.image.orEmpty(),
+            name = metadata.name,
+            description = metadata.description,
+            image = metadata.image,
             animationUrl = "",
-            externalUrl = metadata.external_url.orEmpty(),
+            externalUrl = metadata.externalUrl.orEmpty(),
             attributes = metadata.attributes?.map { attrib ->
                 NftAttributes(
-                    traitType = attrib.trait_type ?: "",
-                    value = attrib.display_type ?: ""
+                    traitType = attrib.traitType,
+                    value = attrib.value
                 )
             } ?: listOf(),
             properties = NftProperties(
@@ -156,15 +148,4 @@ class MetaplexNftUseCase @Inject constructor(
             )
         )
     }
-
-    suspend fun NFT.loadMeta(plex: Metaplex): JsonMetadata =
-        suspendCoroutine { cont ->
-            this.metadata(plex) { result ->
-                result.onSuccess { jsonMeta ->
-                    cont.resume(jsonMeta)
-                }
-
-                result.onFailure { throw it }
-            }
-        }
 }

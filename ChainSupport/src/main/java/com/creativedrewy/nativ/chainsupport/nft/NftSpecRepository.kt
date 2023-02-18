@@ -1,25 +1,30 @@
 package com.creativedrewy.nativ.chainsupport.nft
 
-import com.creativedrewy.nativ.chainsupport.NftPropertiesDeserializer
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
 class NftSpecRepository(
     private val apiRequestClient: ApiRequestClient = ApiRequestClient(OkHttpClient()),
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(NftProperties::class.java, NftPropertiesDeserializer())
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        .serializeNulls()
-        .create()
 ) {
 
-    suspend fun getNftDetails(uri: String): NftMetadata? {
+    @OptIn(
+        ExperimentalSerializationApi::class
+    )
+    val json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        explicitNulls = false
+    }
+
+    suspend fun getNftDetails(uri: String): NativJsonMetadata? {
         val request = Request.Builder()
             .url(uri)
             .get()
@@ -31,11 +36,40 @@ class NftSpecRepository(
             is Success -> {
                 val resString = result.response.body?.string()
 
-                gson.fromJson(resString, NftMetadata::class.java)
+                json.decodeFromString<NativJsonMetadata>(resString ?: "")
             }
             is Error -> {
                 null
             }
         }
+    }
+}
+
+@Serializable
+data class NativJsonMetadata(
+    val name: String,
+    val description: String,
+    val image: String,
+    @SerialName("external_url") val externalUrl: String?,
+    val attributes: List<Attribute>? = null,
+    val properties: Properties? = null
+) {
+    @Serializable
+    data class Attribute(
+        @SerialName("trait_type") val traitType: String,
+        val value: String
+    )
+
+    @Serializable
+    data class Properties(
+        val files: List<File>?,
+        val category: String?
+    ) {
+        @Serializable
+        data class File(
+            val uri: String,
+            val type: String,
+            val cdn: Boolean? = null
+        )
     }
 }

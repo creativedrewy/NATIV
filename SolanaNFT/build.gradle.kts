@@ -5,6 +5,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("kotlinx-serialization")
     id("com.google.dagger.hilt.android")
 }
 
