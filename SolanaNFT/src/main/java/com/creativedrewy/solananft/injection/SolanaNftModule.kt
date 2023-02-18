@@ -2,8 +2,6 @@ package com.creativedrewy.solananft.injection
 
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.nft.NftSpecRepository
-import com.creativedrewy.solananft.accounts.AccountRepository
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,11 +15,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 class SolanaNftModule {
 
     @Provides
-    fun providesAccountRepository(): AccountRepository {
-        return AccountRepository()
-    }
-
-    @Provides
     fun providesNftSpecRepository(): NftSpecRepository {
         return NftSpecRepository()
     }
@@ -30,12 +23,6 @@ class SolanaNftModule {
     @Provides
     fun providesApiRequestClient(): ApiRequestClient {
         return ApiRequestClient()
-    }
-
-    @ViewModelScoped
-    @Provides
-    fun proivdesGson(): Gson {
-        return Gson()
     }
 
 }
