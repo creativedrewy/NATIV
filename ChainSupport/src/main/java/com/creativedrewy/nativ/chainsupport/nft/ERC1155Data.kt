@@ -37,8 +37,7 @@ object NftCategories {
 
 data class NftProperties(
     val category: String = "",
-    val files: List<FileDetails> = listOf(),
-    val creators: List<NftCreator> = listOf()
+    val files: List<FileDetails> = listOf()
 )
 
 object NftFileTypes {

@@ -45,6 +45,9 @@ class NftSpecRepository(
     }
 }
 
+/**
+ * TODO: This will likely become replaced with a future version of the metaplex SDK
+ */
 @Serializable
 data class NativJsonMetadata(
     val name: String,
