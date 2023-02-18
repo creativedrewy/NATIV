@@ -4,20 +4,16 @@ import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.LoaderNftResult
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.*
-import com.creativedrewy.solananft.BuildConfig
-import com.metaplex.lib.Metaplex
-import com.metaplex.lib.drivers.indenty.ReadOnlyIdentityDriver
-import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
-import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
+import com.creativedrewy.solananft.factory.MetaplexConnectionFactory
 import com.solana.core.PublicKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.withContext
-import java.net.URL
 import javax.inject.Inject
 
 class MetaplexNftUseCase @Inject constructor(
+    private val metaplexFactory: MetaplexConnectionFactory,
     private val nftSpecRepository: NftSpecRepository
 ) : IBlockchainNftLoader {
 
@@ -25,14 +21,10 @@ class MetaplexNftUseCase @Inject constructor(
      * Load and emit the full set of *possible* NFTs, then emit each NFT's metadata as it is loaded
      */
     override suspend fun loadNftsThenMetaForAddress(chain: SupportedChain, address: String): Flow<LoaderNftResult> = channelFlow {
-        val ownerPublicKey = PublicKey(address)
-        val solanaConnection = SolanaConnectionDriver(NewJdkRpcDriver(URL(BuildConfig.RPC_BASE_URL + BuildConfig.RPC_API_KEY)))
-        val solanaIdentityDriver = ReadOnlyIdentityDriver(ownerPublicKey, solanaConnection)
-        val storageDriver = OkHttpSharedStorageDriver()
-        val metaplex = Metaplex(solanaConnection, solanaIdentityDriver, storageDriver)
+        val metaplex = metaplexFactory.createMetaplexConnection(address)
 
         val nfts = withContext(Dispatchers.IO) {
-            val result = metaplex.nft.findAllByOwner(ownerPublicKey)
+            val result = metaplex.nft.findAllByOwner(PublicKey(address))
             result.getOrThrow().filterNotNull()
         }
 
@@ -53,6 +45,7 @@ class MetaplexNftUseCase @Inject constructor(
                 val mappedDetails = mapToIntermediaryMeta(details!!)
                 statusMap[nft.uri] = MetaLoaded(mappedDetails)
 
+                //Emit the status map as each new metadata object is loaded
                 send(LoaderNftResult(chain, statusMap))
             }
     }
