@@ -27,6 +27,8 @@ class MetaplexNftUseCase @Inject constructor(
             val result = metaplex.nft.findAllByOwner(PublicKey(address))
             result.getOrThrow().filterNotNull()
         }
+        //BLOCK: THIS IS DEBG ONLY
+        .filter { it.name.contains("Saga Pass") }
 
         val statusMap = mutableMapOf<String, NftMetaStatus>()
         nfts.map { it.uri }.forEach { uri ->

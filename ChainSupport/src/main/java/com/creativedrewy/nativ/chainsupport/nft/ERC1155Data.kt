@@ -32,6 +32,7 @@ data class NftAttributes(
 
 object NftCategories {
     const val VR = "vr"
+    const val Model = "model"
     const val Image = "image"
 }
 
@@ -42,6 +43,7 @@ data class NftProperties(
 
 object NftFileTypes {
     const val GLB = "glb"
+    const val GLB_Binary = "gltf/binary"
 }
 
 data class FileDetails(

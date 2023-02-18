@@ -43,6 +43,7 @@ class DetailsViewModel @Inject constructor(
 
             if (shouldDownload) {
                 viewModelScope.launch {
+                    //BLOCK: Don't download if no url
                     val assetBytes = assetDownloadUseCase.downloadAsset(propItem.assetUrl)
 
                     viewStateCache.cacheMediaItem(propItem.id.toString(), assetBytes)

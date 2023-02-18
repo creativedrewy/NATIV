@@ -23,20 +23,20 @@ class GalleryViewStateMapping @Inject constructor() {
 
     fun updateNftMetaIntoViewState(existingProps: NftViewProps, nft: NftMetadata, chain: SupportedChain): NftViewProps {
         val chainDetails = Blockchain(chain.ticker, chain.iconRes)
-        val attribs = nft.attributes?.map {
+        val attribs = nft.attributes.map {
             Attribute(
-                name = it.traitType ?: "",
-                value = it.value ?: ""
+                name = it.traitType,
+                value = it.value
             )
-        } ?: listOf()
+        }
 
         return existingProps.copy(
-            name = nft.name ?: "",
-            description = nft.description ?: "",
+            name = nft.name,
+            description = nft.description,
             blockchain = chainDetails,
-            siteUrl = nft.externalUrl ?: "",
-            displayImageUrl = nft.image ?: "",
-            videoUrl = nft.animationUrl ?: "",
+            siteUrl = nft.externalUrl,
+            displayImageUrl = nft.image,
+            videoUrl = nft.animationUrl,
             assetType = determineAssetType(nft),
             assetUrl = findDownloadUri(nft.properties) ?: "",
             attributes = attribs,
@@ -46,18 +46,18 @@ class GalleryViewStateMapping @Inject constructor() {
 
     private fun determineAssetType(nft: NftMetadata): AssetType {
         return when {
-            nft.properties?.category == NftCategories.VR -> Model3d
-            nft.properties?.category == NftCategories.Image
-                    && nft.animationUrl?.endsWith(".mp4") == true -> ImageAndVideo
+            (nft.properties.category == NftCategories.VR || nft.properties.category == NftCategories.Model) -> Model3d
+            nft.properties.category == NftCategories.Image && nft.animationUrl.endsWith(".mp4") -> ImageAndVideo
             else -> Image
         }
     }
 
     private fun findDownloadUri(props: NftProperties?): String? {
         return when (props?.category) {
+            //TODO: Add support for "Model"
             NftCategories.VR -> {
-                props.files?.firstOrNull { it.type == NftFileTypes.GLB }?.uri
-                    ?: props.files?.firstOrNull()?.uri
+                props.files.firstOrNull { it.type == NftFileTypes.GLB || it.type == NftFileTypes.GLB_Binary }?.uri
+                    ?: props.files.firstOrNull()?.uri
             }
             else -> null //We don't actually know what we want to do in other cases yet
         }
