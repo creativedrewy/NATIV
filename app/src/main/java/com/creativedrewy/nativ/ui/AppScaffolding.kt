@@ -1,14 +1,31 @@
 package com.creativedrewy.nativ.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.BottomDrawer
+import androidx.compose.material.BottomDrawerState
+import androidx.compose.material.BottomDrawerValue
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FabPosition
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberBottomDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -22,13 +39,13 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.Turquoise
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 
 sealed class AppScreen(
@@ -43,17 +60,15 @@ object Gallery : AppScreen("gallery")
 object Accounts : AppScreen("accounts")
 object Details : AppScreen("details/{${NavArgs.nftId}}")
 
-@ExperimentalAnimationApi
-@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun AppScreenContent() {
-    val animNavController = rememberAnimatedNavController()
+    val navController = rememberNavController()
     val listState = rememberLazyListState()
 
     fun navigate(route: String) {
-        animNavController.navigate(route) {
-            popUpTo(animNavController.graph.findStartDestination().id) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
 
@@ -62,8 +77,8 @@ fun AppScreenContent() {
         }
     }
 
-    AnimatedNavHost(
-        navController = animNavController,
+    NavHost(
+        navController = navController,
         startDestination = Gallery.route
     ) {
         composable(Gallery.route) {
@@ -74,7 +89,7 @@ fun AppScreenContent() {
             ) {
                 GalleryList(
                     onDetailsNavigate = { id ->
-                        animNavController.navigate("details/" + id)
+                        navController.navigate("details/$id")
                     },
                     listState = listState
                 )
@@ -99,7 +114,6 @@ fun AppScreenContent() {
 }
 
 @ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @Composable
 fun FabScreens(
     navDest: NavDestination?,
@@ -163,7 +177,7 @@ fun FabScreens(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         BottomDrawer(
             drawerContent = {
                 AddAddressPanel(
@@ -182,6 +196,7 @@ fun FabScreens(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(paddingValues)
                     .background(MaterialTheme.colors.primary)
             ) {
                 screeContent()
@@ -209,7 +224,6 @@ fun MainAppFab(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomNavigationContents(
     navDest: NavDestination?,
