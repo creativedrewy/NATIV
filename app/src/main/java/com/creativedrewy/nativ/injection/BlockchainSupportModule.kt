@@ -1,6 +1,5 @@
 package com.creativedrewy.nativ.injection
 
-import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
@@ -25,7 +24,7 @@ class BlockchainSupportModule {
                 SupportedChain(
                     name = "Solana",
                     ticker = "SOL",
-                    iconRes = R.drawable.solana_logo
+                    iconRes = com.creativedrewy.solananft.R.drawable.solana_logo
                 ) to metaplexLoaderUseCase
             )
         }

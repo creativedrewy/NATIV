@@ -1,10 +1,17 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        google()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -14,6 +21,7 @@ dependencyResolutionManagement {
     }
 }
 
+rootProject.name = "NativNewDawn"
 include(":app")
-include(":SolanaNFT")
 include(":ChainSupport")
+include(":SolanaNFT")

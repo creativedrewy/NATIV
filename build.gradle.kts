@@ -1,7 +1,10 @@
+
 plugins {
-    id("com.android.application") version "7.3.0" apply false
-    id("com.android.library") version "7.3.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.7.20" apply false
-    id("com.google.dagger.hilt.android") version "2.44" apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.20"
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.ksp) apply false
 }
