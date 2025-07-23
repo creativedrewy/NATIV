@@ -45,6 +45,10 @@ dependencies {
 
     implementation(libs.solanakt)
 
+    implementation(libs.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.room.compiler)
+
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
 }

@@ -48,6 +48,4 @@ data class FileDetails(
 
 data class NftCreator(
     val address: String?,
-    val verified: Boolean = false,
-    val share: Int = 0
 )

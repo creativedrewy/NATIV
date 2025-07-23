@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomDrawer
 import androidx.compose.material.BottomDrawerState
@@ -64,7 +64,7 @@ object Details : AppScreen("details/{${NavArgs.nftId}}")
 @Composable
 fun AppScreenContent() {
     val navController = rememberNavController()
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
 
     fun navigate(route: String) {
         navController.navigate(route) {
