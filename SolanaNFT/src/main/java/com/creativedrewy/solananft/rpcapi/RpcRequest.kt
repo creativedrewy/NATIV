@@ -8,3 +8,10 @@ data class Rpc20RequestDto(
     val jsonrpc: String = "2.0",
     val id: String = UUID.randomUUID().toString()
 )
+
+data class Rpc20ObjectParamsDto(
+    val method: String,
+    val params: Map<String, Any>? = null,
+    val jsonrpc: String = "2.0",
+    val id: String = UUID.randomUUID().toString()
+)

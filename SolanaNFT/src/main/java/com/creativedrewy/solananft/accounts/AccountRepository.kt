@@ -3,7 +3,8 @@ package com.creativedrewy.solananft.accounts
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
-import com.creativedrewy.solananft.rpcapi.Rpc20RequestDto
+import com.creativedrewy.solananft.BuildConfig
+import com.creativedrewy.solananft.rpcapi.Rpc20ObjectParamsDto
 import com.creativedrewy.solananft.rpcapi.RpcRequestClient
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -12,76 +13,69 @@ import com.solana.networking.RPCEndpoint
 import com.solana.programs.TokenProgram
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.creativedrewy.solananft.das.*
+import com.solana.networking.Network
+import java.net.URL
 
 class AccountRepository(
-    private val rpcRequestClient: RpcRequestClient = RpcRequestClient(RPCEndpoint.mainnetBetaSolana),
+    private val rpcRequestClient: RpcRequestClient = RpcRequestClient(RPCEndpoint.custom(
+        URL("https://mainnet.helius-rpc.com/?api-key=${BuildConfig.API_KEY}"),
+        URL("https://mainnet.helius-rpc.com/?api-key=${BuildConfig.API_KEY}"),
+        Network.mainnetBeta
+    )),
     private val gson: Gson = Gson(),
 ) {
 
-    suspend fun getAccountInfo(accountKey: PublicKey): SimpleDataAccountDetailsDto {
-        val params = mutableListOf(
-            accountKey.toString(),
-            hashMapOf("encoding" to "base64")
-        )
+    suspend fun getAssetsByOwner(owner: PublicKey): List<DasAsset> = withContext(Dispatchers.IO) {
+        val allItems = mutableListOf<DasAsset>()
 
-        val rpcRequest = Rpc20RequestDto("getAccountInfo", params)
+        var page = 1
+        val limit = 50
 
-        return withContext(Dispatchers.IO) {
+        while (true) {
+            val params = mapOf<String, Any>(
+                "ownerAddress" to owner.toString(),
+                "page" to page,
+                "limit" to limit
+            )
+
+            val rpcRequest = Rpc20ObjectParamsDto("getAssetsByOwner", params)
+
             when (val result = rpcRequestClient.makeRequest(rpcRequest)) {
                 is Success -> {
-                    val resultString = result.response.body?.string()
+                    val resultString = result.response.body?.string() ?: continue
 
-                    val typeToken = object : TypeToken<RpcResultDto<SimpleDataAccountDetailsDto>>() {}.type
-                    val dto = gson.fromJson<RpcResultDto<SimpleDataAccountDetailsDto>>(resultString, typeToken)
-
-                    dto.result.value
-                }
-                is Error -> {
-                    SimpleDataAccountDetailsDto(listOf(), false, 0L, "", 0)
-                }
-            }
-        }
-    }
-
-    fun getMultipleAccounts() {
-    }
-
-    suspend fun getTokenAccountsByOwner(accountKey: PublicKey, tokenProgramKey: PublicKey = TokenProgram.PROGRAM_ID): List<AccountHolderRootDto> {
-        val params = mutableListOf(
-            accountKey.toString(),
-            hashMapOf("programId" to tokenProgramKey.toBase58()),
-            hashMapOf("encoding" to "jsonParsed")
-        )
-
-        val rpcRequest = Rpc20RequestDto("getTokenAccountsByOwner", params)
-
-        return withContext(Dispatchers.IO) {
-            when (val result = rpcRequestClient.makeRequest(rpcRequest)) {
-                is Success -> {
-                    var resultString = ""
                     try {
-                        resultString = result.response.body?.string() ?: ""
+                        val typeToken = object : TypeToken<RpcResultDas<DasAssetsList>>() {}.type
+                        val dto =
+                            gson.fromJson<RpcResultDas<DasAssetsList>>(resultString, typeToken)
 
-                        val typeToken = object : TypeToken<RpcResultDto<List<AccountHolderRootDto>>>() {}.type
-                        val dto = gson.fromJson<RpcResultDto<List<AccountHolderRootDto>>>(resultString, typeToken)
+                        val assets = dto.result.items
+                        allItems.addAll(assets)
 
-                        dto.result.value
+                        if (assets.isEmpty() || allItems.size >= dto.result.total) {
+                            break
+                        }
+
+                        page++
                     } catch (e: Exception) {
-                        Log.e("Solana", "Error parsing account RPC result: $resultString", e)
-
-                        listOf()
+                        Log.e("Solana", "Error parsing DAS response: $resultString", e)
+                        break
                     }
                 }
+
                 is Error -> {
-                    listOf()
+                    Log.e(
+                        "Solana",
+                        "Error fetching DAS assets: ${result.exception?.message}",
+                        result.exception
+                    )
+                    break
                 }
             }
         }
+
+        allItems
     }
 
-    // To be implemented later in this repository
-    fun getProgramAccounts() { }
-    fun getTokenAccountBalance() { }
-    fun getTokenAccountsByDelegate() { }
-    fun getTokenLargestAccounts() { }
 }

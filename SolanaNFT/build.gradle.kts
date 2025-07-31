@@ -9,11 +9,17 @@ android {
     namespace = "com.creativedrewy.solananft"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 28
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "API_KEY", "\"${project.findProperty("API_KEY") ?: ""}\"")
     }
 
     buildTypes {
@@ -44,6 +50,10 @@ dependencies {
     implementation(libs.gson)
 
     implementation(libs.solanakt)
+
+    implementation(libs.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.room.compiler)
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)

@@ -21,7 +21,10 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "NativNewDawn"
 include(":app")
 include(":ChainSupport")
 include(":SolanaNFT")
+include(":ImagesLiveWallpaper")

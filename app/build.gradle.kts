@@ -42,8 +42,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":ChainSupport"))
-    implementation(project(":SolanaNFT"))
+    implementation(projects.imagesLiveWallpaper)
+    implementation(projects.chainSupport)
+    implementation(projects.solanaNFT)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -62,9 +63,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
-    implementation("androidx.room:room-ktx:2.7.2")
-    implementation("androidx.room:room-runtime:2.7.2")
-    ksp("androidx.room:room-compiler:2.7.2")
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 
     implementation(libs.okhttp)
 
@@ -75,7 +76,9 @@ dependencies {
     implementation("com.google.accompanist:accompanist-placeholder:0.28.0")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
 
-    implementation("com.github.skydoves:landscapist-glide:1.3.6")
+    implementation(libs.coil.core)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.okhttp)
 
     implementation("com.google.android.filament:filament-android:1.8.1")
     implementation("com.google.android.filament:filament-utils-android:1.8.1")

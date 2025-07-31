@@ -28,4 +28,13 @@ class RpcRequestClient(
 
         return apiRequestClient.apiRequest(request)
     }
+
+    suspend fun makeRequest(requestDto: Rpc20ObjectParamsDto): ResponseStatus {
+        val request = Request.Builder()
+            .url(rpcEndpoint.url)
+            .post(gson.toJson(requestDto).toRequestBody(JSON))
+            .build()
+
+        return apiRequestClient.apiRequest(request)
+    }
 }

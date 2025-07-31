@@ -24,8 +24,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import coil3.ImageLoader
+import coil3.compose.SubcomposeAsyncImage
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.imageLoader
+import coil3.memory.MemoryCache
+import coil3.request.ImageRequest
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.DarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
@@ -41,7 +46,6 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.filament.Skybox
 import com.google.android.filament.utils.KtxLoader
 import com.google.android.filament.utils.ModelViewer
-import com.skydoves.landscapist.glide.GlideImage
 import java.nio.ByteBuffer
 
 @ExperimentalComposeUiApi
@@ -89,16 +93,21 @@ fun AssetViewer(
 fun ImageViewer(
     nftProps: NftViewProps
 ) {
-    GlideImage(
-        contentScale = ContentScale.Fit,
-        imageModel = nftProps.displayImageUrl,
+    val context = LocalContext.current
+
+    val imageRequest = remember(nftProps.displayImageUrl) {
+        ImageRequest.Builder(context)
+            .data(nftProps.displayImageUrl)
+            .build()
+    }
+
+    SubcomposeAsyncImage(
+        model = imageRequest,
         contentDescription = "Nft Image",
-        requestOptions = RequestOptions()
-            .timeout(15000)
-            .diskCacheStrategy(DiskCacheStrategy.ALL),
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
+        contentScale = ContentScale.Fit,
         loading = {
             Box(
                 modifier = Modifier.fillMaxSize(),
