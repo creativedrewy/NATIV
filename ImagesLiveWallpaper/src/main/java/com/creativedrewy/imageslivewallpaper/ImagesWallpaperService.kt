@@ -1,19 +1,38 @@
 package com.creativedrewy.imageslivewallpaper
 
-import android.content.Context
-import android.graphics.Color
-import android.transition.Scene.getCurrentScene
 import android.util.Log
-import android.view.MotionEvent
-import org.rajawali3d.Object3D
-import org.rajawali3d.materials.Material
-import org.rajawali3d.materials.textures.ATexture.TextureException
-import org.rajawali3d.materials.textures.Texture
-import org.rajawali3d.math.vector.Vector3
-import org.rajawali3d.primitives.Sphere
-import org.rajawali3d.renderer.Renderer
-import org.rajawali3d.view.ISurface
-import org.rajawali3d.wallpaper.Wallpaper
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import com.creativedrewy.mozart.MozartWallpaperService
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlinx.coroutines.delay
 
 
 //val images = listOf(
@@ -56,58 +75,68 @@ import org.rajawali3d.wallpaper.Wallpaper
 //    }
 //}
 
-class ImagesWallpaperService : Wallpaper() {
+@AndroidEntryPoint
+class ImagesWallpaperService: MozartWallpaperService() {
 
-    override fun onCreateEngine(): Engine {
-        return WallpaperEngine(applicationContext, BasicRenderer(applicationContext), ISurface.ANTI_ALIASING_CONFIG.NONE)
-    }
+    @Inject
+    lateinit var viewModel: WallpaperGalleryViewModel
 
-}
+    override val wallpaperContents: @Composable ((OffsetValues) -> Unit)
+        get() = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Gray)
+            ) {
+                Log.v("Andrew", "::: You have a value ${viewModel.blah}")
 
-class BasicRenderer(
-    context: Context
-) : Renderer(context) {
-    private var mSphere: Object3D? = null
+                val colors = remember {
+                    listOf(
+                        Color(0xFFE57373),
+                        Color(0xFF64B5F6),
+                        Color(0xFF81C784),
+                        Color(0xFFFFD54F),
+                        Color(0xFFBA68C8)
+                    )
+                }
 
-    override fun initScene() {
-        try {
-            val material = Material()
-//            material.addTexture(
-//                Texture(
-//                    "earthColors",
-//                    R.drawable.earthtruecolor_nasa_big
-//                )
-//            )
+                var currentIndex by remember { mutableStateOf(0) }
 
-            material.color = Color.BLUE
-            material.colorInfluence = 1f
-            mSphere = Sphere(1f, 24, 24)
-            mSphere?.setMaterial(material)
+                LaunchedEffect(Unit) {
+                    while (true) {
+                        delay(5000)
+                        currentIndex = (currentIndex + 1) % colors.size
+                    }
+                }
 
-            currentScene.addChild(mSphere)
-        } catch (e: TextureException) {
-            e.printStackTrace()
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimatedContent(
+                        targetState = currentIndex,
+                        transitionSpec = {
+                            slideInHorizontally(
+                                initialOffsetX = { fullWidth -> fullWidth },
+                                animationSpec = tween(800)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(800)
+                            )
+                        },
+                        label = "colorSquareTransition"
+                    ) { index ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(colors[index])
+                        )
+                    }
+                }
+            }
         }
-
-        currentCamera.enableLookAt()
-        currentCamera.setLookAt(0.0, 0.0, 0.0)
-        currentCamera.setZ(6.0)
-        currentCamera.setOrientation(currentCamera.orientation.inverse())
-    }
-
-    override fun onRender(elapsedTime: Long, deltaTime: Double) {
-        super.onRender(elapsedTime, deltaTime)
-        mSphere!!.rotate(Vector3.Axis.Y, 1.0)
-    }
-
-    override fun onOffsetsChanged(
-        xOffset: Float,
-        yOffset: Float,
-        xOffsetStep: Float,
-        yOffsetStep: Float,
-        xPixelOffset: Int,
-        yPixelOffset: Int
-    ) { }
-
-    override fun onTouchEvent(event: MotionEvent?) { }
 }

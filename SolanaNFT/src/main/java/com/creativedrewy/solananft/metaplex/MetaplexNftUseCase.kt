@@ -4,15 +4,23 @@ import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.LoaderNftResult
 import com.creativedrewy.nativ.chainsupport.SupportedChain
-import com.creativedrewy.nativ.chainsupport.nft.*
+import com.creativedrewy.nativ.chainsupport.nft.FileDetails
+import com.creativedrewy.nativ.chainsupport.nft.Invalid
+import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
+import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
+import com.creativedrewy.nativ.chainsupport.nft.NftCategories
+import com.creativedrewy.nativ.chainsupport.nft.NftCreator
+import com.creativedrewy.nativ.chainsupport.nft.NftFileTypes
+import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import com.creativedrewy.nativ.chainsupport.nft.NftProperties
+import com.creativedrewy.nativ.chainsupport.nft.Pending
 import com.creativedrewy.solananft.accounts.AccountRepository
+import com.creativedrewy.solananft.das.DasAsset
 import com.creativedrewy.solananft.database.DatabaseRepository
-import com.creativedrewy.solananft.das.*
-import kotlinx.coroutines.Dispatchers
+import com.solana.core.PublicKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
-import com.solana.core.PublicKey
 import javax.inject.Inject
 
 class MetaplexNftUseCase @Inject constructor(
@@ -38,40 +46,40 @@ class MetaplexNftUseCase @Inject constructor(
             emit(LoaderNftResult(chain, statusMap))
         }
 
-//        try {
-//            val fetchedAssets = accountsRepository.getAssetsByOwner(PublicKey(address))
-//
-//            databaseRepository.cacheNewAssets(fetchedAssets)
-//
-//            val cachedIds = cachedAssets.map { it.id }.toSet()
-//            val newAssets = fetchedAssets.filter { it.id !in cachedIds }
-//
-//            newAssets.forEach { asset ->
-//                val uri = asset.content?.jsonUri ?: return@forEach
-//                statusMap[uri] = Pending
-//            }
-//            if (newAssets.isNotEmpty()) {
-//                emit(LoaderNftResult(chain, statusMap))
-//            }
-//
-//            newAssets.forEach { asset ->
-//                val uri = asset.content?.jsonUri ?: return@forEach
-//
-//                try {
-//                    val nftMeta = mapToNftMetadata(asset)
-//                    statusMap[uri] = MetaLoaded(nftMeta)
-//                    emit(LoaderNftResult(chain, statusMap))
-//                } catch (e: Exception) {
-//                    Log.e("SOL", "Error mapping DAS asset to metadata for $uri", e)
-//                    statusMap[uri] = Invalid
-//                }
-//            }
-//
-//            emit(LoaderNftResult(chain, statusMap))
-//        } catch (e: Exception) {
-//            Log.e("SOL", "Error attempting to load nfts for address $address", e)
-//            emit(LoaderNftResult(chain, emptyMap()))
-//        }
+        try {
+            val fetchedAssets = accountsRepository.getAssetsByOwner(PublicKey(address))
+
+            databaseRepository.cacheNewAssets(fetchedAssets)
+
+            val cachedIds = cachedAssets.map { it.id }.toSet()
+            val newAssets = fetchedAssets.filter { it.id !in cachedIds }
+
+            newAssets.forEach { asset ->
+                val uri = asset.content?.jsonUri ?: return@forEach
+                statusMap[uri] = Pending
+            }
+            if (newAssets.isNotEmpty()) {
+                emit(LoaderNftResult(chain, statusMap))
+            }
+
+            newAssets.forEach { asset ->
+                val uri = asset.content?.jsonUri ?: return@forEach
+
+                try {
+                    val nftMeta = mapToNftMetadata(asset)
+                    statusMap[uri] = MetaLoaded(nftMeta)
+                    emit(LoaderNftResult(chain, statusMap))
+                } catch (e: Exception) {
+                    Log.e("SOL", "Error mapping DAS asset to metadata for $uri", e)
+                    statusMap[uri] = Invalid
+                }
+            }
+
+            emit(LoaderNftResult(chain, statusMap))
+        } catch (e: Exception) {
+            Log.e("SOL", "Error attempting to load nfts for address $address", e)
+            emit(LoaderNftResult(chain, emptyMap()))
+        }
     }
 
     private fun mapToNftMetadata(asset: DasAsset): NftMetadata {

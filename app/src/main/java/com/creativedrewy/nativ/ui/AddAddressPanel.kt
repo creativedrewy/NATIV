@@ -1,5 +1,8 @@
 package com.creativedrewy.nativ.ui
 
+import android.app.WallpaperManager
+import android.content.ComponentName
+import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,6 +32,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.creativedrewy.imageslivewallpaper.ImagesWallpaperService
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.ui.theme.Turquoise
@@ -106,6 +111,7 @@ fun AddAddressPanel(
                     cursorColor = Color.White
                 )
             )
+
             IconButton(
                 onClick = {
                     if (address.text.isNotEmpty()) {
@@ -127,6 +133,33 @@ fun AddAddressPanel(
                         .size(24.dp)
                         .background(
                             color = HotPink,
+                            shape = CircleShape
+                        )
+                )
+            }
+
+            val context = LocalContext.current
+
+            //BLOCK: Remove later
+            IconButton(
+                onClick = {
+                    val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+                    intent.putExtra(
+                        WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                        ComponentName(context, ImagesWallpaperService::class.java)
+                    )
+
+                    context.startActivity(intent)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add Address",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(
+                            color = Color.Gray,
                             shape = CircleShape
                         )
                 )
