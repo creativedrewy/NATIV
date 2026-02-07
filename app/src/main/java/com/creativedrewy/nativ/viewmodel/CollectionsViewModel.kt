@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
+import com.creativedrewy.nativ.usecase.CollectionDisplayInfo
 import com.creativedrewy.nativ.usecase.CollectionsUseCase
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,12 +30,16 @@ class CollectionsViewModel @Inject constructor(
 
     fun loadCollections() {
         viewModelScope.launch {
-            _state.value = CollectionsViewState.Loading
+            // Immediately show cached collections from the database if available
+            val cachedCollections = collectionsUseCase.loadCollections()
+            if (cachedCollections.isNotEmpty()) {
+                applyCollections(cachedCollections)
+            } else {
+                _state.value = CollectionsViewState.Loading
+            }
 
-            // Trigger the NFT sync via the existing chain loader mechanism
+            // Then sync from the API in the background and refresh when done
             syncNftsFromApi()
-
-            // After sync, load collections from the database
             refreshCollectionsFromDb()
         }
     }
@@ -93,7 +98,10 @@ class CollectionsViewModel @Inject constructor(
 
     private suspend fun refreshCollectionsFromDb() {
         val collections = collectionsUseCase.loadCollections()
+        applyCollections(collections)
+    }
 
+    private fun applyCollections(collections: List<CollectionDisplayInfo>) {
         allCollections = collections.map { info ->
             CollectionViewProps(
                 collectionId = info.collectionId,
