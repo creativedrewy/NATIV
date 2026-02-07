@@ -54,7 +54,9 @@ class AccountRepository(
                         val assets = dto.result.items
                         allItems.addAll(assets)
 
-                        if (assets.isEmpty() || allItems.size >= dto.result.total) {
+                        // Break when we get fewer items than requested — this is the
+                        // last page. Don't rely on `total` as it can be inaccurate.
+                        if (assets.isEmpty() || assets.size < limit) {
                             break
                         }
 
