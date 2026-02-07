@@ -22,6 +22,8 @@ roomRuntime = "2.7.2"
 solanakt = "1.1.5"
 coil = "3.3.0"
 mozart = "0.1.2"
+exoplayer = "2.18.2"
+filamentAndroid = "1.69.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +57,13 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
+exoplayer-ui = { module = "com.google.android.exoplayer:exoplayer-ui", version.ref = "exoplayer" }
+
+filament-android = { module = "com.google.android.filament:filament-android", version.ref = "filamentAndroid" }
+gltfio-android = { module = "com.google.android.filament:gltfio-android", version.ref = "filamentAndroid" }
+filament-utils-android = { module = "com.google.android.filament:filament-utils-android", version.ref = "filamentAndroid" }
 
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coil" }

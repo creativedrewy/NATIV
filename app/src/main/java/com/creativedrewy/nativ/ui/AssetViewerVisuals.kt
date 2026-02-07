@@ -51,7 +51,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.filament.Skybox
-import com.google.android.filament.utils.KtxLoader
+import com.google.android.filament.utils.KTX1Loader
 import com.google.android.filament.utils.ModelViewer
 import java.nio.ByteBuffer
 
@@ -213,7 +213,7 @@ fun Model3dViewer(
                 modelViewer = ModelViewer(this as SurfaceView)
                 modelViewer?.let { viewer ->
                     val ibl = readCompressedAsset(context, "courtyard_8k_ibl.ktx")
-                    viewer.scene.indirectLight = KtxLoader.createIndirectLight(viewer.engine, ibl)
+                    viewer.scene.indirectLight = KTX1Loader.createIndirectLight(viewer.engine, ibl).indirectLight
                     viewer.scene.indirectLight?.intensity = 30_000.0f
 
                     viewer.scene.skybox = Skybox.Builder()

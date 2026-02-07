@@ -69,8 +69,8 @@ dependencies {
 
     implementation(libs.okhttp)
 
-    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
-    implementation("com.google.android.exoplayer:exoplayer-ui:2.18.2")
+    implementation(libs.exoplayer)
+    implementation(libs.exoplayer.ui)
 
     implementation("com.google.accompanist:accompanist-flowlayout:0.16.1")
     implementation("com.google.accompanist:accompanist-placeholder:0.28.0")
@@ -80,9 +80,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.okhttp)
 
-    implementation("com.google.android.filament:filament-android:1.8.1")
-    implementation("com.google.android.filament:filament-utils-android:1.8.1")
-    implementation("com.google.android.filament:gltfio-android:1.8.1")
+    implementation(libs.filament.android)
+    implementation(libs.filament.utils.android)
+    implementation(libs.gltfio.android)
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
