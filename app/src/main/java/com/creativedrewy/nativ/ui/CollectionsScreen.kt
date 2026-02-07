@@ -178,7 +178,6 @@ fun CollectionsContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 64.dp)
         ) {
             SwipeRefresh(
                 state = rememberSwipeRefreshState(isRefreshing = isLoading || isRefreshing),
