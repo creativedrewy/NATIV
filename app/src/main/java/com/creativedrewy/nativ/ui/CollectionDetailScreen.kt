@@ -1,8 +1,10 @@
 package com.creativedrewy.nativ.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,6 +74,7 @@ fun CollectionDetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.primary)
+            .padding(top = 36.dp)
     ) {
         // Background
         Image(
@@ -185,7 +188,7 @@ fun NftCard(
 
     Surface(
         modifier = Modifier.clickable { onClick() },
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(16.dp),
         elevation = 8.dp
     ) {
         Column(
@@ -198,7 +201,11 @@ fun NftCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .clip(RoundedCornerShape(16.dp))
+                    .border(
+                        border = BorderStroke(2.dp, HotPink),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+                    .clip(RoundedCornerShape(6.dp))
             ) {
                 if (nft.imageUrl.isNotBlank()) {
                     val imageRequest = remember(nft.imageUrl) {

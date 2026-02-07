@@ -5,9 +5,11 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -310,7 +313,7 @@ fun CollectionCard(
 
     Surface(
         modifier = Modifier.clickable { onClick() },
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(16.dp),
         elevation = 8.dp
     ) {
         Column(
@@ -323,7 +326,11 @@ fun CollectionCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .clip(RoundedCornerShape(16.dp))
+                    .border(
+                        border = BorderStroke(2.dp, HotPink),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+                    .clip(RoundedCornerShape(6.dp))
             ) {
                 if (collection.previewImageUrl.isNotBlank()) {
                     val imageRequest = remember(collection.previewImageUrl) {
@@ -390,4 +397,48 @@ fun CollectionCard(
             )
         }
     }
+}
+
+@ExperimentalComposeUiApi
+@Composable
+@Preview
+fun CollectionsScreenPreview() {
+    val demoCollections = listOf(
+        CollectionViewProps(
+            collectionId = "1",
+            collectionName = "Art Blocks",
+            nftCount = 13,
+            previewImageUrl = "",
+        ),
+        CollectionViewProps(
+            collectionId = "2",
+            collectionName = "Bored Ape Yacht Club",
+            nftCount = 42,
+            previewImageUrl = "",
+        ),
+        CollectionViewProps(
+            collectionId = "3",
+            collectionName = "CryptoPunks",
+            nftCount = 1,
+            previewImageUrl = "",
+        ),
+        CollectionViewProps(
+            collectionId = "4",
+            collectionName = "Cool Cats with a Really Long Name To Test Ellipsis",
+            nftCount = 16,
+            previewImageUrl = "",
+        )
+    )
+    val displayState = CollectionsViewState.Display(
+        collections = demoCollections,
+        isRefreshing = false,
+        searchQuery = "",
+    )
+    CollectionsContent(
+        viewState = displayState,
+        onRefresh = {},
+        onSearchQueryChanged = {},
+        onCollectionNavigate = {},
+        listState = remember { LazyGridState() }
+    )
 }
