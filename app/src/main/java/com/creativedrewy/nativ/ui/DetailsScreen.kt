@@ -1,9 +1,22 @@
 package com.creativedrewy.nativ.ui
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -28,11 +41,15 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.ui.theme.*
+import com.creativedrewy.nativ.ui.theme.HotPink
+import com.creativedrewy.nativ.ui.theme.Lexend
+import com.creativedrewy.nativ.ui.theme.LightPurple
+import com.creativedrewy.nativ.ui.theme.TitleGray
+import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.DetailsViewModel
 import com.creativedrewy.nativ.viewmodel.Ready
 import com.google.accompanist.flowlayout.FlowRow
-import java.util.*
+import java.util.Locale
 
 @ExperimentalComposeUiApi
 @Composable
@@ -182,23 +199,25 @@ fun DetailsScreen(
                             style = MaterialTheme.typography.h4,
                             color = MaterialTheme.colors.onPrimary
                         )
-                        Box(
-                            modifier = Modifier
-                                .constrainAs(logo) {
-                                    top.linkTo(parent.top)
-                                    end.linkTo(parent.end)
-                                }
-                                .width(48.dp)
-                                .padding(
-                                    top = 8.dp
+                        if (loadedNft.blockchain.logoRes > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .constrainAs(logo) {
+                                        top.linkTo(parent.top)
+                                        end.linkTo(parent.end)
+                                    }
+                                    .width(48.dp)
+                                    .padding(
+                                        top = 8.dp
+                                    )
+                            ) {
+                                OutlinedCircleImage(
+                                    imageRes = loadedNft.blockchain.logoRes,
+                                    size = 48.dp,
+                                    outlineWidth = 0.dp,
+                                    backgroundColor = LightPurple
                                 )
-                        ) {
-                            OutlinedCircleImage(
-                                imageRes = loadedNft.blockchain.logoRes,
-                                size = 48.dp,
-                                outlineWidth = 0.dp,
-                                backgroundColor = LightPurple
-                            )
+                            }
                         }
                     }
                     Text(

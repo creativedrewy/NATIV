@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.usecase.CollectionNftsUseCase
 import com.creativedrewy.nativ.viewstate.ViewStateCache
+import com.creativedrewy.solananft.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -75,6 +76,10 @@ class DetailsViewModel @Inject constructor(
                 id = UUID.nameUUIDFromBytes(assetId.toByteArray()),
                 name = nftInfo.name,
                 description = nftInfo.description,
+                blockchain = Blockchain(
+                    ticker = "SOL",
+                    logoRes = R.drawable.solana_logo
+                ),
                 displayImageUrl = nftInfo.imageUrl,
                 videoUrl = nftInfo.animationUrl,
                 siteUrl = nftInfo.externalUrl,
