@@ -3,11 +3,13 @@ package com.creativedrewy.nativ.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
+import com.creativedrewy.nativ.usecase.CollectionNftsUseCase
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 sealed class ScreenState
@@ -27,6 +29,7 @@ object NotReady : ScreenState()
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val assetDownloadUseCase: AssetDownloadUseCase,
+    private val collectionNftsUseCase: CollectionNftsUseCase,
     private val viewStateCache: ViewStateCache
 ) : ViewModel() {
 
@@ -36,21 +39,50 @@ class DetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow<ScreenState>(NotReady)
 
     fun loadNftDetails(id: String) {
-        viewStateCache.cachedProps.firstOrNull { it.id.toString() == id }?.let { propItem ->
-            val shouldDownload = shouldDownloadAsset(propItem, viewStateCache)
+        // First try the legacy ViewStateCache (for backward compatibility)
+        val cachedProp = viewStateCache.cachedProps.firstOrNull { it.id.toString() == id }
 
-            _state.value = Ready(PropsWithMedia(propItem), shouldDownload)
+        if (cachedProp != null) {
+            loadFromCache(cachedProp)
+        } else {
+            // Load from database using the DAS asset ID
+            loadFromDatabase(id)
+        }
+    }
 
-            if (shouldDownload) {
-                viewModelScope.launch {
-                    val assetBytes = assetDownloadUseCase.downloadAsset(propItem.assetUrl)
+    private fun loadFromCache(propItem: NftViewProps) {
+        val shouldDownload = shouldDownloadAsset(propItem, viewStateCache)
 
-                    viewStateCache.cacheMediaItem(propItem.id.toString(), assetBytes)
-                    updateViewState(propItem)
-                }
-            } else {
+        _state.value = Ready(PropsWithMedia(propItem), shouldDownload)
+
+        if (shouldDownload) {
+            viewModelScope.launch {
+                val assetBytes = assetDownloadUseCase.downloadAsset(propItem.assetUrl)
+
+                viewStateCache.cacheMediaItem(propItem.id.toString(), assetBytes)
                 updateViewState(propItem)
             }
+        } else {
+            updateViewState(propItem)
+        }
+    }
+
+    private fun loadFromDatabase(assetId: String) {
+        viewModelScope.launch {
+            val nftInfo = collectionNftsUseCase.loadNft(assetId) ?: return@launch
+
+            val nftProps = NftViewProps(
+                id = UUID.nameUUIDFromBytes(assetId.toByteArray()),
+                name = nftInfo.name,
+                description = nftInfo.description,
+                displayImageUrl = nftInfo.imageUrl,
+                videoUrl = nftInfo.animationUrl,
+                siteUrl = nftInfo.externalUrl,
+                assetType = if (nftInfo.animationUrl.endsWith(".mp4")) ImageAndVideo else Image,
+                isPending = false
+            )
+
+            _state.value = Ready(PropsWithMedia(nftProps), false)
         }
     }
 

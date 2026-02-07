@@ -51,6 +51,9 @@ class MetaplexNftUseCase @Inject constructor(
 
             databaseRepository.cacheNewAssets(fetchedAssets)
 
+            // Resolve collection names for any collections that don't have one yet
+            resolveCollectionNames()
+
             val cachedIds = cachedAssets.map { it.id }.toSet()
             val newAssets = fetchedAssets.filter { it.id !in cachedIds }
 
@@ -79,6 +82,31 @@ class MetaplexNftUseCase @Inject constructor(
         } catch (e: Exception) {
             Log.e("SOL", "Error attempting to load nfts for address $address", e)
             emit(LoaderNftResult(chain, emptyMap()))
+        }
+    }
+
+    /**
+     * For each collection that doesn't have a resolved name yet,
+     * fetch the collection asset metadata via getAsset and update the database.
+     */
+    private suspend fun resolveCollectionNames() {
+        try {
+            val unnamedCollections = databaseRepository.getCollectionIdsWithoutName()
+
+            unnamedCollections.forEach { collectionId ->
+                try {
+                    val collectionAsset = accountsRepository.getAsset(collectionId)
+                    val name = collectionAsset?.content?.metadata?.name
+
+                    if (!name.isNullOrBlank()) {
+                        databaseRepository.updateCollectionName(collectionId, name)
+                    }
+                } catch (e: Exception) {
+                    Log.e("SOL", "Error resolving collection name for $collectionId", e)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("SOL", "Error resolving collection names", e)
         }
     }
 

@@ -4,17 +4,18 @@ import android.util.Log
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
 import com.creativedrewy.solananft.BuildConfig
+import com.creativedrewy.solananft.das.DasAsset
+import com.creativedrewy.solananft.das.DasAssetsList
+import com.creativedrewy.solananft.das.RpcResultDas
 import com.creativedrewy.solananft.rpcapi.Rpc20ObjectParamsDto
 import com.creativedrewy.solananft.rpcapi.RpcRequestClient
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.solana.core.PublicKey
+import com.solana.networking.Network
 import com.solana.networking.RPCEndpoint
-import com.solana.programs.TokenProgram
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.creativedrewy.solananft.das.*
-import com.solana.networking.Network
 import java.net.URL
 
 class AccountRepository(
@@ -78,4 +79,35 @@ class AccountRepository(
         allItems
     }
 
+    /**
+     * Fetch a single asset by its ID using the DAS getAsset method.
+     * Used primarily to resolve collection metadata (name, image, etc.)
+     */
+    suspend fun getAsset(assetId: String): DasAsset? = withContext(Dispatchers.IO) {
+        val params = mapOf<String, Any>(
+            "id" to assetId
+        )
+
+        val rpcRequest = Rpc20ObjectParamsDto("getAsset", params)
+
+        when (val result = rpcRequestClient.makeRequest(rpcRequest)) {
+            is Success -> {
+                val resultString = result.response.body?.string() ?: return@withContext null
+
+                try {
+                    val typeToken = object : TypeToken<RpcResultDas<DasAsset>>() {}.type
+                    val dto = gson.fromJson<RpcResultDas<DasAsset>>(resultString, typeToken)
+                    dto.result
+                } catch (e: Exception) {
+                    Log.e("Solana", "Error parsing getAsset response for $assetId", e)
+                    null
+                }
+            }
+
+            is Error -> {
+                Log.e("Solana", "Error fetching asset $assetId: ${result.exception?.message}", result.exception)
+                null
+            }
+        }
+    }
 }

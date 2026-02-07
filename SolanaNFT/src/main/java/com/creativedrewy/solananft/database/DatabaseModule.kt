@@ -17,6 +17,7 @@ object DatabaseModule {
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "cached_nft")
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
     @Singleton

@@ -3,8 +3,13 @@ package com.creativedrewy.solananft.database
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.creativedrewy.solananft.das.*
-import com.google.gson.Gson
+import com.creativedrewy.solananft.das.DasAsset
+import com.creativedrewy.solananft.das.DasAttribute
+import com.creativedrewy.solananft.das.DasContent
+import com.creativedrewy.solananft.das.DasCreator
+import com.creativedrewy.solananft.das.DasFile
+import com.creativedrewy.solananft.das.DasGrouping
+import com.creativedrewy.solananft.das.DasMetadata
 
 @Entity(tableName = "DasAssetEntity")
 data class DasAssetEntity(
@@ -13,6 +18,8 @@ data class DasAssetEntity(
     @Embedded val content: DasContentEmbedded?,
     val grouping: List<DasGrouping>?,
     val creators: List<DasCreator>?,
+    val collectionId: String?,
+    val collectionName: String?,
 )
 
 data class DasContentEmbedded(
@@ -47,6 +54,8 @@ fun DasAsset.toEntity(): DasAssetEntity = DasAssetEntity(
     },
     grouping = grouping,
     creators = creators,
+    collectionId = grouping?.firstOrNull { it.groupKey == "collection" }?.groupValue,
+    collectionName = null,
 )
 
 fun DasAssetEntity.toDasAsset(): DasAsset = DasAsset(

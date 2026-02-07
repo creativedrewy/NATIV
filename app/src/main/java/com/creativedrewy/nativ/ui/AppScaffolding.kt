@@ -54,10 +54,12 @@ sealed class AppScreen(
 
 object NavArgs {
     const val nftId = "nftId"
+    const val collectionId = "collectionId"
 }
 
 object Gallery : AppScreen("gallery")
 object Accounts : AppScreen("accounts")
+object CollectionDetail : AppScreen("collection/{${NavArgs.collectionId}}")
 object Details : AppScreen("details/{${NavArgs.nftId}}")
 
 @ExperimentalComposeUiApi
@@ -87,9 +89,9 @@ fun AppScreenContent() {
                 showFab = false,
                 onNavItemClick = { route -> navigate(route) }
             ) {
-                GalleryList(
-                    onDetailsNavigate = { id ->
-                        navController.navigate("details/$id")
+                CollectionsScreen(
+                    onCollectionNavigate = { collectionId ->
+                        navController.navigate("collection/$collectionId")
                     },
                     listState = listState
                 )
@@ -103,6 +105,18 @@ fun AppScreenContent() {
             ) {
                 AddressListScreen()
             }
+        }
+        composable(
+            route = CollectionDetail.route,
+            arguments = listOf(navArgument(NavArgs.collectionId) { type = NavType.StringType })
+        ) {
+            CollectionDetailScreen(
+                collectionId = it.arguments?.getString(NavArgs.collectionId) ?: "",
+                onNftNavigate = { assetId ->
+                    navController.navigate("details/$assetId")
+                },
+                onBack = { navController.popBackStack() }
+            )
         }
         composable(
             route = Details.route,

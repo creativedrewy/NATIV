@@ -1,12 +1,10 @@
 package com.creativedrewy.solananft.database
 
 import com.creativedrewy.solananft.das.DasAsset
-import dagger.hilt.android.scopes.ViewModelScoped
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-@ViewModelScoped
 class DatabaseRepository @Inject constructor(
     private val dao: DasAssetDao
 ) {
@@ -17,10 +15,46 @@ class DatabaseRepository @Inject constructor(
         }
 
     suspend fun cacheNewAssets(assets: List<DasAsset>) = withContext(Dispatchers.IO) {
-        val existingIds = dao.getAllIds().toSet()
+        // Use REPLACE strategy so updated grouping/collection data is always persisted
+        dao.insertAll(assets.map { it.toEntity() })
+    }
 
-        val newAssets = assets.filter { it.id !in existingIds }
+    suspend fun getCollectionSummaries(): List<CollectionSummary> =
+        withContext(Dispatchers.IO) {
+            dao.getCollectionSummaries()
+        }
 
-        dao.insertAll(newAssets.map { it.toEntity() })
+    suspend fun getFirstAssetForCollection(collectionId: String): DasAsset? =
+        withContext(Dispatchers.IO) {
+            dao.getFirstAssetForCollection(collectionId)?.toDasAsset()
+        }
+
+    suspend fun getAssetsByCollectionId(collectionId: String): List<DasAsset> =
+        withContext(Dispatchers.IO) {
+            dao.getAssetsByCollectionId(collectionId).map { it.toDasAsset() }
+        }
+
+    suspend fun getAssetById(assetId: String): DasAsset? =
+        withContext(Dispatchers.IO) {
+            dao.getAssetById(assetId)?.toDasAsset()
+        }
+
+    suspend fun searchCollectionIds(query: String): List<String> =
+        withContext(Dispatchers.IO) {
+            dao.searchCollectionIds(query)
+        }
+
+    suspend fun getCollectionIdsWithoutName(): List<String> =
+        withContext(Dispatchers.IO) {
+            dao.getCollectionIdsWithoutName()
+        }
+
+    suspend fun updateCollectionName(collectionId: String, name: String) =
+        withContext(Dispatchers.IO) {
+            dao.updateCollectionName(collectionId, name)
+        }
+
+    suspend fun deleteAll() = withContext(Dispatchers.IO) {
+        dao.deleteAll()
     }
 }

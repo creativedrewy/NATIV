@@ -49,7 +49,9 @@ data class DasAttribute(
 )
 
 data class DasGrouping(
+    @SerializedName("group_key")
     val groupKey: String,
+    @SerializedName("group_value")
     val groupValue: String
 )
 
