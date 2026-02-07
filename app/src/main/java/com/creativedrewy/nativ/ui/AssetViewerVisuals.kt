@@ -12,11 +12,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -24,18 +32,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import coil3.ImageLoader
 import coil3.compose.SubcomposeAsyncImage
-import coil3.disk.DiskCache
-import coil3.disk.directory
-import coil3.imageLoader
-import coil3.memory.MemoryCache
 import coil3.request.ImageRequest
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.DarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.ShimmerBlue
-import com.creativedrewy.nativ.viewmodel.*
+import com.creativedrewy.nativ.viewmodel.Image
+import com.creativedrewy.nativ.viewmodel.ImageAndVideo
+import com.creativedrewy.nativ.viewmodel.Model3d
+import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.viewmodel.PropsWithMedia
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -101,24 +108,40 @@ fun ImageViewer(
             .build()
     }
 
-    SubcomposeAsyncImage(
-        model = imageRequest,
-        contentDescription = "Nft Image",
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
-        contentScale = ContentScale.Fit,
-        loading = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = HotPink
-                )
+        contentAlignment = Alignment.Center
+    ) {
+        // Blurred background fill — crops to fill the square
+        SubcomposeAsyncImage(
+            model = imageRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .blur(radius = 16.dp),
+            contentScale = ContentScale.Crop
+        )
+
+        // Foreground image — fits within the square preserving aspect ratio
+        SubcomposeAsyncImage(
+            model = imageRequest,
+            contentDescription = "Nft Image",
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+            loading = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = HotPink
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
