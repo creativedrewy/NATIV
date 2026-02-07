@@ -2,6 +2,7 @@ package com.creativedrewy.nativ.ui
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -121,13 +122,19 @@ fun CollectionsContent(
     }
 
     val infiniteTransition = rememberInfiniteTransition()
-    val animatedOffset by infiniteTransition.animateFloat(
+    val loopingOffset by infiniteTransition.animateFloat(
         initialValue = 340f,
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 5000),
-            repeatMode = RepeatMode.Restart
+            repeatMode = RepeatMode.Reverse
         )
+    )
+
+    // Smoothly animate to 0 when loading completes instead of snapping
+    val animatedOffset by animateFloatAsState(
+        targetValue = if (isLoading || isRefreshing) loopingOffset else 0f,
+        animationSpec = tween(durationMillis = if (isLoading || isRefreshing) 0 else 5000)
     )
 
     Box {
@@ -144,7 +151,7 @@ fun CollectionsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.TopStart)
-                .offset(y = if (isLoading || isRefreshing) animatedOffset.dp else 0.dp),
+                .offset(y = animatedOffset.dp),
             contentAlignment = Alignment.TopCenter
         ) {
             Image(
