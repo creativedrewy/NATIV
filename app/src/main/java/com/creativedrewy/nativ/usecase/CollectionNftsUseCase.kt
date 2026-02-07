@@ -21,9 +21,14 @@ class CollectionNftsUseCase @Inject constructor(
 
     /**
      * Load all NFTs belonging to a specific collection.
+     * For the assorted group, loads all NFTs from single-item collections.
      */
     suspend fun loadNftsForCollection(collectionId: String): List<NftDisplayInfo> {
-        val assets = nftDatabaseRepository.getAssetsByCollectionId(collectionId)
+        val assets = if (collectionId == ASSORTED_COLLECTION_ID) {
+            nftDatabaseRepository.getAssetsFromSingleItemCollections()
+        } else {
+            nftDatabaseRepository.getAssetsByCollectionId(collectionId)
+        }
         return assets.map { it.toNftDisplayInfo() }
     }
 
@@ -39,15 +44,16 @@ class CollectionNftsUseCase @Inject constructor(
      * Get the collection name for a given collection ID.
      */
     suspend fun getCollectionName(collectionId: String): String? {
+        if (collectionId == ASSORTED_COLLECTION_ID) return "Assorted"
+
+        val summaries = nftDatabaseRepository.getCollectionSummaries()
+        val collectionName = summaries.firstOrNull { it.collectionId == collectionId }?.collectionName
+
+        if (collectionName != null) return collectionName
+
+        // Fall back to the first NFT's name if no collection name is available
         val firstAsset = nftDatabaseRepository.getFirstAssetForCollection(collectionId)
-        // The collection name is denormalized on each NFT row
-        return firstAsset?.grouping
-            ?.firstOrNull { it.groupKey == "collection" }
-            ?.let {
-                // Query the database for the collection name stored on the entity
-                val summaries = nftDatabaseRepository.getCollectionSummaries()
-                summaries.firstOrNull { s -> s.collectionId == collectionId }?.collectionName
-            }
+        return firstAsset?.content?.metadata?.name
     }
 
     private fun DasAsset.toNftDisplayInfo(): NftDisplayInfo {

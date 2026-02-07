@@ -13,6 +13,7 @@ sealed class CollectionsViewState {
     data class Display(
         val collections: List<CollectionViewProps>,
         val searchQuery: String = "",
-        val isSearching: Boolean = false
+        val isSearching: Boolean = false,
+        val isRefreshing: Boolean = false
     ) : CollectionsViewState()
 }

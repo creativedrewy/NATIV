@@ -104,6 +104,10 @@ fun CollectionsContent(
     listState: LazyGridState
 ) {
     val isLoading = viewState is CollectionsViewState.Loading
+    val isRefreshing = when (viewState) {
+        is CollectionsViewState.Display -> viewState.isRefreshing
+        else -> false
+    }
     val collections = when (viewState) {
         is CollectionsViewState.Display -> viewState.collections
         else -> emptyList()
@@ -137,7 +141,7 @@ fun CollectionsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.TopStart)
-                .offset(y = if (isLoading) animatedOffset.dp else 0.dp),
+                .offset(y = if (isLoading || isRefreshing) animatedOffset.dp else 0.dp),
             contentAlignment = Alignment.TopCenter
         ) {
             Image(
@@ -174,7 +178,7 @@ fun CollectionsContent(
                 .padding(bottom = 64.dp)
         ) {
             SwipeRefresh(
-                state = rememberSwipeRefreshState(isRefreshing = isLoading),
+                state = rememberSwipeRefreshState(isRefreshing = isLoading || isRefreshing),
                 onRefresh = onRefresh,
                 indicator = { state, trigger ->
                     LineSwipeRefreshIndicator(

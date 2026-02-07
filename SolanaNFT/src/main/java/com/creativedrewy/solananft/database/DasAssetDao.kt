@@ -54,6 +54,18 @@ interface DasAssetDao {
     @Query("SELECT DISTINCT collectionId FROM DasAssetEntity WHERE collectionId IS NOT NULL AND collectionName IS NULL")
     fun getCollectionIdsWithoutName(): List<String>
 
+    @Query("""
+        SELECT * FROM DasAssetEntity 
+        WHERE collectionId IN (
+            SELECT collectionId FROM DasAssetEntity 
+            WHERE collectionId IS NOT NULL 
+            GROUP BY collectionId 
+            HAVING COUNT(*) = 1
+        )
+        ORDER BY name ASC
+    """)
+    fun getAssetsFromSingleItemCollections(): List<DasAssetEntity>
+
     @Query("DELETE FROM DasAssetEntity")
     fun deleteAll()
 }

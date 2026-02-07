@@ -30,23 +30,29 @@ class CollectionsViewModel @Inject constructor(
 
     fun loadCollections() {
         viewModelScope.launch {
-            // Immediately show cached collections from the database if available
             val cachedCollections = collectionsUseCase.loadCollections()
             if (cachedCollections.isNotEmpty()) {
+                // Show cached data immediately; no API call needed
                 applyCollections(cachedCollections)
             } else {
+                // No cached data — fetch from API on first load
                 _state.value = CollectionsViewState.Loading
+                syncNftsFromApi()
+                refreshCollectionsFromDb()
             }
-
-            // Then sync from the API in the background and refresh when done
-            syncNftsFromApi()
-            refreshCollectionsFromDb()
         }
     }
 
     fun reloadCollections() {
         viewModelScope.launch {
-            _state.value = CollectionsViewState.Loading
+            // Keep showing current collections while refreshing in the background
+            val current = _state.value
+            if (current is CollectionsViewState.Display) {
+                _state.value = current.copy(isRefreshing = true)
+            } else {
+                _state.value = CollectionsViewState.Loading
+            }
+
             syncNftsFromApi()
             refreshCollectionsFromDb()
         }
@@ -109,7 +115,7 @@ class CollectionsViewModel @Inject constructor(
                 previewImageUrl = info.previewImageUrl,
                 nftCount = info.nftCount
             )
-        }.sortedBy { it.collectionName.lowercase() }
+        }.sortedByDescending { it.nftCount }
 
         // Re-apply any active search filter
         if (currentQuery.isBlank()) {

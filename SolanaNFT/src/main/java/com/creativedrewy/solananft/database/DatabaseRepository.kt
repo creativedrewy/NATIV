@@ -54,6 +54,11 @@ class DatabaseRepository @Inject constructor(
             dao.updateCollectionName(collectionId, name)
         }
 
+    suspend fun getAssetsFromSingleItemCollections(): List<DasAsset> =
+        withContext(Dispatchers.IO) {
+            dao.getAssetsFromSingleItemCollections().map { it.toDasAsset() }
+        }
+
     suspend fun deleteAll() = withContext(Dispatchers.IO) {
         dao.deleteAll()
     }
