@@ -10,7 +10,6 @@ import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
 import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
 import com.creativedrewy.nativ.chainsupport.nft.NftCategories
 import com.creativedrewy.nativ.chainsupport.nft.NftCreator
-import com.creativedrewy.nativ.chainsupport.nft.NftFileTypes
 import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
@@ -118,7 +117,15 @@ class MetaplexNftUseCase @Inject constructor(
             NftAttributes(it.traitType, it.value, 0)
         } ?: emptyList()
 
-        val category = if (content.files?.any { it.type == NftFileTypes.GLB } == true) {
+        val animationUrl = content.links?.get("animation_url") ?: ""
+        val hasGlbFile = content.files?.any { file ->
+            val type = file.type?.lowercase() ?: ""
+            type == "model/gltf-binary" || type == "model/gltf+json" || type.contains("gltf")
+                    || file.uri?.lowercase()?.let { it.contains(".glb") || it.contains("ext=glb") } == true
+        } == true
+        val hasGlbAnimUrl = animationUrl.lowercase().let { it.contains(".glb") || it.contains("ext=glb") }
+
+        val category = if (hasGlbFile || hasGlbAnimUrl) {
             NftCategories.VR
         } else {
             NftCategories.Image

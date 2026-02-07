@@ -72,6 +72,10 @@ class DetailsViewModel @Inject constructor(
         viewModelScope.launch {
             val nftInfo = collectionNftsUseCase.loadNft(assetId) ?: return@launch
 
+            val animUrl = nftInfo.animationUrl
+            val assetType = determineAssetTypeFromUrls(animUrl, nftInfo.fileTypes)
+            val assetUrl = if (assetType is Model3d) animUrl else ""
+
             val nftProps = NftViewProps(
                 id = UUID.nameUUIDFromBytes(assetId.toByteArray()),
                 name = nftInfo.name,
@@ -81,13 +85,21 @@ class DetailsViewModel @Inject constructor(
                     logoRes = R.drawable.solana_logo
                 ),
                 displayImageUrl = nftInfo.imageUrl,
-                videoUrl = nftInfo.animationUrl,
+                videoUrl = animUrl,
                 siteUrl = nftInfo.externalUrl,
-                assetType = if (nftInfo.animationUrl.endsWith(".mp4")) ImageAndVideo else Image,
+                assetType = assetType,
+                assetUrl = assetUrl,
                 isPending = false
             )
 
-            _state.value = Ready(PropsWithMedia(nftProps), false)
+            if (assetType is Model3d) {
+                _state.value = Ready(PropsWithMedia(nftProps), true)
+
+                val mediaBytes = assetDownloadUseCase.downloadAsset(assetUrl)
+                _state.value = Ready(PropsWithMedia(nftProps, mediaBytes), false)
+            } else {
+                _state.value = Ready(PropsWithMedia(nftProps), false)
+            }
         }
     }
 
@@ -102,4 +114,34 @@ class DetailsViewModel @Inject constructor(
     private fun shouldDownloadAsset(nft: NftViewProps, cache: ViewStateCache): Boolean {
         return nft.assetType is Model3d && !cache.mediaCache.containsKey(nft.id.toString())
     }
+}
+
+/**
+ * Determine the asset type from the animation URL and file MIME types.
+ * Checks for GLB model files via URL patterns and MIME types.
+ */
+fun determineAssetTypeFromUrls(animationUrl: String, fileTypes: List<String>): AssetType {
+    return when {
+        isGlbUrl(animationUrl) || fileTypes.any { isGlbMimeType(it) } -> Model3d
+        animationUrl.endsWith(".mp4") -> ImageAndVideo
+        else -> Image
+    }
+}
+
+/**
+ * Check if a URL points to a GLB (3D model) file.
+ * Handles both direct `.glb` extensions and Arweave-style `?ext=glb` query params.
+ */
+fun isGlbUrl(url: String): Boolean {
+    if (url.isBlank()) return false
+    val lower = url.lowercase()
+    return lower.contains(".glb") || lower.contains("ext=glb")
+}
+
+/**
+ * Check if a MIME type indicates a GLB/glTF 3D model file.
+ */
+fun isGlbMimeType(mimeType: String): Boolean {
+    val lower = mimeType.lowercase()
+    return lower == "model/gltf-binary" || lower == "model/gltf+json" || lower.contains("gltf")
 }

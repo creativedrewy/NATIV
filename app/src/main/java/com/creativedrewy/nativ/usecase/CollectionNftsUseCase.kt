@@ -13,6 +13,7 @@ data class NftDisplayInfo(
     val externalUrl: String,
     val collectionId: String?,
     val collectionName: String?,
+    val fileTypes: List<String> = emptyList(),
 )
 
 class CollectionNftsUseCase @Inject constructor(
@@ -66,6 +67,7 @@ class CollectionNftsUseCase @Inject constructor(
             externalUrl = content?.links?.get("external_url") ?: "",
             collectionId = grouping?.firstOrNull { it.groupKey == "collection" }?.groupValue,
             collectionName = null, // Will be filled from DB if needed
+            fileTypes = content?.files?.mapNotNull { it.type } ?: emptyList(),
         )
     }
 }
