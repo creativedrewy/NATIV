@@ -1,4 +1,4 @@
-package com.creativedrewy.solananft.accounts
+package com.creativedrewy.solananft.dto
 
 data class RpcResultDto<T>(
     val jsonrpc: String,

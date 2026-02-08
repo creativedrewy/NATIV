@@ -1,4 +1,4 @@
-package com.creativedrewy.solananft.das
+package com.creativedrewy.solananft.dto
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,11 +1,10 @@
 package com.creativedrewy.solananft.database
 
 import androidx.room.TypeConverter
-import androidx.room.TypeConverters
-import com.creativedrewy.solananft.das.DasGrouping
-import com.creativedrewy.solananft.das.DasCreator
-import com.creativedrewy.solananft.das.DasFile
-import com.creativedrewy.solananft.das.DasAttribute
+import com.creativedrewy.solananft.dto.DasAttribute
+import com.creativedrewy.solananft.dto.DasCreator
+import com.creativedrewy.solananft.dto.DasFile
+import com.creativedrewy.solananft.dto.DasGrouping
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

@@ -3,7 +3,7 @@ package com.creativedrewy.nativ.injection
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
-import com.creativedrewy.solananft.metaplex.MetaplexNftUseCase
+import com.creativedrewy.solananft.usecase.MetaplexNftUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

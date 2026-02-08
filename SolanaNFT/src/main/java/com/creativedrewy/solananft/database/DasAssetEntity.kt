@@ -3,13 +3,13 @@ package com.creativedrewy.solananft.database
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.creativedrewy.solananft.das.DasAsset
-import com.creativedrewy.solananft.das.DasAttribute
-import com.creativedrewy.solananft.das.DasContent
-import com.creativedrewy.solananft.das.DasCreator
-import com.creativedrewy.solananft.das.DasFile
-import com.creativedrewy.solananft.das.DasGrouping
-import com.creativedrewy.solananft.das.DasMetadata
+import com.creativedrewy.solananft.dto.DasAsset
+import com.creativedrewy.solananft.dto.DasAttribute
+import com.creativedrewy.solananft.dto.DasContent
+import com.creativedrewy.solananft.dto.DasCreator
+import com.creativedrewy.solananft.dto.DasFile
+import com.creativedrewy.solananft.dto.DasGrouping
+import com.creativedrewy.solananft.dto.DasMetadata
 
 @Entity(tableName = "DasAssetEntity")
 data class DasAssetEntity(

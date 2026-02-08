@@ -1,12 +1,12 @@
-package com.creativedrewy.solananft.accounts
+package com.creativedrewy.solananft.repository
 
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.network.Error
 import com.creativedrewy.nativ.chainsupport.network.Success
 import com.creativedrewy.solananft.BuildConfig
-import com.creativedrewy.solananft.das.DasAsset
-import com.creativedrewy.solananft.das.DasAssetsList
-import com.creativedrewy.solananft.das.RpcResultDas
+import com.creativedrewy.solananft.dto.DasAsset
+import com.creativedrewy.solananft.dto.DasAssetsList
+import com.creativedrewy.solananft.dto.RpcResultDas
 import com.creativedrewy.solananft.rpcapi.Rpc20ObjectParamsDto
 import com.creativedrewy.solananft.rpcapi.RpcRequestClient
 import com.google.gson.Gson
@@ -19,11 +19,13 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 
 class AccountRepository(
-    private val rpcRequestClient: RpcRequestClient = RpcRequestClient(RPCEndpoint.custom(
-        URL("https://mainnet.helius-rpc.com/?api-key=${BuildConfig.API_KEY}"),
-        URL("https://mainnet.helius-rpc.com/?api-key=${BuildConfig.API_KEY}"),
-        Network.mainnetBeta
-    )),
+    private val rpcRequestClient: RpcRequestClient = RpcRequestClient(
+        RPCEndpoint.custom(
+            URL("https://mainnet.helius-rpc.com/?api-key=${BuildConfig.API_KEY}"),
+            URL("https://mainnet.helius-rpc.com/?api-key=${BuildConfig.API_KEY}"),
+            Network.mainnetBeta
+        )
+    ),
     private val gson: Gson = Gson(),
 ) {
 
@@ -107,7 +109,11 @@ class AccountRepository(
             }
 
             is Error -> {
-                Log.e("Solana", "Error fetching asset $assetId: ${result.exception?.message}", result.exception)
+                Log.e(
+                    "Solana",
+                    "Error fetching asset $assetId: ${result.exception?.message}",
+                    result.exception
+                )
                 null
             }
         }

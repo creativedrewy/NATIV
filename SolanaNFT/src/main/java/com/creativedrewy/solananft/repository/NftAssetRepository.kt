@@ -1,10 +1,10 @@
 package com.creativedrewy.solananft.repository
 
-import com.creativedrewy.solananft.das.DasAsset
 import com.creativedrewy.solananft.database.CollectionSummary
 import com.creativedrewy.solananft.database.DasAssetDao
 import com.creativedrewy.solananft.database.toDasAsset
 import com.creativedrewy.solananft.database.toEntity
+import com.creativedrewy.solananft.dto.DasAsset
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

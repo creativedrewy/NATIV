@@ -1,7 +1,10 @@
-package com.creativedrewy.solananft.database
+package com.creativedrewy.solananft.injection
 
 import android.content.Context
 import androidx.room.Room
+import com.creativedrewy.solananft.database.DasAssetDao
+import com.creativedrewy.solananft.database.FavoriteNftDao
+import com.creativedrewy.solananft.database.NftDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

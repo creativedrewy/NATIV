@@ -1,6 +1,6 @@
 package com.creativedrewy.solananft.usecase
 
-import com.creativedrewy.solananft.das.DasAsset
+import com.creativedrewy.solananft.dto.DasAsset
 import com.creativedrewy.solananft.repository.NftAssetRepository
 import javax.inject.Inject
 
