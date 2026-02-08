@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.database
+package com.creativedrewy.solananft.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

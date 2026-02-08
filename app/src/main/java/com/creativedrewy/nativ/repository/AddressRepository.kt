@@ -5,7 +5,7 @@ import com.creativedrewy.nativ.database.ChainAddrDao
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class DatabaseRepository @Inject constructor(
+class AddressRepository @Inject constructor(
     private val addressDao: ChainAddrDao
 ) {
 

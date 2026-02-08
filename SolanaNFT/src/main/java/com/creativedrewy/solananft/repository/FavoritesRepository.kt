@@ -1,8 +1,8 @@
-package com.creativedrewy.nativ.repository
+package com.creativedrewy.solananft.repository
 
 import android.content.Context
-import com.creativedrewy.nativ.database.FavoriteNft
-import com.creativedrewy.nativ.database.FavoriteNftDao
+import com.creativedrewy.solananft.database.FavoriteNft
+import com.creativedrewy.solananft.database.FavoriteNftDao
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,11 +35,12 @@ class FavoritesRepository @Inject constructor(
         favoriteNftDao.getAll()
     }
 
-    suspend fun cacheMediaFile(tokenAddress: String, bytes: ByteArray) = withContext(Dispatchers.IO) {
-        val dir = File(context.filesDir, CACHE_DIR)
-        dir.mkdirs()
-        File(dir, tokenAddress).writeBytes(bytes)
-    }
+    suspend fun cacheMediaFile(tokenAddress: String, bytes: ByteArray) =
+        withContext(Dispatchers.IO) {
+            val dir = File(context.filesDir, CACHE_DIR)
+            dir.mkdirs()
+            File(dir, tokenAddress).writeBytes(bytes)
+        }
 
     private fun deleteCachedFile(tokenAddress: String) {
         val file = File(context.filesDir, "$CACHE_DIR/$tokenAddress")

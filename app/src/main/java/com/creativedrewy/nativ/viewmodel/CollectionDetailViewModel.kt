@@ -2,7 +2,7 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.creativedrewy.nativ.usecase.CollectionNftsUseCase
+import com.creativedrewy.solananft.usecase.CollectionNftsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

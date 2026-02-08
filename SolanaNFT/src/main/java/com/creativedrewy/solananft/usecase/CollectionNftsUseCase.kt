@@ -1,7 +1,7 @@
-package com.creativedrewy.nativ.usecase
+package com.creativedrewy.solananft.usecase
 
 import com.creativedrewy.solananft.das.DasAsset
-import com.creativedrewy.solananft.database.DatabaseRepository
+import com.creativedrewy.solananft.repository.NftAssetRepository
 import javax.inject.Inject
 
 data class NftDisplayInfo(
@@ -17,7 +17,7 @@ data class NftDisplayInfo(
 )
 
 class CollectionNftsUseCase @Inject constructor(
-    private val nftDatabaseRepository: DatabaseRepository
+    private val nftAssetRepository: NftAssetRepository
 ) {
 
     /**
@@ -26,9 +26,9 @@ class CollectionNftsUseCase @Inject constructor(
      */
     suspend fun loadNftsForCollection(collectionId: String): List<NftDisplayInfo> {
         val assets = if (collectionId == ASSORTED_COLLECTION_ID) {
-            nftDatabaseRepository.getAssetsFromSingleItemCollections()
+            nftAssetRepository.getAssetsFromSingleItemCollections()
         } else {
-            nftDatabaseRepository.getAssetsByCollectionId(collectionId)
+            nftAssetRepository.getAssetsByCollectionId(collectionId)
         }
         return assets.map { it.toNftDisplayInfo() }
     }
@@ -37,7 +37,7 @@ class CollectionNftsUseCase @Inject constructor(
      * Load a single NFT by its asset ID.
      */
     suspend fun loadNft(assetId: String): NftDisplayInfo? {
-        val asset = nftDatabaseRepository.getAssetById(assetId)
+        val asset = nftAssetRepository.getAssetById(assetId)
         return asset?.toNftDisplayInfo()
     }
 
@@ -47,13 +47,13 @@ class CollectionNftsUseCase @Inject constructor(
     suspend fun getCollectionName(collectionId: String): String? {
         if (collectionId == ASSORTED_COLLECTION_ID) return "Assorted"
 
-        val summaries = nftDatabaseRepository.getCollectionSummaries()
+        val summaries = nftAssetRepository.getCollectionSummaries()
         val collectionName = summaries.firstOrNull { it.collectionId == collectionId }?.collectionName
 
         if (collectionName != null) return collectionName
 
         // Fall back to the first NFT's name if no collection name is available
-        val firstAsset = nftDatabaseRepository.getFirstAssetForCollection(collectionId)
+        val firstAsset = nftAssetRepository.getFirstAssetForCollection(collectionId)
         return firstAsset?.content?.metadata?.name
     }
 
@@ -66,7 +66,7 @@ class CollectionNftsUseCase @Inject constructor(
             animationUrl = content?.links?.get("animation_url") ?: "",
             externalUrl = content?.links?.get("external_url") ?: "",
             collectionId = grouping?.firstOrNull { it.groupKey == "collection" }?.groupValue,
-            collectionName = null, // Will be filled from DB if needed
+            collectionName = null,
             fileTypes = content?.files?.mapNotNull { it.type } ?: emptyList(),
         )
     }

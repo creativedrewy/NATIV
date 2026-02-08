@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
-import com.creativedrewy.nativ.usecase.CollectionDisplayInfo
-import com.creativedrewy.nativ.usecase.CollectionsUseCase
-import com.creativedrewy.nativ.usecase.FavoriteNftUseCase
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
+import com.creativedrewy.solananft.usecase.CollectionDisplayInfo
+import com.creativedrewy.solananft.usecase.CollectionsUseCase
+import com.creativedrewy.solananft.usecase.FavoriteNftUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.downloader
+package com.creativedrewy.solananft.usecase
 
 import com.creativedrewy.nativ.chainsupport.network.ApiRequestClient
 import com.creativedrewy.nativ.chainsupport.network.Error

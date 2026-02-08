@@ -2,11 +2,11 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.usecase.CollectionNftsUseCase
-import com.creativedrewy.nativ.usecase.FavoriteNftUseCase
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import com.creativedrewy.solananft.R
+import com.creativedrewy.solananft.usecase.AssetDownloadUseCase
+import com.creativedrewy.solananft.usecase.CollectionNftsUseCase
+import com.creativedrewy.solananft.usecase.FavoriteNftUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,8 +1,7 @@
-package com.creativedrewy.nativ.usecase
+package com.creativedrewy.solananft.usecase
 
-import com.creativedrewy.nativ.database.FavoriteNft
-import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
-import com.creativedrewy.nativ.repository.FavoritesRepository
+import com.creativedrewy.solananft.database.FavoriteNft
+import com.creativedrewy.solananft.repository.FavoritesRepository
 import javax.inject.Inject
 
 class FavoriteNftUseCase @Inject constructor(

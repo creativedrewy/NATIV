@@ -2,9 +2,8 @@ package com.creativedrewy.nativ.injection
 
 import android.content.Context
 import androidx.room.Room
-import com.creativedrewy.nativ.database.AppDatabase
+import com.creativedrewy.nativ.database.AddressDatabase
 import com.creativedrewy.nativ.database.ChainAddrDao
-import com.creativedrewy.nativ.database.FavoriteNftDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,10 +19,10 @@ class NATIVModule {
 
     @ViewModelScoped
     @Provides
-    fun providesAppDatabase(@ApplicationContext context: Context): AppDatabase {
+    fun providesAddressDatabase(@ApplicationContext context: Context): AddressDatabase {
         return Room.databaseBuilder(
             context,
-            AppDatabase::class.java,
+            AddressDatabase::class.java,
             "nativ-db"
         )
         .fallbackToDestructiveMigration()
@@ -32,13 +31,7 @@ class NATIVModule {
 
     @ViewModelScoped
     @Provides
-    fun providesChainAddrDao(db: AppDatabase): ChainAddrDao {
+    fun providesChainAddrDao(db: AddressDatabase): ChainAddrDao {
         return db.chainAddrDao()
-    }
-
-    @ViewModelScoped
-    @Provides
-    fun providesFavoriteNftDao(db: AppDatabase): FavoriteNftDao {
-        return db.favoriteNftDao()
     }
 }

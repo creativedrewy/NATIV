@@ -1,4 +1,4 @@
-package com.creativedrewy.nativ.database
+package com.creativedrewy.solananft.database
 
 import androidx.room.Dao
 import androidx.room.Insert

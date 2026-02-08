@@ -15,12 +15,16 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "cached_nft")
+    fun provideNftDatabase(@ApplicationContext context: Context): NftDatabase =
+        Room.databaseBuilder(context, NftDatabase::class.java, "cached_nft")
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
     @Singleton
     @Provides
-    fun provideDasAssetDao(db: AppDatabase): DasAssetDao = db.dasAssetDao()
+    fun provideDasAssetDao(db: NftDatabase): DasAssetDao = db.dasAssetDao()
+
+    @Singleton
+    @Provides
+    fun provideFavoriteNftDao(db: NftDatabase): FavoriteNftDao = db.favoriteNftDao()
 }

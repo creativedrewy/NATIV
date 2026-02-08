@@ -16,7 +16,7 @@ import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.creativedrewy.nativ.chainsupport.nft.Pending
 import com.creativedrewy.solananft.accounts.AccountRepository
 import com.creativedrewy.solananft.das.DasAsset
-import com.creativedrewy.solananft.database.DatabaseRepository
+import com.creativedrewy.solananft.repository.NftAssetRepository
 import com.solana.core.PublicKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class MetaplexNftUseCase @Inject constructor(
     private val accountsRepository: AccountRepository,
-    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: NftAssetRepository
 ) : IBlockchainNftLoader {
 
     /**

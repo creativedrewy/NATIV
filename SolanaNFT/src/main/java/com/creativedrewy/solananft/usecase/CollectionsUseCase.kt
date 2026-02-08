@@ -1,6 +1,6 @@
-package com.creativedrewy.nativ.usecase
+package com.creativedrewy.solananft.usecase
 
-import com.creativedrewy.solananft.database.DatabaseRepository
+import com.creativedrewy.solananft.repository.NftAssetRepository
 import javax.inject.Inject
 
 const val ASSORTED_COLLECTION_ID = "__assorted__"
@@ -13,7 +13,7 @@ data class CollectionDisplayInfo(
 )
 
 class CollectionsUseCase @Inject constructor(
-    private val nftDatabaseRepository: DatabaseRepository
+    private val nftAssetRepository: NftAssetRepository
 ) {
 
     /**
@@ -21,7 +21,7 @@ class CollectionsUseCase @Inject constructor(
      * Collections with only 1 NFT are aggregated into an "Assorted" group.
      */
     suspend fun loadCollections(): List<CollectionDisplayInfo> {
-        val summaries = nftDatabaseRepository.getCollectionSummaries()
+        val summaries = nftAssetRepository.getCollectionSummaries()
 
         val multiItemCollections = summaries.filter { it.nftCount > 1 }
         val singleItemCollections = summaries.filter { it.nftCount == 1 }
@@ -30,7 +30,7 @@ class CollectionsUseCase @Inject constructor(
 
         // Map multi-item collections normally
         multiItemCollections.forEach { summary ->
-            val previewAsset = nftDatabaseRepository.getFirstAssetForCollection(summary.collectionId)
+            val previewAsset = nftAssetRepository.getFirstAssetForCollection(summary.collectionId)
             val imageUrl = previewAsset?.content?.links?.get("image") ?: ""
 
             result.add(
@@ -48,7 +48,7 @@ class CollectionsUseCase @Inject constructor(
         // Aggregate single-item collections into one "Assorted" group
         if (singleItemCollections.isNotEmpty()) {
             val firstSingle = singleItemCollections.first()
-            val previewAsset = nftDatabaseRepository.getFirstAssetForCollection(firstSingle.collectionId)
+            val previewAsset = nftAssetRepository.getFirstAssetForCollection(firstSingle.collectionId)
             val imageUrl = previewAsset?.content?.links?.get("image") ?: ""
 
             result.add(
@@ -71,10 +71,10 @@ class CollectionsUseCase @Inject constructor(
     suspend fun searchCollections(query: String): List<String> {
         if (query.isBlank()) return emptyList()
 
-        val matchingIds = nftDatabaseRepository.searchCollectionIds(query)
+        val matchingIds = nftAssetRepository.searchCollectionIds(query)
 
         // Check if any matching IDs belong to single-item collections
-        val summaries = nftDatabaseRepository.getCollectionSummaries()
+        val summaries = nftAssetRepository.getCollectionSummaries()
         val singleItemIds = summaries.filter { it.nftCount == 1 }.map { it.collectionId }.toSet()
 
         val result = mutableListOf<String>()
