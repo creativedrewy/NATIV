@@ -6,6 +6,7 @@ import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.findLoaderByTicker
 import com.creativedrewy.nativ.usecase.CollectionDisplayInfo
 import com.creativedrewy.nativ.usecase.CollectionsUseCase
+import com.creativedrewy.nativ.usecase.FavoriteNftUseCase
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class CollectionsViewModel @Inject constructor(
     private val userAddrsUseCase: UserAddressesUseCase,
     private val collectionsUseCase: CollectionsUseCase,
+    private val favoriteNftUseCase: FavoriteNftUseCase,
     private val chainSupport: ISupportedChains
 ) : ViewModel() {
 
@@ -26,10 +28,13 @@ class CollectionsViewModel @Inject constructor(
     val viewState: StateFlow<CollectionsViewState> get() = _state
 
     private var allCollections: List<CollectionViewProps> = emptyList()
+    private var allFavorites: List<FavoriteNftViewProps> = emptyList()
     private var currentQuery: String = ""
 
     fun loadCollections() {
         viewModelScope.launch {
+            loadFavorites()
+
             val cachedCollections = collectionsUseCase.loadCollections()
             if (cachedCollections.isNotEmpty()) {
                 // Show cached data immediately; no API call needed
@@ -53,6 +58,7 @@ class CollectionsViewModel @Inject constructor(
                 _state.value = CollectionsViewState.Loading
             }
 
+            loadFavorites()
             syncNftsFromApi()
             refreshCollectionsFromDb()
         }
@@ -64,6 +70,7 @@ class CollectionsViewModel @Inject constructor(
             if (query.isBlank()) {
                 _state.value = CollectionsViewState.Display(
                     collections = allCollections,
+                    favorites = allFavorites,
                     searchQuery = query,
                     isSearching = false
                 )
@@ -72,6 +79,7 @@ class CollectionsViewModel @Inject constructor(
                 val filtered = allCollections.filter { it.collectionId in matchingIds }
                 _state.value = CollectionsViewState.Display(
                     collections = filtered,
+                    favorites = allFavorites,
                     searchQuery = query,
                     isSearching = true
                 )
@@ -107,6 +115,17 @@ class CollectionsViewModel @Inject constructor(
         applyCollections(collections)
     }
 
+    private suspend fun loadFavorites() {
+        val favorites = favoriteNftUseCase.getAllFavorites()
+        allFavorites = favorites.map { fav ->
+            FavoriteNftViewProps(
+                tokenAddress = fav.tokenAddress,
+                name = fav.name,
+                imageUrl = fav.imageUrl
+            )
+        }
+    }
+
     private fun applyCollections(collections: List<CollectionDisplayInfo>) {
         allCollections = collections.map { info ->
             CollectionViewProps(
@@ -121,6 +140,7 @@ class CollectionsViewModel @Inject constructor(
         if (currentQuery.isBlank()) {
             _state.value = CollectionsViewState.Display(
                 collections = allCollections,
+                favorites = allFavorites,
                 searchQuery = currentQuery,
                 isSearching = false
             )

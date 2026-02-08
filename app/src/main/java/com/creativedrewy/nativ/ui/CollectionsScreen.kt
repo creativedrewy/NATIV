@@ -25,9 +25,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.CircularProgressIndicator
@@ -73,6 +76,7 @@ import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.CollectionViewProps
 import com.creativedrewy.nativ.viewmodel.CollectionsViewModel
 import com.creativedrewy.nativ.viewmodel.CollectionsViewState
+import com.creativedrewy.nativ.viewmodel.FavoriteNftViewProps
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -81,6 +85,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 fun CollectionsScreen(
     viewModel: CollectionsViewModel = hiltViewModel(),
     onCollectionNavigate: (String) -> Unit,
+    onNftNavigate: (String) -> Unit,
     listState: LazyGridState
 ) {
     LaunchedEffect(Unit) {
@@ -94,6 +99,7 @@ fun CollectionsScreen(
         onRefresh = { viewModel.reloadCollections() },
         onSearchQueryChanged = { viewModel.onSearchQueryChanged(it) },
         onCollectionNavigate = onCollectionNavigate,
+        onNftNavigate = onNftNavigate,
         listState = listState
     )
 }
@@ -105,6 +111,7 @@ fun CollectionsContent(
     onRefresh: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onCollectionNavigate: (String) -> Unit,
+    onNftNavigate: (String) -> Unit,
     listState: LazyGridState
 ) {
     val isLoading = viewState is CollectionsViewState.Loading
@@ -114,6 +121,10 @@ fun CollectionsContent(
     }
     val collections = when (viewState) {
         is CollectionsViewState.Display -> viewState.collections
+        else -> emptyList()
+    }
+    val favorites = when (viewState) {
+        is CollectionsViewState.Display -> viewState.favorites
         else -> emptyList()
     }
     val searchQuery = when (viewState) {
@@ -209,7 +220,7 @@ fun CollectionsContent(
                             .padding(horizontal = 16.dp, vertical = 12.dp)
                     )
 
-                    // Collections grid
+                    // Collections grid with favorites section
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         state = listState,
@@ -219,6 +230,16 @@ fun CollectionsContent(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        // Favorites section (full-width, at the top)
+                        if (favorites.isNotEmpty()) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                WallpaperGallerySection(
+                                    favorites = favorites,
+                                    onNftNavigate = onNftNavigate
+                                )
+                            }
+                        }
+
                         items(collections.size) { index ->
                             val collection = collections[index]
                             CollectionCard(
@@ -229,6 +250,126 @@ fun CollectionsContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun WallpaperGallerySection(
+    favorites: List<FavoriteNftViewProps>,
+    onNftNavigate: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
+        Text(
+            text = "Your Wallpaper Gallery",
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colors.onPrimary,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(end = 8.dp)
+        ) {
+            items(favorites) { favorite ->
+                FavoriteNftCard(
+                    favorite = favorite,
+                    onClick = { onNftNavigate(favorite.tokenAddress) }
+                )
+            }
+        }
+    }
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun FavoriteNftCard(
+    favorite: FavoriteNftViewProps,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Surface(
+        modifier = Modifier
+            .width(140.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        elevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier
+                .background(CardDarkBlue)
+                .padding(8.dp)
+        ) {
+            // Preview image
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .border(
+                        border = BorderStroke(2.dp, HotPink),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+                    .clip(RoundedCornerShape(6.dp))
+            ) {
+                if (favorite.imageUrl.isNotBlank()) {
+                    val imageRequest = remember(favorite.imageUrl) {
+                        ImageRequest.Builder(context)
+                            .data(favorite.imageUrl)
+                            .build()
+                    }
+
+                    SubcomposeAsyncImage(
+                        model = imageRequest,
+                        contentDescription = favorite.name,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        loading = {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    color = HotPink,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(DarkBlue),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "?",
+                            style = MaterialTheme.typography.h4,
+                            color = Turquoise
+                        )
+                    }
+                }
+            }
+
+            // NFT name
+            Text(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+                    .basicMarquee(initialDelayMillis = 2000),
+                text = favorite.name,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -445,6 +586,7 @@ fun CollectionsScreenPreview() {
         onRefresh = {},
         onSearchQueryChanged = {},
         onCollectionNavigate = {},
+        onNftNavigate = {},
         listState = remember { LazyGridState() }
     )
 }

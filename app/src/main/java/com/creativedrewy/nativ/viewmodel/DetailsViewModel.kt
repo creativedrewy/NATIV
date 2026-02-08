@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.downloader.AssetDownloadUseCase
 import com.creativedrewy.nativ.usecase.CollectionNftsUseCase
+import com.creativedrewy.nativ.usecase.FavoriteNftUseCase
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import com.creativedrewy.solananft.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -22,7 +25,9 @@ class PropsWithMedia(
 
 class Ready(
     val item: PropsWithMedia,
-    val isLoadingAsset: Boolean = true
+    val isLoadingAsset: Boolean = true,
+    val assetId: String = "",
+    val isFavorited: Boolean = false
 ): ScreenState()
 
 object NotReady : ScreenState()
@@ -31,6 +36,7 @@ object NotReady : ScreenState()
 class DetailsViewModel @Inject constructor(
     private val assetDownloadUseCase: AssetDownloadUseCase,
     private val collectionNftsUseCase: CollectionNftsUseCase,
+    private val favoriteNftUseCase: FavoriteNftUseCase,
     private val viewStateCache: ViewStateCache
 ) : ViewModel() {
 
@@ -39,7 +45,14 @@ class DetailsViewModel @Inject constructor(
 
     private val _state = MutableStateFlow<ScreenState>(NotReady)
 
+    private val _snackbarEvent = Channel<String>(Channel.BUFFERED)
+    val snackbarEvent = _snackbarEvent.receiveAsFlow()
+
+    private var currentAssetId: String = ""
+
     fun loadNftDetails(id: String) {
+        currentAssetId = id
+
         // First try the legacy ViewStateCache (for backward compatibility)
         val cachedProp = viewStateCache.cachedProps.firstOrNull { it.id.toString() == id }
 
@@ -51,20 +64,58 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
+    fun toggleFavorite() {
+        val currentState = _state.value as? Ready ?: return
+        val props = currentState.item.props
+
+        viewModelScope.launch {
+            // Determine the media URL to cache (images or GLB, not videos)
+            val mediaUrl = when (props.assetType) {
+                is Model3d -> props.assetUrl.ifBlank { props.videoUrl }
+                else -> props.displayImageUrl
+            }
+
+            val assetTypeStr = when (props.assetType) {
+                is Model3d -> "model3d"
+                is ImageAndVideo -> "image_and_video"
+                else -> "image"
+            }
+
+            val isNowFavorited = favoriteNftUseCase.toggleFavorite(
+                tokenAddress = currentAssetId,
+                name = props.name,
+                imageUrl = props.displayImageUrl,
+                mediaUrl = mediaUrl,
+                assetType = assetTypeStr
+            )
+
+            _state.value = Ready(
+                item = currentState.item,
+                isLoadingAsset = currentState.isLoadingAsset,
+                assetId = currentAssetId,
+                isFavorited = isNowFavorited
+            )
+
+            if (isNowFavorited) {
+                _snackbarEvent.send("Added to your wallpaper!")
+            }
+        }
+    }
+
     private fun loadFromCache(propItem: NftViewProps) {
         val shouldDownload = shouldDownloadAsset(propItem, viewStateCache)
 
-        _state.value = Ready(PropsWithMedia(propItem), shouldDownload)
+        viewModelScope.launch {
+            val isFav = favoriteNftUseCase.isFavorited(currentAssetId)
+            _state.value = Ready(PropsWithMedia(propItem), shouldDownload, currentAssetId, isFav)
 
-        if (shouldDownload) {
-            viewModelScope.launch {
+            if (shouldDownload) {
                 val assetBytes = assetDownloadUseCase.downloadAsset(propItem.assetUrl)
-
                 viewStateCache.cacheMediaItem(propItem.id.toString(), assetBytes)
-                updateViewState(propItem)
+                updateViewState(propItem, isFav)
+            } else {
+                updateViewState(propItem, isFav)
             }
-        } else {
-            updateViewState(propItem)
         }
     }
 
@@ -75,6 +126,7 @@ class DetailsViewModel @Inject constructor(
             val animUrl = nftInfo.animationUrl
             val assetType = determineAssetTypeFromUrls(animUrl, nftInfo.fileTypes)
             val assetUrl = if (assetType is Model3d) animUrl else ""
+            val isFav = favoriteNftUseCase.isFavorited(assetId)
 
             val nftProps = NftViewProps(
                 id = UUID.nameUUIDFromBytes(assetId.toByteArray()),
@@ -93,21 +145,21 @@ class DetailsViewModel @Inject constructor(
             )
 
             if (assetType is Model3d) {
-                _state.value = Ready(PropsWithMedia(nftProps), true)
+                _state.value = Ready(PropsWithMedia(nftProps), true, assetId, isFav)
 
                 val mediaBytes = assetDownloadUseCase.downloadAsset(assetUrl)
-                _state.value = Ready(PropsWithMedia(nftProps, mediaBytes), false)
+                _state.value = Ready(PropsWithMedia(nftProps, mediaBytes), false, assetId, isFav)
             } else {
-                _state.value = Ready(PropsWithMedia(nftProps), false)
+                _state.value = Ready(PropsWithMedia(nftProps), false, assetId, isFav)
             }
         }
     }
 
-    private fun updateViewState(nft: NftViewProps) {
+    private fun updateViewState(nft: NftViewProps, isFavorited: Boolean) {
         viewStateCache.mediaCache[nft.id.toString()]?.let { mediaBytes ->
             val displayData = PropsWithMedia(nft, mediaBytes)
 
-            _state.value = Ready(displayData, false)
+            _state.value = Ready(displayData, false, currentAssetId, isFavorited)
         }
     }
 

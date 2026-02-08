@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.creativedrewy.nativ.database.AppDatabase
 import com.creativedrewy.nativ.database.ChainAddrDao
+import com.creativedrewy.nativ.database.FavoriteNftDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +34,11 @@ class NATIVModule {
     @Provides
     fun providesChainAddrDao(db: AppDatabase): ChainAddrDao {
         return db.chainAddrDao()
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun providesFavoriteNftDao(db: AppDatabase): FavoriteNftDao {
+        return db.favoriteNftDao()
     }
 }

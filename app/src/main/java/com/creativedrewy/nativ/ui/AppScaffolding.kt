@@ -93,6 +93,9 @@ fun AppScreenContent() {
                     onCollectionNavigate = { collectionId ->
                         navController.navigate("collection/$collectionId")
                     },
+                    onNftNavigate = { assetId ->
+                        navController.navigate("details/$assetId")
+                    },
                     listState = listState
                 )
             }

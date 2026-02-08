@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,18 +13,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -57,12 +67,20 @@ fun DetailsScreen(
     nftId: String,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(
         key1 = Unit,
         block = {
             viewModel.loadNftDetails(nftId)
         }
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.snackbarEvent.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
     val viewState by viewModel.viewState.collectAsState()
     val scrollState = rememberScrollState()
@@ -142,6 +160,23 @@ fun DetailsScreen(
                             )
                         }
                     }
+                }
+
+                // Favorite star button
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (state.isFavorited) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                        contentDescription = if (state.isFavorited) "Unfavorite" else "Favorite",
+                        tint = if (state.isFavorited) Turquoise else Turquoise.copy(alpha = 0.6f),
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { viewModel.toggleFavorite() }
+                    )
                 }
 
                 val uriHandler = LocalUriHandler.current
@@ -294,6 +329,20 @@ fun DetailsScreen(
                     }
                 }
             }
+        }
+
+        // Snackbar host overlay
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
+        ) { data ->
+            Snackbar(
+                backgroundColor = HotPink,
+                contentColor = Color.White,
+                snackbarData = data
+            )
         }
     }
 }
