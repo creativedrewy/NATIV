@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":ChainSupport"))
+    implementation(projects.chainSupport)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

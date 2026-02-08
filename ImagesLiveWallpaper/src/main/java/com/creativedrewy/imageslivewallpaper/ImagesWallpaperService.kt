@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,55 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.creativedrewy.mozart.MozartWallpaperService
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.delay
-
-
-//val images = listOf(
-//    "https://arweave.net/e7bJrc4k-dQtGVS1rxHlCWiHjdQIM82d4h8OdZ-ioVM?ext=png",
-//    "https://arweave.net/cqI0lELJFasPoJjjg-dZoUG1LJDxAa3hq4s8IVvYVgo?ext=png",
-//    "https://arweave.net/ghHzqkyF_gg6K3HuB8xTxi4ZRSZ7DPtpUmglWOLch9c?ext=png"
-//)
-//
-//val imageLoader = ImageLoader.Builder(context)
-//    .build()
-//    .diskCache
-//
-//private fun loadImages() {
-//    bitmaps.clear()
-//    images.forEach { url ->
-//        try {
-//            val rawPath: Path? = imageLoader?.openEditor(url)?.data
-//            rawPath?.let { path ->
-//                val pathStrSource = path.name.replace(".tmp", "")
-//                val cachedImage = context.cacheDir.toString() + "/" + pathStrSource
-//
-//                val bitmap = BitmapFactory.decodeFile(cachedImage)
-//                bitmap?.let { bmp ->
-//                    val scaledBitmap = Bitmap.createScaledBitmap(
-//                        bmp,
-//                        (squareSize.toInt()),
-//                        (squareSize.toInt()),
-//                        true
-//                    )
-//
-//                    bitmaps.add(scaledBitmap)
-//                    if (bmp != scaledBitmap) {
-//                        bmp.recycle()
-//                    }
-//                }
-//            }
-//        } catch (e: Exception) {
-//            Log.e("ImagesWallpaper", "Error loading image: $url", e)
-//        }
-//    }
-//}
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ImagesWallpaperService: MozartWallpaperService() {
