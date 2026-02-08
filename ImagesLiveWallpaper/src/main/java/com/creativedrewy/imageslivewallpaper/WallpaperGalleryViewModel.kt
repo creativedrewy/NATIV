@@ -1,13 +1,28 @@
 package com.creativedrewy.imageslivewallpaper
 
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.creativedrewy.solananft.repository.FavoritesRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+data class WallpaperNftItem(
+    val tokenAddress: String,
+    val name: String,
+    val imageUrl: String
+)
+
 class WallpaperGalleryViewModel @Inject constructor(
+    private val favoritesRepository: FavoritesRepository
+) {
 
-) : ViewModel() {
-
-    val blah = "something something"
-
+    val wallpaperItems: Flow<List<WallpaperNftItem>> = favoritesRepository.observeAllFavorites()
+        .map { favorites ->
+            favorites.map { nft ->
+                WallpaperNftItem(
+                    tokenAddress = nft.tokenAddress,
+                    name = nft.name,
+                    imageUrl = nft.imageUrl
+                )
+            }
+        }
 }

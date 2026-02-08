@@ -2,6 +2,7 @@ package com.creativedrewy.solananft.usecase
 
 import com.creativedrewy.solananft.database.FavoriteNft
 import com.creativedrewy.solananft.repository.FavoritesRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FavoriteNftUseCase @Inject constructor(
@@ -55,5 +56,9 @@ class FavoriteNftUseCase @Inject constructor(
 
     suspend fun getAllFavorites(): List<FavoriteNft> {
         return favoritesRepository.getAllFavorites()
+    }
+
+    fun observeFavorites(): Flow<List<FavoriteNft>> {
+        return favoritesRepository.observeAllFavorites()
     }
 }

@@ -4,12 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteNftDao {
 
     @Query("SELECT * FROM FavoriteNft")
     fun getAll(): List<FavoriteNft>
+
+    @Query("SELECT * FROM FavoriteNft")
+    fun observeAll(): Flow<List<FavoriteNft>>
 
     @Query("SELECT * FROM FavoriteNft WHERE tokenAddress = :tokenAddress")
     fun getFavorite(tokenAddress: String): FavoriteNft?

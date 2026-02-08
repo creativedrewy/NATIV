@@ -5,6 +5,7 @@ import com.creativedrewy.solananft.database.FavoriteNft
 import com.creativedrewy.solananft.database.FavoriteNftDao
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -17,6 +18,8 @@ class FavoritesRepository @Inject constructor(
     companion object {
         private const val CACHE_DIR = "wallpaper_cache"
     }
+
+    fun observeAllFavorites(): Flow<List<FavoriteNft>> = favoriteNftDao.observeAll()
 
     suspend fun addFavorite(nft: FavoriteNft) = withContext(Dispatchers.IO) {
         favoriteNftDao.insert(nft)
