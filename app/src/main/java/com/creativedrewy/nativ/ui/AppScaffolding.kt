@@ -3,13 +3,16 @@ package com.creativedrewy.nativ.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigation
@@ -138,11 +141,14 @@ fun TabScreen(
     screenContent: @Composable () -> Unit
 ) {
     Scaffold(
+        modifier = Modifier
+            .background(MaterialTheme.colors.primary)
+            .windowInsetsPadding(WindowInsets.systemBars),
         topBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
+                    .height(80.dp)
                     .background(MaterialTheme.colors.primary)
             ) {
                 // Centered logo
@@ -150,7 +156,7 @@ fun TabScreen(
                     modifier = Modifier
                         .width(135.dp)
                         .aspectRatio(1.7f)
-                        .align(Alignment.BottomCenter),
+                        .align(Alignment.Center),
                     contentScale = ContentScale.Fit,
                     painter = painterResource(
                         id = R.drawable.nativ_logo
@@ -162,8 +168,8 @@ fun TabScreen(
                 IconButton(
                     onClick = onSettingsClick,
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 8.dp, bottom = 8.dp)
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 8.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Person,
@@ -208,9 +214,9 @@ fun BottomNavigationContents(
             icon = {
                 Icon(
                     modifier = Modifier
-                        .size(20.dp),
+                        .size(24.dp),
                     painter = painterResource(
-                        id = R.drawable.ic_gallery_icon_src
+                        id = R.drawable.ic_grid
                     ),
                     contentDescription = "Gallery"
                 )
@@ -229,9 +235,9 @@ fun BottomNavigationContents(
         BottomNavigationItem(
             icon = {
                 Icon(
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(24.dp),
                     painter = painterResource(
-                        id = R.drawable.ic_keys_icon_src
+                        id = R.drawable.ic_phone_wallpaper
                     ),
                     contentDescription = "Wallpapers"
                 )
