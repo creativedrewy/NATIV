@@ -126,10 +126,18 @@ class MetaplexNftUseCase @Inject constructor(
         } == true
         val hasGlbAnimUrl = animationUrl.lowercase().let { it.contains(".glb") || it.contains("ext=glb") }
 
-        val category = if (hasGlbFile || hasGlbAnimUrl) {
-            NftCategories.VR
-        } else {
-            NftCategories.Image
+        val imageUrl = content.links?.get("image") ?: ""
+        val hasGifFile = content.files?.any { file ->
+            val type = file.type?.lowercase() ?: ""
+            type == "image/gif" || file.uri?.lowercase()?.let { it.contains(".gif") || it.contains("ext=gif") } == true
+        } == true
+        val hasGifImageUrl = imageUrl.lowercase().let { it.contains(".gif") || it.contains("ext=gif") }
+        val hasGifAnimUrl = animationUrl.lowercase().let { it.contains(".gif") || it.contains("ext=gif") }
+
+        val category = when {
+            hasGlbFile || hasGlbAnimUrl -> NftCategories.VR
+            hasGifFile || hasGifImageUrl || hasGifAnimUrl -> NftCategories.Gif
+            else -> NftCategories.Image
         }
 
         val properties = NftProperties(

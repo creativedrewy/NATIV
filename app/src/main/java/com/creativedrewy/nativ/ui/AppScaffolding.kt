@@ -1,6 +1,5 @@
 package com.creativedrewy.nativ.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,25 +12,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.BottomAppBar
-import androidx.compose.material.BottomDrawer
-import androidx.compose.material.BottomDrawerState
-import androidx.compose.material.BottomDrawerValue
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberBottomDrawerState
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -44,9 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.creativedrewy.nativ.R
-import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.Turquoise
-import kotlinx.coroutines.launch
 
 sealed class AppScreen(
     val route: String
@@ -58,7 +49,8 @@ object NavArgs {
 }
 
 object Gallery : AppScreen("gallery")
-object Accounts : AppScreen("accounts")
+object Wallpapers : AppScreen("wallpapers")
+object Settings : AppScreen("settings")
 object CollectionDetail : AppScreen("collection/{${NavArgs.collectionId}}")
 object Details : AppScreen("details/{${NavArgs.nftId}}")
 
@@ -84,10 +76,10 @@ fun AppScreenContent() {
         startDestination = Gallery.route
     ) {
         composable(Gallery.route) {
-            FabScreens(
+            TabScreen(
                 navDest = it.destination,
-                showFab = false,
-                onNavItemClick = { route -> navigate(route) }
+                onNavItemClick = { route -> navigate(route) },
+                onSettingsClick = { navController.navigate(Settings.route) }
             ) {
                 CollectionsScreen(
                     onCollectionNavigate = { collectionId ->
@@ -100,14 +92,22 @@ fun AppScreenContent() {
                 )
             }
         }
-        composable(Accounts.route) {
-            FabScreens(
+        composable(Wallpapers.route) {
+            TabScreen(
                 navDest = it.destination,
-                showFab = true,
-                onNavItemClick = { route -> navigate(route) }
+                onNavItemClick = { route -> navigate(route) },
+                onSettingsClick = { navController.navigate(Settings.route) }
             ) {
-                AddressListScreen()
+                SelectWallpaperScreen()
             }
+        }
+        composable(Settings.route) {
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onConnectWallet = {
+                    // TODO: Initiate Solana Mobile wallet adapter connection & signing
+                }
+            )
         }
         composable(
             route = CollectionDetail.route,
@@ -130,125 +130,77 @@ fun AppScreenContent() {
     }
 }
 
-@ExperimentalComposeUiApi
 @Composable
-fun FabScreens(
+fun TabScreen(
     navDest: NavDestination?,
-    showFab: Boolean,
     onNavItemClick: (String) -> Unit,
-    screeContent: @Composable () -> Unit
+    onSettingsClick: () -> Unit,
+    screenContent: @Composable () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
-
-    BackHandler(
-        enabled = drawerState.isExpanded
-    ) {
-        scope.launch {
-            drawerState.close()
-        }
-    }
-
     Scaffold(
         topBar = {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .background(MaterialTheme.colors.primary),
-                contentAlignment = Alignment.BottomCenter
+                    .background(MaterialTheme.colors.primary)
             ) {
+                // Centered logo
                 Image(
                     modifier = Modifier
                         .width(135.dp)
-                        .aspectRatio(1.7f),
+                        .aspectRatio(1.7f)
+                        .align(Alignment.BottomCenter),
                     contentScale = ContentScale.Fit,
                     painter = painterResource(
                         id = R.drawable.nativ_logo
                     ),
                     contentDescription = ""
                 )
-            }
-        },
-        floatingActionButton = {
-            if (showFab) {
-                MainAppFab {
-                    scope.launch {
-                        drawerState.expand()
-                    }
-                }
-            }
-        },
-        isFloatingActionButtonDocked = showFab,
-        floatingActionButtonPosition = FabPosition.Center,
-        bottomBar = {
-            BottomAppBar(
-                backgroundColor = MaterialTheme.colors.primary,
-                cutoutShape = RoundedDiamondFabShape(8.dp),
-                content = {
-                    BottomNavigationContents(
-                        navDest = navDest,
-                        bottomDrawerState = drawerState,
-                        onNavItemClick = onNavItemClick
+
+                // User icon in upper right
+                IconButton(
+                    onClick = onSettingsClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 8.dp, bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Settings",
+                        tint = Turquoise,
+                        modifier = Modifier.size(28.dp)
                     )
                 }
-            )
-        }
-    ) { paddingValues ->
-        BottomDrawer(
-            drawerContent = {
-                AddAddressPanel(
-                    closePanel = {
-                        scope.launch {
-                            drawerState.close()
-                        }
-                    }
-                )
-            },
-            drawerState = drawerState,
-            scrimColor = Color.Transparent,
-            drawerBackgroundColor = Color.Transparent,
-            gesturesEnabled = false
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .background(MaterialTheme.colors.primary)
+            }
+        },
+        bottomBar = {
+            BottomAppBar(
+                backgroundColor = MaterialTheme.colors.primary
             ) {
-                screeContent()
+                BottomNavigationContents(
+                    navDest = navDest,
+                    onNavItemClick = onNavItemClick
+                )
             }
         }
-    }
-}
-
-@Composable
-fun MainAppFab(
-    onClick: () -> Unit
-) {
-    FloatingActionButton(
-        onClick = {
-            onClick()
-        },
-        shape = RoundedDiamondFabShape(8.dp),
-        backgroundColor = HotPink
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            tint = MaterialTheme.colors.onPrimary,
-            contentDescription = ""
-        )
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(MaterialTheme.colors.primary)
+        ) {
+            screenContent()
+        }
     }
 }
 
 @Composable
 fun BottomNavigationContents(
     navDest: NavDestination?,
-    bottomDrawerState: BottomDrawerState,
     onNavItemClick: (String) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.primary
     ) {
@@ -264,15 +216,10 @@ fun BottomNavigationContents(
             },
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
-            alwaysShowLabel = false,
+            alwaysShowLabel = true,
+            label = { Text("Gallery") },
             selected = navDest?.hierarchy?.any { it.route == Gallery.route } == true,
-            onClick = {
-                onNavItemClick(Gallery.route)
-
-                scope.launch {
-                    bottomDrawerState.close()
-                }
-            }
+            onClick = { onNavItemClick(Gallery.route) }
         )
         BottomNavigationItem(
             icon = {
@@ -281,14 +228,15 @@ fun BottomNavigationContents(
                     painter = painterResource(
                         id = R.drawable.ic_keys_icon_src
                     ),
-                    contentDescription = "Addresses"
+                    contentDescription = "Wallpapers"
                 )
             },
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
-            alwaysShowLabel = false,
-            selected = navDest?.hierarchy?.any { it.route == Accounts.route } == true,
-            onClick = { onNavItemClick(Accounts.route) }
+            alwaysShowLabel = true,
+            label = { Text("Wallpapers") },
+            selected = navDest?.hierarchy?.any { it.route == Wallpapers.route } == true,
+            onClick = { onNavItemClick(Wallpapers.route) }
         )
     }
 }

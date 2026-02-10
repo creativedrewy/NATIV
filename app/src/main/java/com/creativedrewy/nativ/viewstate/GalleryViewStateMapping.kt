@@ -4,6 +4,7 @@ import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.NftCategories
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
+import com.creativedrewy.nativ.viewmodel.AnimatedImage
 import com.creativedrewy.nativ.viewmodel.AssetType
 import com.creativedrewy.nativ.viewmodel.Attribute
 import com.creativedrewy.nativ.viewmodel.Blockchain
@@ -11,6 +12,7 @@ import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
 import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.nativ.viewmodel.isGifUrl
 import com.creativedrewy.nativ.viewmodel.isGlbUrl
 import java.util.UUID
 import javax.inject.Inject
@@ -52,10 +54,13 @@ class GalleryViewStateMapping @Inject constructor() {
 
     private fun determineAssetType(nft: NftMetadata): AssetType {
         val animUrl = nft.animationUrl ?: ""
+        val imageUrl = nft.image ?: ""
         return when {
             nft.properties?.category == NftCategories.VR -> Model3d
             isGlbUrl(animUrl) -> Model3d
             animUrl.endsWith(".mp4") -> ImageAndVideo
+            nft.properties?.category == NftCategories.Gif -> AnimatedImage
+            isGifUrl(animUrl) || isGifUrl(imageUrl) -> AnimatedImage
             else -> Image
         }
     }

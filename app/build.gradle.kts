@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.coil.core)
     implementation(libs.coil.compose)
     implementation(libs.coil.okhttp)
+    implementation(libs.coil.gif)
 
     implementation(libs.filament.android)
     implementation(libs.filament.utils.android)

@@ -38,6 +38,7 @@ import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.DarkBlue
 import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.ShimmerBlue
+import com.creativedrewy.nativ.viewmodel.AnimatedImage
 import com.creativedrewy.nativ.viewmodel.Image
 import com.creativedrewy.nativ.viewmodel.ImageAndVideo
 import com.creativedrewy.nativ.viewmodel.Model3d
@@ -83,7 +84,7 @@ fun AssetViewer(
             ),
     ) {
         when {
-            imageOnlyMode || nftProps.props.assetType is Image -> {
+            imageOnlyMode || nftProps.props.assetType is Image || nftProps.props.assetType is AnimatedImage -> {
                 ImageViewer(nftProps.props)
             }
             nftProps.props.assetType is ImageAndVideo -> {

@@ -1,6 +1,6 @@
 package com.creativedrewy.nativ.viewmodel
 
-import java.util.*
+import java.util.UUID
 
 // Screen status state --------------------------------------------------
 
@@ -47,6 +47,7 @@ sealed class AssetType
 
 object Model3d : AssetType()
 object Image : AssetType()
+object AnimatedImage : AssetType()
 object ImageAndVideo : AssetType()
 
 class Blockchain(

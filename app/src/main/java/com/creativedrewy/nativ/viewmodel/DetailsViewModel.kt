@@ -77,6 +77,7 @@ class DetailsViewModel @Inject constructor(
 
             val assetTypeStr = when (props.assetType) {
                 is Model3d -> "model3d"
+                is AnimatedImage -> "animated_image"
                 is ImageAndVideo -> "image_and_video"
                 else -> "image"
             }
@@ -124,7 +125,7 @@ class DetailsViewModel @Inject constructor(
             val nftInfo = collectionNftsUseCase.loadNft(assetId) ?: return@launch
 
             val animUrl = nftInfo.animationUrl
-            val assetType = determineAssetTypeFromUrls(animUrl, nftInfo.fileTypes)
+            val assetType = determineAssetTypeFromUrls(animUrl, nftInfo.imageUrl, nftInfo.fileTypes)
             val assetUrl = if (assetType is Model3d) animUrl else ""
             val isFav = favoriteNftUseCase.isFavorited(assetId)
 
@@ -169,13 +170,14 @@ class DetailsViewModel @Inject constructor(
 }
 
 /**
- * Determine the asset type from the animation URL and file MIME types.
- * Checks for GLB model files via URL patterns and MIME types.
+ * Determine the asset type from the animation URL, image URL, and file MIME types.
+ * Checks for GLB model files, animated GIFs, and videos.
  */
-fun determineAssetTypeFromUrls(animationUrl: String, fileTypes: List<String>): AssetType {
+fun determineAssetTypeFromUrls(animationUrl: String, imageUrl: String = "", fileTypes: List<String>): AssetType {
     return when {
         isGlbUrl(animationUrl) || fileTypes.any { isGlbMimeType(it) } -> Model3d
         animationUrl.endsWith(".mp4") -> ImageAndVideo
+        isGifUrl(animationUrl) || isGifUrl(imageUrl) || fileTypes.any { isGifMimeType(it) } -> AnimatedImage
         else -> Image
     }
 }
@@ -196,4 +198,21 @@ fun isGlbUrl(url: String): Boolean {
 fun isGlbMimeType(mimeType: String): Boolean {
     val lower = mimeType.lowercase()
     return lower == "model/gltf-binary" || lower == "model/gltf+json" || lower.contains("gltf")
+}
+
+/**
+ * Check if a URL points to an animated GIF file.
+ * Handles both direct `.gif` extensions and Arweave-style `?ext=gif` query params.
+ */
+fun isGifUrl(url: String): Boolean {
+    if (url.isBlank()) return false
+    val lower = url.lowercase()
+    return lower.contains(".gif") || lower.contains("ext=gif")
+}
+
+/**
+ * Check if a MIME type indicates an animated GIF file.
+ */
+fun isGifMimeType(mimeType: String): Boolean {
+    return mimeType.lowercase() == "image/gif"
 }

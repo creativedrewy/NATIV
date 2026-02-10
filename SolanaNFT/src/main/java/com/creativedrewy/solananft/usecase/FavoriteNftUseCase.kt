@@ -6,13 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FavoriteNftUseCase @Inject constructor(
-    private val favoritesRepository: FavoritesRepository,
-    private val assetDownloadUseCase: AssetDownloadUseCase
+    private val favoritesRepository: FavoritesRepository
 ) {
 
     /**
      * Toggle the favorite status of an NFT.
-     * When favoriting, downloads and caches the media (images or GLB files, not videos).
      *
      * @return true if the NFT is now favorited, false if unfavorited
      */
@@ -37,15 +35,6 @@ class FavoriteNftUseCase @Inject constructor(
                 assetType = assetType
             )
             favoritesRepository.addFavorite(nft)
-
-            // Download and cache media for offline use (images and GLB files, not videos)
-            if (mediaUrl.isNotBlank()) {
-                val bytes = assetDownloadUseCase.downloadAsset(mediaUrl)
-                if (bytes.isNotEmpty()) {
-                    favoritesRepository.cacheMediaFile(tokenAddress, bytes)
-                }
-            }
-
             return true
         }
     }
