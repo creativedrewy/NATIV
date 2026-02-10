@@ -1,6 +1,7 @@
 package com.creativedrewy.imageslivewallpaper
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -17,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,10 +46,17 @@ class ImagesWallpaperService : MozartWallpaperService() {
         get() = {
             val items by viewModel.wallpaperItems.collectAsState(initial = emptyList())
 
+            var targetBgColor by remember { mutableStateOf(Color.LightGray) }
+            val animatedBgColor by animateColorAsState(
+                targetValue = targetBgColor,
+                animationSpec = tween(800),
+                label = "bgColorAnimation"
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.LightGray)
+                    .background(animatedBgColor)
             ) {
                 if (items.isNotEmpty()) {
                     var currentIndex by remember { mutableIntStateOf(0) }
@@ -57,6 +66,12 @@ class ImagesWallpaperService : MozartWallpaperService() {
                     LaunchedEffect(items.size) {
                         currentIndex = 0
                     }
+
+                    // Apply cached color immediately when index changes
+//                    LaunchedEffect(safeIndex) {
+//                        val url = items[safeIndex].imageUrl
+//                        colorCache[url]?.let { targetBgColor = it }
+//                    }
 
                     LaunchedEffect(Unit) {
                         while (true) {
@@ -118,7 +133,40 @@ class ImagesWallpaperService : MozartWallpaperService() {
                                     model = imageRequest,
                                     contentDescription = item.name,
                                     modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Fit
+                                    contentScale = ContentScale.Fit,
+                                    onSuccess = { state ->
+                                        try {
+//                                            val bitmap = state.result.image.toBitmap()
+//                                            Log.v("Andrew", "::: Your bitmap is $bitmap")
+//
+//                                            var redBucket: Long = 0
+//                                            var greenBucket: Long = 0
+//                                            var blueBucket: Long = 0
+//                                            var pixelCount: Long = 0
+//
+//                                            for (y in 0 ..< bitmap.getHeight()) {
+//                                                for (x in 0 ..< bitmap.getWidth()) {
+//                                                    val c = bitmap.getPixel(x, y)
+//
+//                                                    pixelCount++
+//                                                    val red = (c shr 16) and 0xFF
+//                                                    val green = (c shr 8) and 0xFF
+//                                                    val blue = c and 0xFF
+//                                                    redBucket += red
+//                                                    greenBucket += green
+//                                                    blueBucket += blue
+//                                                }
+//                                            }
+//
+//                                            val red = (redBucket / pixelCount).toInt()
+//                                            val green = (greenBucket / pixelCount).toInt()
+//                                            val blue = (blueBucket / pixelCount).toInt()
+//
+//                                            targetBgColor = Color(red, green, blue)
+                                        } catch (_: Exception) {
+                                            // Ignore color extraction failures
+                                        }
+                                    }
                                 )
                             }
                         }
