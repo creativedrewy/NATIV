@@ -207,7 +207,8 @@ fun BottomNavigationContents(
         BottomNavigationItem(
             icon = {
                 Icon(
-                    modifier = Modifier.size(30.dp),
+                    modifier = Modifier
+                        .size(20.dp),
                     painter = painterResource(
                         id = R.drawable.ic_gallery_icon_src
                     ),
@@ -217,14 +218,18 @@ fun BottomNavigationContents(
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = true,
-            label = { Text("Gallery") },
+            label = {
+                Text("Gallery")
+            },
             selected = navDest?.hierarchy?.any { it.route == Gallery.route } == true,
-            onClick = { onNavItemClick(Gallery.route) }
+            onClick = {
+                onNavItemClick(Gallery.route)
+            }
         )
         BottomNavigationItem(
             icon = {
                 Icon(
-                    modifier = Modifier.size(30.dp),
+                    modifier = Modifier.size(20.dp),
                     painter = painterResource(
                         id = R.drawable.ic_keys_icon_src
                     ),
@@ -234,9 +239,13 @@ fun BottomNavigationContents(
             selectedContentColor = Turquoise,
             unselectedContentColor = Turquoise.copy(0.6f),
             alwaysShowLabel = true,
-            label = { Text("Wallpapers") },
+            label = {
+                Text("Wallpapers")
+            },
             selected = navDest?.hierarchy?.any { it.route == Wallpapers.route } == true,
-            onClick = { onNavItemClick(Wallpapers.route) }
+            onClick = {
+                onNavItemClick(Wallpapers.route)
+            }
         )
     }
 }
