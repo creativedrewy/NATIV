@@ -17,7 +17,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
                 serviceClass = SlideshowWallpaperService::class.java
             ),
             WallpaperDefinition(
-                name = "Vertical Grid",
+                name = "The Grid",
                 previewImageRes = R.drawable.sunset,
                 requiredFavorites = 8,
                 purchaseId = "wallpaper_cosmic_grid",

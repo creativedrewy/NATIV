@@ -24,6 +24,7 @@ import kotlinx.coroutines.isActive
 @Composable
 fun VideoWallpaperViewer(
     videoUrl: String,
+    repeatModeThreshold: Int,
     onDurationKnown: (Long) -> Unit
 ) {
     val context = LocalContext.current
@@ -55,11 +56,12 @@ fun VideoWallpaperViewer(
             if (exoPlayer.playbackState == Player.STATE_READY) {
                 val duration = exoPlayer.duration.coerceAtLeast(0L)
                 if (duration > 0L) {
-                    exoPlayer.repeatMode = if (duration < VIDEO_MIN_PLAY_MS) {
+                    exoPlayer.repeatMode = if (duration < repeatModeThreshold) {
                         Player.REPEAT_MODE_ALL
                     } else {
                         Player.REPEAT_MODE_OFF
                     }
+
                     onDurationKnown(duration)
                     break
                 }
@@ -82,6 +84,3 @@ fun VideoWallpaperViewer(
         }
     }
 }
-
-const val IMAGE_DISPLAY_MS = 5_000L
-const val VIDEO_MIN_PLAY_MS = 10_000L

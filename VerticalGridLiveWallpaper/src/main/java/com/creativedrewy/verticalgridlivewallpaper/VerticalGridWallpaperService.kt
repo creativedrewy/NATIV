@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -29,8 +28,8 @@ import androidx.compose.ui.unit.IntOffset
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import com.creativedrewy.mozart.MozartWallpaperService
-import com.creativedrewy.sharedui.IMAGE_DISPLAY_MS
 import com.creativedrewy.sharedui.VideoWallpaperViewer
+import com.creativedrewy.solananft.viewmodel.NftViewProps
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -39,10 +38,11 @@ import kotlin.math.roundToInt
 
 private const val GRID_COLS = 2
 private const val GRID_ROWS = 4
-private const val GRID_SIZE = GRID_COLS * GRID_ROWS // 8
 
 private const val SCALE_ANIM_MS = 600
-private const val PAUSE_BETWEEN_FEATURES_MS = 3_000L
+private const val PAUSE_BETWEEN_FEATURES_MS = 5_000L
+const val IMAGE_DISPLAY_MS = 10000L
+const val VIDEO_MIN_PLAY_MS = 10000
 
 @AndroidEntryPoint
 class VerticalGridWallpaperService : MozartWallpaperService() {
@@ -51,39 +51,45 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
     lateinit var viewModel: VerticalGridViewModel
 
     override val wallpaperContents: @Composable ((OffsetValues) -> Unit)
-        get() = {
+        get() = { offsets ->
             val items by viewModel.wallpaperItems.collectAsState(initial = emptyList())
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White),
+                    .background(Color(0xFF3b343a)),
                 contentAlignment = Alignment.Center
             ) {
                 if (items.isNotEmpty()) {
-                    val gridItems = items.take(GRID_SIZE)
-                    VerticalGridContent(gridItems)
+                    val gridItems = items.take(GRID_COLS * GRID_ROWS)
+                    VerticalGridContent(
+                        items = gridItems,
+                        screenWidthPx = offsets.screenWidth,
+                        screenHeightPx = offsets.screenHeight
+                    )
                 }
             }
         }
 
     @Composable
-    private fun VerticalGridContent(items: List<com.creativedrewy.solananft.viewmodel.NftViewProps>) {
-        BoxWithConstraints(
+    private fun VerticalGridContent(
+        items: List<NftViewProps>,
+        screenWidthPx: Int,
+        screenHeightPx: Int
+    ) {
+        Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopStart
         ) {
             val density = LocalDensity.current
 
-            val screenWidthPx = with(density) { maxWidth.toPx() }
-            val screenHeightPx = with(density) { maxHeight.toPx() }
+//            val screenWidthPx = with(density) { maxWidth.toPx() }
+//            val screenHeightPx = with(density) { maxHeight.toPx() }
 
             // Square cells that fit within the screen in both dimensions
             val cellSizePx = minOf(screenWidthPx / GRID_COLS, screenHeightPx / GRID_ROWS)
-            val cellWidthPx = cellSizePx
-            val cellHeightPx = cellSizePx
-            val gridWidthPx = cellWidthPx * GRID_COLS
-            val gridHeightPx = cellHeightPx * GRID_ROWS
+            val gridWidthPx = cellSizePx * GRID_COLS
+            val gridHeightPx = cellSizePx * GRID_ROWS
             val gridOffsetXPx = (screenWidthPx - gridWidthPx) / 2f
             val gridOffsetYPx = (screenHeightPx - gridHeightPx) / 2f
 
@@ -99,16 +105,13 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
             LaunchedEffect(items.size) {
                 if (items.isEmpty()) return@LaunchedEffect
 
-                // Initial short pause before the first feature
                 delay(PAUSE_BETWEEN_FEATURES_MS)
 
                 while (isActive) {
-                    // Pick a random index
                     val nextIndex = (0 until items.size).random()
                     featuredIndex = nextIndex
                     videoDurationMs = 0L
 
-                    // Animate scale up
                     animProgress.snapTo(0f)
                     animProgress.animateTo(1f, tween(SCALE_ANIM_MS))
 
@@ -119,6 +122,7 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                         while (isActive && videoDurationMs <= 0L) {
                             delay(100)
                         }
+
                         delay(videoDurationMs)
                     } else {
                         delay(IMAGE_DISPLAY_MS)
@@ -129,18 +133,16 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
 
                     featuredIndex = -1
 
-                    // Pause before picking the next item
                     delay(PAUSE_BETWEEN_FEATURES_MS)
                 }
             }
 
-            // ----------- Grid layer -----------
             items.forEachIndexed { index, item ->
                 val col = index % GRID_COLS
                 val row = index / GRID_COLS
 
-                val cellX = gridOffsetXPx + col * cellWidthPx
-                val cellY = gridOffsetYPx + row * cellHeightPx
+                val cellX = gridOffsetXPx + col * cellSizePx
+                val cellY = gridOffsetYPx + row * cellSizePx
 
                 // If this cell is the featured one, hide it from the grid (it's drawn on top)
                 if (index == featuredIndex) return@forEachIndexed
@@ -150,8 +152,8 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                     contentDescription = item.name,
                     xPx = cellX,
                     yPx = cellY,
-                    widthPx = cellWidthPx,
-                    heightPx = cellHeightPx
+                    widthPx = cellSizePx.toFloat(),
+                    heightPx = cellSizePx.toFloat()
                 )
             }
 
@@ -174,10 +176,9 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                 val col = featuredIndex % GRID_COLS
                 val row = featuredIndex / GRID_COLS
 
-                val cellX = gridOffsetXPx + col * cellWidthPx
-                val cellY = gridOffsetYPx + row * cellHeightPx
+                val cellX = gridOffsetXPx + col * cellSizePx
+                val cellY = gridOffsetYPx + row * cellSizePx
 
-                // Target: screen-width square, vertically centered
                 val targetSize = screenWidthPx
                 val targetX = 0f
                 val targetY = (screenHeightPx - targetSize) / 2f
@@ -186,8 +187,8 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
 
                 val currentX = lerp(cellX, targetX, progress)
                 val currentY = lerp(cellY, targetY, progress)
-                val currentW = lerp(cellWidthPx, targetSize, progress)
-                val currentH = lerp(cellHeightPx, targetSize, progress)
+                val currentW = lerp(cellSizePx.toFloat(), targetSize.toFloat(), progress)
+                val currentH = lerp(cellSizePx.toFloat(), targetSize.toFloat(), progress)
 
                 val isVideo = viewModel.isVideoItem(item)
 
@@ -203,18 +204,19 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                         // Only show video player once nearly full-screen
                         VideoWallpaperViewer(
                             videoUrl = item.videoUrl,
+                            repeatModeThreshold = VIDEO_MIN_PLAY_MS,
                             onDurationKnown = { duration ->
                                 videoDurationMs = duration
                             }
                         )
                     } else {
-                        // Static image preserving aspect ratio
                         val context = LocalContext.current
                         val imageRequest = remember(item.displayImageUrl) {
                             ImageRequest.Builder(context)
                                 .data(item.displayImageUrl)
                                 .build()
                         }
+
                         SubcomposeAsyncImage(
                             model = imageRequest,
                             contentDescription = item.name,

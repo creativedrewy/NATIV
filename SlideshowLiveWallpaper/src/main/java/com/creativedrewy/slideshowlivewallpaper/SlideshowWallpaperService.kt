@@ -35,6 +35,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
+const val VIDEO_MIN_PLAY_MS = 10000
+
 @AndroidEntryPoint
 class SlideshowWallpaperService : MozartWallpaperService() {
 
@@ -133,6 +135,7 @@ class SlideshowWallpaperService : MozartWallpaperService() {
                                 if (viewModel.isVideoItem(currentItem)) {
                                     VideoWallpaperViewer(
                                         videoUrl = item.videoUrl,
+                                        repeatModeThreshold = VIDEO_MIN_PLAY_MS,
                                         onDurationKnown = { duration ->
                                             currentVideoDurationMs = duration
                                         }
