@@ -2,11 +2,13 @@ package com.creativedrewy.solananft.viewmodel
 
 import com.creativedrewy.nativ.chainsupport.nft.AssetType
 import com.creativedrewy.nativ.chainsupport.nft.Image
+import com.creativedrewy.nativ.chainsupport.nft.ImageAndVideo
 import com.creativedrewy.nativ.chainsupport.nft.NftCategories
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.creativedrewy.nativ.chainsupport.nft.determineAssetType
 import com.creativedrewy.nativ.chainsupport.nft.isGlbUrl
+import com.creativedrewy.nativ.chainsupport.nft.isMp4Url
 import java.util.UUID
 
 data class NftViewProps(
@@ -32,6 +34,12 @@ class Blockchain(
     val ticker: String = "",
     val logoRes: Int = -1
 )
+
+val NftViewProps.isVideoItem: Boolean
+    get() {
+        if (this.assetType is ImageAndVideo) return true
+        return isMp4Url(this.videoUrl)
+    }
 
 /**
  * Map an [NftMetadata] into a fully resolved [NftViewProps].

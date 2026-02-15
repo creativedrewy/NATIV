@@ -30,6 +30,7 @@ import coil3.request.ImageRequest
 import com.creativedrewy.mozart.MozartWallpaperService
 import com.creativedrewy.sharedui.VideoWallpaperViewer
 import com.creativedrewy.solananft.viewmodel.NftViewProps
+import com.creativedrewy.solananft.viewmodel.isVideoItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -110,8 +111,7 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                     animProgress.animateTo(1f, tween(SCALE_ANIM_MS))
 
                     // Show content for the appropriate duration
-                    val isVideo = viewModel.isVideoItem(items[nextIndex])
-                    if (isVideo) {
+                    if (items[nextIndex].isVideoItem) {
                         // Wait for video duration to be known, then wait for it to finish
                         while (isActive && videoDurationMs <= 0L) {
                             delay(100)
@@ -184,8 +184,6 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                 val currentW = lerp(cellSizePx.toFloat(), targetSize.toFloat(), progress)
                 val currentH = lerp(cellSizePx.toFloat(), targetSize.toFloat(), progress)
 
-                val isVideo = viewModel.isVideoItem(item)
-
                 Box(
                     modifier = Modifier
                         .offset { IntOffset(currentX.roundToInt(), currentY.roundToInt()) }
@@ -194,7 +192,7 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
                         .clip(RectangleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (progress > 0.9f && isVideo) {
+                    if (progress > 0.9f && item.isVideoItem) {
                         // Only show video player once nearly full-screen
                         VideoWallpaperViewer(
                             videoUrl = item.videoUrl,

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.creativedrewy.mozart.MozartWallpaperService
 import com.creativedrewy.sharedui.NftImageViewer
 import com.creativedrewy.sharedui.VideoWallpaperViewer
+import com.creativedrewy.solananft.viewmodel.isVideoItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -65,7 +66,6 @@ class SlideshowWallpaperService : MozartWallpaperService() {
 
                     val safeIndex = currentIndex % items.size
                     val currentItem = items[safeIndex]
-                    val isCurrentVideo = viewModel.isVideoItem(currentItem)
 
                     LaunchedEffect(items.size) {
                         currentIndex = 0
@@ -75,10 +75,10 @@ class SlideshowWallpaperService : MozartWallpaperService() {
                         currentVideoDurationMs = 0L
                     }
 
-                    LaunchedEffect(safeIndex, items.size, isCurrentVideo) {
+                    LaunchedEffect(safeIndex, items.size, currentItem.isVideoItem) {
                         if (items.isEmpty()) return@LaunchedEffect
 
-                        if (!isCurrentVideo) {
+                        if (!currentItem.isVideoItem) {
                             delay(SLIDESHOW_IMAGE_DISPLAY_MS)
                             if (items.isNotEmpty()) {
                                 currentIndex = (currentIndex + 1) % items.size
@@ -132,7 +132,7 @@ class SlideshowWallpaperService : MozartWallpaperService() {
                                     .aspectRatio(1f),
                                 contentAlignment = Alignment.Center
                             ) {
-                                if (viewModel.isVideoItem(currentItem)) {
+                                if (currentItem.isVideoItem) {
                                     VideoWallpaperViewer(
                                         videoUrl = item.videoUrl,
                                         repeatModeThreshold = VIDEO_MIN_PLAY_MS,
