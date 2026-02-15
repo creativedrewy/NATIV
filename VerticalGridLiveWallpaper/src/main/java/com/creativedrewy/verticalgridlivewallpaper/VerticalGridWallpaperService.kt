@@ -83,9 +83,6 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
         ) {
             val density = LocalDensity.current
 
-//            val screenWidthPx = with(density) { maxWidth.toPx() }
-//            val screenHeightPx = with(density) { maxHeight.toPx() }
-
             // Square cells that fit within the screen in both dimensions
             val cellSizePx = minOf(screenWidthPx / GRID_COLS, screenHeightPx / GRID_ROWS)
             val gridWidthPx = cellSizePx * GRID_COLS
@@ -93,12 +90,9 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
             val gridOffsetXPx = (screenWidthPx - gridWidthPx) / 2f
             val gridOffsetYPx = (screenHeightPx - gridHeightPx) / 2f
 
-            // ----------- Featured-item state -----------
-            // -1 means nothing is featured right now
             var featuredIndex by remember { mutableIntStateOf(-1) }
             var videoDurationMs by remember { mutableLongStateOf(0L) }
 
-            // Animation progress: 0 = in-grid, 1 = full-screen
             val animProgress = remember { Animatable(0f) }
 
             // Orchestrator: pick random item → scale up → display → scale back → pause → repeat
@@ -159,7 +153,7 @@ class VerticalGridWallpaperService : MozartWallpaperService() {
 
             // ----------- Dim overlay -----------
             if (featuredIndex >= 0) {
-                val alpha = animProgress.value * 0.6f
+                val alpha = animProgress.value * 0.75f
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
