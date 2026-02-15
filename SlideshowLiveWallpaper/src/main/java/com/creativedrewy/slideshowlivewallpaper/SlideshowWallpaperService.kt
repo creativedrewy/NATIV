@@ -62,12 +62,12 @@ class SlideshowWallpaperService : MozartWallpaperService() {
 fun SlideshowWallpaperContents(
     items: List<NftViewProps>
 ) {
+    var targetBgColor by remember { mutableStateOf(Color(0xFFb0d3f1)) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val bgOverlayColor by remember { mutableStateOf(Color(0xFFb0d3f1)) }
-
         Image(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,7 +75,7 @@ fun SlideshowWallpaperContents(
             painter = painterResource(R.drawable.baroque_bg),
             contentScale = ContentScale.Crop,
             contentDescription = "",
-            colorFilter = ColorFilter.tint(bgOverlayColor, blendMode = BlendMode.Color)
+            colorFilter = ColorFilter.tint(targetBgColor, blendMode = BlendMode.Color)
         )
 
         if (items.isNotEmpty()) {

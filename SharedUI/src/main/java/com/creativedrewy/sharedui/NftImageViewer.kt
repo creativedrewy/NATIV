@@ -16,9 +16,9 @@ import coil3.request.ImageRequest
  */
 @Composable
 fun NftImageViewer(
+    modifier: Modifier = Modifier,
     imageUrl: String,
     contentDescription: String?,
-    modifier: Modifier = Modifier,
     showBlurredBackground: Boolean = true
 ) {
     val context = LocalContext.current
