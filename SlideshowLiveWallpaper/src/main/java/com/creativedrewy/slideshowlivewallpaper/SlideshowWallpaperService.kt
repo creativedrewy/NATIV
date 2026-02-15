@@ -6,7 +6,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +17,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.creativedrewy.mozart.MozartWallpaperService
@@ -50,7 +53,6 @@ class SlideshowWallpaperService : MozartWallpaperService() {
             val items by viewModel.wallpaperItems.collectAsState(initial = emptyList())
 
             SlideshowWallpaperContents(
-                bgColor = Color.Green,
                 items = items
             )
         }
@@ -58,14 +60,24 @@ class SlideshowWallpaperService : MozartWallpaperService() {
 
 @Composable
 fun SlideshowWallpaperContents(
-    bgColor: Color,
     items: List<NftViewProps>
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(bgColor)
     ) {
+        val bgOverlayColor by remember { mutableStateOf(Color(0xFFb0d3f1)) }
+
+        Image(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.TopCenter),
+            painter = painterResource(R.drawable.baroque_bg),
+            contentScale = ContentScale.Crop,
+            contentDescription = "",
+            colorFilter = ColorFilter.tint(bgOverlayColor, blendMode = BlendMode.Color)
+        )
+
         if (items.isNotEmpty()) {
             var currentIndex by remember { mutableIntStateOf(0) }
             var currentVideoDurationMs by remember { mutableLongStateOf(0L) }
@@ -115,6 +127,18 @@ fun SlideshowWallpaperContents(
                     .padding(horizontal = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
+                Image(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            translationX = 15f
+                            translationY = 15f
+                        },
+                    painter = painterResource(R.drawable.baroque_shadow),
+                    contentDescription = ""
+                )
+
                 AnimatedContent(
                     targetState = safeIndex,
                     transitionSpec = {
@@ -122,11 +146,11 @@ fun SlideshowWallpaperContents(
                             initialOffsetX = { fullWidth -> fullWidth },
                             animationSpec = tween(800)
                         ) togetherWith (
-                                slideOutHorizontally(
-                                    targetOffsetX = { fullWidth -> -fullWidth },
-                                    animationSpec = tween(800)
-                                )
-                                )
+                            slideOutHorizontally(
+                                targetOffsetX = { fullWidth -> -fullWidth },
+                                animationSpec = tween(800)
+                            )
+                        )
                     },
                     label = "nftWallpaperTransition"
                 ) { index ->
@@ -134,7 +158,7 @@ fun SlideshowWallpaperContents(
 
                     Box(
                         modifier = Modifier
-                            .width(245.dp)
+                            .width(252.dp)
                             .aspectRatio(1f),
                         contentAlignment = Alignment.Center
                     ) {
@@ -158,22 +182,9 @@ fun SlideshowWallpaperContents(
                 Image(
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .fillMaxSize()
-                        .graphicsLayer {
-                            translationX = 15f
-                            translationY = 15f
-                        },
-                    painter = painterResource(R.drawable.baroque_shadow),
-                    contentDescription = ""
-                )
-
-                Image(
-                    modifier = Modifier
-                        .aspectRatio(1f)
                         .fillMaxSize(),
                     painter = painterResource(R.drawable.baroque_frame),
                     contentDescription = "",
-//                    colorFilter = ColorFilter.tint(Color.Blue, blendMode = BlendMode.Color)
                 )
             }
         }
@@ -202,7 +213,6 @@ fun PreviewSlideshowWallpaperContents() {
     )
 
     SlideshowWallpaperContents(
-        bgColor = Color.LightGray,
         items = sampleItems
     )
 }
