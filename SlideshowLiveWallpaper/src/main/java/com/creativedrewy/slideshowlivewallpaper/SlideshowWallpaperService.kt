@@ -1,4 +1,4 @@
-package com.creativedrewy.imageslivewallpaper
+package com.creativedrewy.slideshowlivewallpaper
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
@@ -18,29 +18,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.SubcomposeAsyncImage
-import coil3.request.ImageRequest
 import com.creativedrewy.mozart.MozartWallpaperService
+import com.creativedrewy.sharedui.NftImageViewer
+import com.creativedrewy.sharedui.VideoWallpaperViewer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ImagesWallpaperService : MozartWallpaperService() {
+class SlideshowWallpaperService : MozartWallpaperService() {
 
     @Inject
-    lateinit var viewModel: WallpaperGalleryViewModel
+    lateinit var viewModel: SlideshowGalleryViewModel
 
     override val wallpaperContents: @Composable ((OffsetValues) -> Unit)
         get() = {
@@ -60,25 +59,45 @@ class ImagesWallpaperService : MozartWallpaperService() {
             ) {
                 if (items.isNotEmpty()) {
                     var currentIndex by remember { mutableIntStateOf(0) }
+                    var currentVideoDurationMs by remember { mutableLongStateOf(0L) }
 
                     val safeIndex = currentIndex % items.size
+                    val currentItem = items[safeIndex]
+                    val isCurrentVideo = viewModel.isVideoItem(currentItem)
 
                     LaunchedEffect(items.size) {
                         currentIndex = 0
                     }
 
-                    // Apply cached color immediately when index changes
-//                    LaunchedEffect(safeIndex) {
-//                        val url = items[safeIndex].imageUrl
-//                        colorCache[url]?.let { targetBgColor = it }
-//                    }
+                    LaunchedEffect(safeIndex) {
+                        currentVideoDurationMs = 0L
+                    }
 
-                    LaunchedEffect(Unit) {
-                        while (true) {
-                            delay(8000)
+                    LaunchedEffect(safeIndex, items.size, isCurrentVideo) {
+                        if (items.isEmpty()) return@LaunchedEffect
+
+                        if (!isCurrentVideo) {
+                            delay(SLIDESHOW_IMAGE_DISPLAY_MS)
                             if (items.isNotEmpty()) {
                                 currentIndex = (currentIndex + 1) % items.size
                             }
+                            return@LaunchedEffect
+                        }
+
+                        // Wait for video duration to be known
+                        while (isActive && currentVideoDurationMs <= 0L) {
+                            delay(100)
+                        }
+
+                        val playDuration = if (currentVideoDurationMs >= SLIDESHOW_VIDEO_MIN_PLAY_MS) {
+                            currentVideoDurationMs
+                        } else {
+                            SLIDESHOW_VIDEO_MIN_PLAY_MS
+                        }
+
+                        delay(playDuration)
+                        if (items.isNotEmpty()) {
+                            currentIndex = (currentIndex + 1) % items.size
                         }
                     }
 
@@ -104,13 +123,6 @@ class ImagesWallpaperService : MozartWallpaperService() {
                             label = "nftWallpaperTransition"
                         ) { index ->
                             val item = items[index]
-                            val context = LocalContext.current
-
-                            val imageRequest = remember(item.imageUrl) {
-                                ImageRequest.Builder(context)
-                                    .data(item.imageUrl)
-                                    .build()
-                            }
 
                             Box(
                                 modifier = Modifier
@@ -118,56 +130,19 @@ class ImagesWallpaperService : MozartWallpaperService() {
                                     .aspectRatio(1f),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // Blurred background — crops to fill the square
-                                SubcomposeAsyncImage(
-                                    model = imageRequest,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .blur(radius = 16.dp),
-                                    contentScale = ContentScale.Crop
-                                )
-
-                                // Foreground image — fits within the square preserving aspect ratio
-                                SubcomposeAsyncImage(
-                                    model = imageRequest,
-                                    contentDescription = item.name,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Fit,
-                                    onSuccess = { state ->
-                                        try {
-//                                            val bitmap = state.result.image.toBitmap()
-//                                            Log.v("Andrew", "::: Your bitmap is $bitmap")
-//
-//                                            var redBucket: Long = 0
-//                                            var greenBucket: Long = 0
-//                                            var blueBucket: Long = 0
-//                                            var pixelCount: Long = 0
-//
-//                                            for (y in 0 ..< bitmap.getHeight()) {
-//                                                for (x in 0 ..< bitmap.getWidth()) {
-//                                                    val c = bitmap.getPixel(x, y)
-//
-//                                                    pixelCount++
-//                                                    val red = (c shr 16) and 0xFF
-//                                                    val green = (c shr 8) and 0xFF
-//                                                    val blue = c and 0xFF
-//                                                    redBucket += red
-//                                                    greenBucket += green
-//                                                    blueBucket += blue
-//                                                }
-//                                            }
-//
-//                                            val red = (redBucket / pixelCount).toInt()
-//                                            val green = (greenBucket / pixelCount).toInt()
-//                                            val blue = (blueBucket / pixelCount).toInt()
-//
-//                                            targetBgColor = Color(red, green, blue)
-                                        } catch (_: Exception) {
-                                            // Ignore color extraction failures
+                                if (viewModel.isVideoItem(currentItem)) {
+                                    VideoWallpaperViewer(
+                                        videoUrl = item.videoUrl,
+                                        onDurationKnown = { duration ->
+                                            currentVideoDurationMs = duration
                                         }
-                                    }
-                                )
+                                    )
+                                } else {
+                                    NftImageViewer(
+                                        imageUrl = item.displayImageUrl,
+                                        contentDescription = item.name
+                                    )
+                                }
                             }
                         }
 
@@ -183,3 +158,6 @@ class ImagesWallpaperService : MozartWallpaperService() {
             }
         }
 }
+
+private const val SLIDESHOW_IMAGE_DISPLAY_MS = 8000L
+private const val SLIDESHOW_VIDEO_MIN_PLAY_MS = 10_000L

@@ -5,6 +5,7 @@ data class WallpaperViewProps(
     val previewImageRes: Int,
     val requiredFavorites: Int,
     val purchaseId: String,
+    val serviceClass: Class<*>,
     val isEnabled: Boolean = false
 )
 

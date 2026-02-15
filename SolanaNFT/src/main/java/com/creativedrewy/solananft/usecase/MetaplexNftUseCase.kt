@@ -4,17 +4,10 @@ import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.LoaderNftResult
 import com.creativedrewy.nativ.chainsupport.SupportedChain
-import com.creativedrewy.nativ.chainsupport.nft.FileDetails
 import com.creativedrewy.nativ.chainsupport.nft.Invalid
 import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
-import com.creativedrewy.nativ.chainsupport.nft.NftAttributes
-import com.creativedrewy.nativ.chainsupport.nft.NftCategories
-import com.creativedrewy.nativ.chainsupport.nft.NftCreator
 import com.creativedrewy.nativ.chainsupport.nft.NftMetaStatus
-import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
-import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.creativedrewy.nativ.chainsupport.nft.Pending
-import com.creativedrewy.solananft.dto.DasAsset
 import com.creativedrewy.solananft.repository.AccountRepository
 import com.creativedrewy.solananft.repository.NftAssetRepository
 import com.solana.core.PublicKey
@@ -24,7 +17,8 @@ import javax.inject.Inject
 
 class MetaplexNftUseCase @Inject constructor(
     private val accountsRepository: AccountRepository,
-    private val databaseRepository: NftAssetRepository
+    private val databaseRepository: NftAssetRepository,
+    private val nftMetadataMapper: NftMetadataMapper
 ) : IBlockchainNftLoader {
 
     /**
@@ -39,7 +33,7 @@ class MetaplexNftUseCase @Inject constructor(
 
             cachedAssets.forEach { asset ->
                 val uri = asset.content?.jsonUri ?: return@forEach
-                statusMap[uri] = MetaLoaded(mapToNftMetadata(asset))
+                statusMap[uri] = MetaLoaded(nftMetadataMapper.mapToNftMetadata(asset))
             }
 
             if (statusMap.isNotEmpty()) {
@@ -69,7 +63,7 @@ class MetaplexNftUseCase @Inject constructor(
                     val uri = asset.content?.jsonUri ?: return@forEach
 
                     try {
-                        val nftMeta = mapToNftMetadata(asset)
+                        val nftMeta = nftMetadataMapper.mapToNftMetadata(asset)
                         statusMap[uri] = MetaLoaded(nftMeta)
                         emit(LoaderNftResult(chain, statusMap))
                     } catch (e: Exception) {
@@ -108,53 +102,5 @@ class MetaplexNftUseCase @Inject constructor(
         } catch (e: Exception) {
             Log.e("SOL", "Error resolving collection names", e)
         }
-    }
-
-    private fun mapToNftMetadata(asset: DasAsset): NftMetadata {
-        val content = asset.content ?: throw IllegalArgumentException("Asset has no content")
-        val meta = content.metadata
-
-        val attributes = meta.attributes?.map {
-            NftAttributes(it.traitType, it.value, 0)
-        } ?: emptyList()
-
-        val animationUrl = content.links?.get("animation_url") ?: ""
-        val hasGlbFile = content.files?.any { file ->
-            val type = file.type?.lowercase() ?: ""
-            type == "model/gltf-binary" || type == "model/gltf+json" || type.contains("gltf")
-                    || file.uri?.lowercase()?.let { it.contains(".glb") || it.contains("ext=glb") } == true
-        } == true
-        val hasGlbAnimUrl = animationUrl.lowercase().let { it.contains(".glb") || it.contains("ext=glb") }
-
-        val imageUrl = content.links?.get("image") ?: ""
-        val hasGifFile = content.files?.any { file ->
-            val type = file.type?.lowercase() ?: ""
-            type == "image/gif" || file.uri?.lowercase()?.let { it.contains(".gif") || it.contains("ext=gif") } == true
-        } == true
-        val hasGifImageUrl = imageUrl.lowercase().let { it.contains(".gif") || it.contains("ext=gif") }
-        val hasGifAnimUrl = animationUrl.lowercase().let { it.contains(".gif") || it.contains("ext=gif") }
-
-        val category = when {
-            hasGlbFile || hasGlbAnimUrl -> NftCategories.VR
-            hasGifFile || hasGifImageUrl || hasGifAnimUrl -> NftCategories.Gif
-            else -> NftCategories.Image
-        }
-
-        val properties = NftProperties(
-            category = category,
-            files = content.files?.map { FileDetails(it.uri, it.type) },
-            creators = asset.creators?.map { NftCreator(it.address) }
-        )
-
-        return NftMetadata(
-            meta.name,
-            meta.symbol,
-            meta.description,
-            content.links?.get("image"),
-            content.links?.get("animation_url"),
-            content.links?.get("external_url"),
-            attributes,
-            properties
-        )
     }
 }

@@ -28,4 +28,6 @@ rootProject.name = "NativNewDawn"
 include(":app")
 include(":ChainSupport")
 include(":SolanaNFT")
-include(":ImagesLiveWallpaper")
+include(":SharedUI")
+include(":SlideshowLiveWallpaper")
+include(":VerticalGridLiveWallpaper")

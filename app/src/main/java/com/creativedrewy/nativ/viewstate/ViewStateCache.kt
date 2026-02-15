@@ -1,6 +1,6 @@
 package com.creativedrewy.nativ.viewstate
 
-import com.creativedrewy.nativ.viewmodel.NftViewProps
+import com.creativedrewy.solananft.viewmodel.NftViewProps
 import javax.inject.Inject
 import javax.inject.Singleton
 

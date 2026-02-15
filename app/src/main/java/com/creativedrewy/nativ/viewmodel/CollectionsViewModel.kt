@@ -115,6 +115,21 @@ class CollectionsViewModel @Inject constructor(
         applyCollections(collections)
     }
 
+    fun onFavoritesReordered(reorderedFavorites: List<FavoriteNftViewProps>) {
+        allFavorites = reorderedFavorites
+
+        // Update the UI state immediately for snappy feedback
+        val current = _state.value
+        if (current is CollectionsViewState.Display) {
+            _state.value = current.copy(favorites = reorderedFavorites)
+        }
+
+        // Persist the new order to the database
+        viewModelScope.launch {
+            favoriteNftUseCase.updateFavoriteOrder(reorderedFavorites.map { it.tokenAddress })
+        }
+    }
+
     private suspend fun loadFavorites() {
         val favorites = favoriteNftUseCase.getAllFavorites()
         allFavorites = favorites.map { fav ->

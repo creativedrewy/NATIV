@@ -1,19 +1,20 @@
 package com.creativedrewy.nativ.viewstate
 
 import com.creativedrewy.nativ.chainsupport.SupportedChain
+import com.creativedrewy.nativ.chainsupport.nft.AnimatedImage
+import com.creativedrewy.nativ.chainsupport.nft.AssetType
+import com.creativedrewy.nativ.chainsupport.nft.Image
+import com.creativedrewy.nativ.chainsupport.nft.ImageAndVideo
+import com.creativedrewy.nativ.chainsupport.nft.Model3d
 import com.creativedrewy.nativ.chainsupport.nft.NftCategories
 import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
 import com.creativedrewy.nativ.chainsupport.nft.NftProperties
-import com.creativedrewy.nativ.viewmodel.AnimatedImage
-import com.creativedrewy.nativ.viewmodel.AssetType
-import com.creativedrewy.nativ.viewmodel.Attribute
-import com.creativedrewy.nativ.viewmodel.Blockchain
-import com.creativedrewy.nativ.viewmodel.Image
-import com.creativedrewy.nativ.viewmodel.ImageAndVideo
-import com.creativedrewy.nativ.viewmodel.Model3d
-import com.creativedrewy.nativ.viewmodel.NftViewProps
-import com.creativedrewy.nativ.viewmodel.isGifUrl
-import com.creativedrewy.nativ.viewmodel.isGlbUrl
+import com.creativedrewy.nativ.chainsupport.nft.isGifUrl
+import com.creativedrewy.nativ.chainsupport.nft.isGlbUrl
+import com.creativedrewy.nativ.chainsupport.nft.isMp4Url
+import com.creativedrewy.solananft.viewmodel.Attribute
+import com.creativedrewy.solananft.viewmodel.Blockchain
+import com.creativedrewy.solananft.viewmodel.NftViewProps
 import java.util.UUID
 import javax.inject.Inject
 
@@ -58,7 +59,7 @@ class GalleryViewStateMapping @Inject constructor() {
         return when {
             nft.properties?.category == NftCategories.VR -> Model3d
             isGlbUrl(animUrl) -> Model3d
-            animUrl.endsWith(".mp4") -> ImageAndVideo
+            isMp4Url(animUrl) -> ImageAndVideo
             nft.properties?.category == NftCategories.Gif -> AnimatedImage
             isGifUrl(animUrl) || isGifUrl(imageUrl) -> AnimatedImage
             else -> Image

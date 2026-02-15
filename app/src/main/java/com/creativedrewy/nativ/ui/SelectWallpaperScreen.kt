@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.creativedrewy.imageslivewallpaper.ImagesWallpaperService
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
 import com.creativedrewy.nativ.ui.theme.TitleGray
@@ -94,7 +93,7 @@ fun SelectWallpaperScreen(
                             val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
                             intent.putExtra(
                                 WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                                ComponentName(context, ImagesWallpaperService::class.java)
+                                ComponentName(context, wallpaper.serviceClass)
                             )
                             context.startActivity(intent)
                         }

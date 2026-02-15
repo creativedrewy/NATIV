@@ -6,5 +6,6 @@ data class WallpaperDefinition(
     val name: String,
     @DrawableRes val previewImageRes: Int,
     val requiredFavorites: Int,
-    val purchaseId: String
+    val purchaseId: String,
+    val serviceClass: Class<*>
 )

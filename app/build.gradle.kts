@@ -42,7 +42,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.imagesLiveWallpaper)
+    implementation(projects.slideshowLiveWallpaper)
+    implementation(projects.verticalGridLiveWallpaper)
     implementation(projects.chainSupport)
     implementation(projects.solanaNFT)
 
@@ -69,12 +70,14 @@ dependencies {
 
     implementation(libs.okhttp)
 
-    implementation(libs.exoplayer)
-    implementation(libs.exoplayer.ui)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
 
     implementation("com.google.accompanist:accompanist-flowlayout:0.16.1")
     implementation("com.google.accompanist:accompanist-placeholder:0.28.0")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
+
+    implementation("sh.calvin.reorderable:reorderable:2.4.3")
 
     implementation(libs.coil.core)
     implementation(libs.coil.compose)

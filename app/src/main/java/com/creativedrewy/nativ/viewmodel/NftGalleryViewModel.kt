@@ -11,13 +11,14 @@ import com.creativedrewy.nativ.chainsupport.nft.Pending
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import com.creativedrewy.nativ.viewstate.GalleryViewStateMapping
 import com.creativedrewy.nativ.viewstate.ViewStateCache
+import com.creativedrewy.solananft.viewmodel.NftViewProps
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel

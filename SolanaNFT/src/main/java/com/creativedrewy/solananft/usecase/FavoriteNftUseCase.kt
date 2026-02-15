@@ -50,4 +50,8 @@ class FavoriteNftUseCase @Inject constructor(
     fun observeFavorites(): Flow<List<FavoriteNft>> {
         return favoritesRepository.observeAllFavorites()
     }
+
+    suspend fun updateFavoriteOrder(tokenAddressesInOrder: List<String>) {
+        favoritesRepository.updateFavoriteOrders(tokenAddressesInOrder)
+    }
 }

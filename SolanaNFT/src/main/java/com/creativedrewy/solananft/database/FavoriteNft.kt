@@ -9,5 +9,6 @@ data class FavoriteNft(
     val name: String,
     val imageUrl: String,
     val mediaUrl: String,
-    val assetType: String
+    val assetType: String,
+    val sortOrder: Int = 0
 )

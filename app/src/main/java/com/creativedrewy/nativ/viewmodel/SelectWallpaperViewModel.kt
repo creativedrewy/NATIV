@@ -29,6 +29,7 @@ class SelectWallpaperViewModel @Inject constructor(
                     previewImageRes = def.previewImageRes,
                     requiredFavorites = def.requiredFavorites,
                     purchaseId = def.purchaseId,
+                    serviceClass = def.serviceClass,
                     isEnabled = favoriteCount >= def.requiredFavorites
                 )
             }

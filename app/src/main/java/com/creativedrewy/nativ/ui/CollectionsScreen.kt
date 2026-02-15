@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.CircularProgressIndicator
@@ -48,6 +49,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -61,8 +63,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
@@ -79,6 +83,8 @@ import com.creativedrewy.nativ.viewmodel.CollectionsViewState
 import com.creativedrewy.nativ.viewmodel.FavoriteNftViewProps
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @ExperimentalComposeUiApi
 @Composable
@@ -100,6 +106,7 @@ fun CollectionsScreen(
         onSearchQueryChanged = { viewModel.onSearchQueryChanged(it) },
         onCollectionNavigate = onCollectionNavigate,
         onNftNavigate = onNftNavigate,
+        onFavoritesReordered = { viewModel.onFavoritesReordered(it) },
         listState = listState
     )
 }
@@ -112,6 +119,7 @@ fun CollectionsContent(
     onSearchQueryChanged: (String) -> Unit,
     onCollectionNavigate: (String) -> Unit,
     onNftNavigate: (String) -> Unit,
+    onFavoritesReordered: (List<FavoriteNftViewProps>) -> Unit = {},
     listState: LazyGridState
 ) {
     val isLoading = viewState is CollectionsViewState.Loading
@@ -235,7 +243,8 @@ fun CollectionsContent(
                             item(span = { GridItemSpan(maxLineSpan) }) {
                                 WallpaperGallerySection(
                                     favorites = favorites,
-                                    onNftNavigate = onNftNavigate
+                                    onNftNavigate = onNftNavigate,
+                                    onFavoritesReordered = onFavoritesReordered
                                 )
                             }
                         }
@@ -258,8 +267,27 @@ fun CollectionsContent(
 @Composable
 fun WallpaperGallerySection(
     favorites: List<FavoriteNftViewProps>,
-    onNftNavigate: (String) -> Unit
+    onNftNavigate: (String) -> Unit,
+    onFavoritesReordered: (List<FavoriteNftViewProps>) -> Unit = {}
 ) {
+    // Local mutable list for instant drag feedback
+    val localFavorites = remember { favorites.toMutableStateList() }
+
+    // Sync from parent when favorites change externally (e.g., initial load, add/remove)
+    LaunchedEffect(favorites) {
+        if (localFavorites.toList() != favorites) {
+            localFavorites.clear()
+            localFavorites.addAll(favorites)
+        }
+    }
+
+    val lazyListState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        localFavorites.apply {
+            add(to.index, removeAt(from.index))
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -274,14 +302,30 @@ fun WallpaperGallerySection(
         )
 
         LazyRow(
+            state = lazyListState,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(end = 8.dp)
         ) {
-            items(favorites) { favorite ->
-                FavoriteNftCard(
-                    favorite = favorite,
-                    onClick = { onNftNavigate(favorite.tokenAddress) }
-                )
+            items(localFavorites, key = { it.tokenAddress }) { favorite ->
+                ReorderableItem(reorderableLazyListState, key = favorite.tokenAddress) { isDragging ->
+                    val elevation by animateFloatAsState(
+                        targetValue = if (isDragging) 16f else 8f,
+                        label = "dragElevation"
+                    )
+
+                    FavoriteNftCard(
+                        favorite = favorite,
+                        onClick = { if (!isDragging) onNftNavigate(favorite.tokenAddress) },
+                        elevation = elevation.dp,
+                        modifier = Modifier
+                            .longPressDraggableHandle(
+                                onDragStopped = {
+                                    onFavoritesReordered(localFavorites.toList())
+                                }
+                            )
+                            .zIndex(if (isDragging) 1f else 0f)
+                    )
+                }
             }
         }
     }
@@ -291,16 +335,18 @@ fun WallpaperGallerySection(
 @Composable
 fun FavoriteNftCard(
     favorite: FavoriteNftViewProps,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    elevation: Dp = 8.dp
 ) {
     val context = LocalContext.current
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .width(140.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        elevation = 8.dp
+        elevation = elevation
     ) {
         Column(
             modifier = Modifier

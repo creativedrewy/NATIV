@@ -2,18 +2,26 @@ package com.creativedrewy.nativ.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.creativedrewy.nativ.chainsupport.nft.AnimatedImage
+import com.creativedrewy.nativ.chainsupport.nft.FileDetails
+import com.creativedrewy.nativ.chainsupport.nft.ImageAndVideo
+import com.creativedrewy.nativ.chainsupport.nft.Model3d
+import com.creativedrewy.nativ.chainsupport.nft.NftMetadata
+import com.creativedrewy.nativ.chainsupport.nft.NftProperties
 import com.creativedrewy.nativ.viewstate.ViewStateCache
 import com.creativedrewy.solananft.R
 import com.creativedrewy.solananft.usecase.AssetDownloadUseCase
 import com.creativedrewy.solananft.usecase.CollectionNftsUseCase
 import com.creativedrewy.solananft.usecase.FavoriteNftUseCase
+import com.creativedrewy.solananft.viewmodel.Blockchain
+import com.creativedrewy.solananft.viewmodel.NftViewProps
+import com.creativedrewy.solananft.viewmodel.toNftViewProps
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
 import javax.inject.Inject
 
 sealed class ScreenState
@@ -123,32 +131,35 @@ class DetailsViewModel @Inject constructor(
     private fun loadFromDatabase(assetId: String) {
         viewModelScope.launch {
             val nftInfo = collectionNftsUseCase.loadNft(assetId) ?: return@launch
-
-            val animUrl = nftInfo.animationUrl
-            val assetType = determineAssetTypeFromUrls(animUrl, nftInfo.imageUrl, nftInfo.fileTypes)
-            val assetUrl = if (assetType is Model3d) animUrl else ""
             val isFav = favoriteNftUseCase.isFavorited(assetId)
 
-            val nftProps = NftViewProps(
-                id = UUID.nameUUIDFromBytes(assetId.toByteArray()),
+            val nftMetadata = NftMetadata(
                 name = nftInfo.name,
+                symbol = null,
                 description = nftInfo.description,
+                image = nftInfo.imageUrl,
+                animationUrl = nftInfo.animationUrl,
+                externalUrl = nftInfo.externalUrl,
+                attributes = null,
+                properties = NftProperties(
+                    category = null,
+                    files = nftInfo.fileTypes.map { FileDetails(null, it) },
+                    creators = null
+                )
+            )
+
+            val nftProps = nftMetadata.toNftViewProps(
+                assetId = assetId,
                 blockchain = Blockchain(
                     ticker = "SOL",
                     logoRes = R.drawable.solana_logo
-                ),
-                displayImageUrl = nftInfo.imageUrl,
-                videoUrl = animUrl,
-                siteUrl = nftInfo.externalUrl,
-                assetType = assetType,
-                assetUrl = assetUrl,
-                isPending = false
+                )
             )
 
-            if (assetType is Model3d) {
+            if (nftProps.assetType is Model3d) {
                 _state.value = Ready(PropsWithMedia(nftProps), true, assetId, isFav)
 
-                val mediaBytes = assetDownloadUseCase.downloadAsset(assetUrl)
+                val mediaBytes = assetDownloadUseCase.downloadAsset(nftProps.assetUrl)
                 _state.value = Ready(PropsWithMedia(nftProps, mediaBytes), false, assetId, isFav)
             } else {
                 _state.value = Ready(PropsWithMedia(nftProps), false, assetId, isFav)
@@ -167,52 +178,4 @@ class DetailsViewModel @Inject constructor(
     private fun shouldDownloadAsset(nft: NftViewProps, cache: ViewStateCache): Boolean {
         return nft.assetType is Model3d && !cache.mediaCache.containsKey(nft.id.toString())
     }
-}
-
-/**
- * Determine the asset type from the animation URL, image URL, and file MIME types.
- * Checks for GLB model files, animated GIFs, and videos.
- */
-fun determineAssetTypeFromUrls(animationUrl: String, imageUrl: String = "", fileTypes: List<String>): AssetType {
-    return when {
-        isGlbUrl(animationUrl) || fileTypes.any { isGlbMimeType(it) } -> Model3d
-        animationUrl.endsWith(".mp4") -> ImageAndVideo
-        isGifUrl(animationUrl) || isGifUrl(imageUrl) || fileTypes.any { isGifMimeType(it) } -> AnimatedImage
-        else -> Image
-    }
-}
-
-/**
- * Check if a URL points to a GLB (3D model) file.
- * Handles both direct `.glb` extensions and Arweave-style `?ext=glb` query params.
- */
-fun isGlbUrl(url: String): Boolean {
-    if (url.isBlank()) return false
-    val lower = url.lowercase()
-    return lower.contains(".glb") || lower.contains("ext=glb")
-}
-
-/**
- * Check if a MIME type indicates a GLB/glTF 3D model file.
- */
-fun isGlbMimeType(mimeType: String): Boolean {
-    val lower = mimeType.lowercase()
-    return lower == "model/gltf-binary" || lower == "model/gltf+json" || lower.contains("gltf")
-}
-
-/**
- * Check if a URL points to an animated GIF file.
- * Handles both direct `.gif` extensions and Arweave-style `?ext=gif` query params.
- */
-fun isGifUrl(url: String): Boolean {
-    if (url.isBlank()) return false
-    val lower = url.lowercase()
-    return lower.contains(".gif") || lower.contains("ext=gif")
-}
-
-/**
- * Check if a MIME type indicates an animated GIF file.
- */
-fun isGifMimeType(mimeType: String): Boolean {
-    return mimeType.lowercase() == "image/gif"
 }

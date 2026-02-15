@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.creativedrewy.imageslivewallpaper"
+    namespace = "com.creativedrewy.slideshowlivewallpaper"
     compileSdk = 36
 
     defaultConfig {
@@ -42,7 +42,9 @@ android {
 }
 
 dependencies {
+    implementation(projects.sharedUI)
     implementation(projects.solanaNFT)
+    implementation(projects.chainSupport)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -64,4 +66,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.okhttp)
     implementation(libs.coil.gif)
+
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
 }

@@ -14,7 +14,8 @@ class FavoritesRepository @Inject constructor(
     fun observeAllFavorites(): Flow<List<FavoriteNft>> = favoriteNftDao.observeAll()
 
     suspend fun addFavorite(nft: FavoriteNft) = withContext(Dispatchers.IO) {
-        favoriteNftDao.insert(nft)
+        val maxOrder = favoriteNftDao.getMaxSortOrder() ?: -1
+        favoriteNftDao.insert(nft.copy(sortOrder = maxOrder + 1))
     }
 
     suspend fun removeFavorite(tokenAddress: String) = withContext(Dispatchers.IO) {
@@ -27,5 +28,11 @@ class FavoritesRepository @Inject constructor(
 
     suspend fun getAllFavorites(): List<FavoriteNft> = withContext(Dispatchers.IO) {
         favoriteNftDao.getAll()
+    }
+
+    suspend fun updateFavoriteOrders(tokenAddressesInOrder: List<String>) = withContext(Dispatchers.IO) {
+        tokenAddressesInOrder.forEachIndexed { index, tokenAddress ->
+            favoriteNftDao.updateSortOrder(tokenAddress, index)
+        }
     }
 }
