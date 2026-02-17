@@ -17,7 +17,15 @@ class CollectionDetailViewModel @Inject constructor(
     private val _state = MutableStateFlow<CollectionDetailViewState>(CollectionDetailViewState.Loading)
     val viewState: StateFlow<CollectionDetailViewState> get() = _state
 
+    private var loadedCollectionId: String? = null
+
     fun loadCollection(collectionId: String) {
+        if (loadedCollectionId == collectionId && _state.value is CollectionDetailViewState.Display) {
+            return
+        }
+
+        loadedCollectionId = collectionId
+
         viewModelScope.launch {
             _state.value = CollectionDetailViewState.Loading
 

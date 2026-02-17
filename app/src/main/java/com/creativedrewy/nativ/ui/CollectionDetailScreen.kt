@@ -143,6 +143,7 @@ fun CollectionDetailScreen(
                 )
             }
 
+            val listState = rememberLazyGridState()
             when (viewState) {
                 is CollectionDetailViewState.Loading -> {
                     Box(
@@ -154,7 +155,6 @@ fun CollectionDetailScreen(
                 }
                 is CollectionDetailViewState.Display -> {
                     val displayState = viewState as CollectionDetailViewState.Display
-                    val listState = rememberLazyGridState()
 
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
