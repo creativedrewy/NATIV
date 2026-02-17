@@ -6,9 +6,6 @@
     <a href="http://makeapullrequest.com">
         <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" />
     </a>
-    <a href="https://developer.android.com/jetpack/androidx/versions/all-channel#december_16_2020">
-        <img src="https://img.shields.io/badge/Jetpack%20Compose-1.0.0-brightgreen" />
-    </a>
     <a href="https://github.com/creativedrewy/NATIV/network/">
         <img src="https://img.shields.io/github/forks/creativedrewy/NATIV" />
     </a>
@@ -30,7 +27,7 @@
 
 # NATIV
 
-NATIV is the best NFT Gallery app for Android, written with 100% Android native APIs and code.
+NATIV lets you flex your NFTs where everyone can see them - on your phone's wallpaper!
 
 <!--
 ## Take a Look
@@ -42,7 +39,7 @@ A New Dawn | For NFT Apps | On Android | For Free!
 
 ## Technologies
 
-NATIV is built using 100% Kotlin with all of the latest and greatest Android APIs and libraries:
+NATIV is built using 100% Kotlin with all the tasty Android APIs and libraries:
 
 - 100% Jetpack Compose UI w/ Material components
 - Coroutines with Flow & StateFlow
@@ -59,12 +56,12 @@ git clone git@github.com:creativedrewy/NATIV.git
 cd NATIV
 ```
 
-When opening the project in Android Studio, be sure to select the `build.gradle` file from the project root.
+When opening the project in Android Studio, be sure to select the `build.gradle.kts` file from the project root.
 
 ## License
 
 ```
-Copyright 2023 Andrew Watson
+Copyright 2026 Andrew Watson
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
