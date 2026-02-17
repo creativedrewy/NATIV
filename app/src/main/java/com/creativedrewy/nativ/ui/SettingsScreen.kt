@@ -253,7 +253,7 @@ fun SettingsScreen(
                                 .weight(1f)
                                 .padding(start = 8.dp),
                             style = MaterialTheme.typography.h6,
-                            text = formatAddress(addr.address),
+                            text = viewModel.formatAddress(addr.address),
                             maxLines = 1,
                             color = MaterialTheme.colors.onPrimary
                         )

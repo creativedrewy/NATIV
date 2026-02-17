@@ -8,7 +8,6 @@ import com.creativedrewy.nativ.usecase.UserAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,6 +54,14 @@ class AddressListViewModel @Inject constructor(
                         supportedChains = chainSupport.supportedChains.sortedBy { it.ticker }.toList()
                     )
                 }
+        }
+    }
+
+    fun formatAddress(srcAddr: String): String {
+        return if (srcAddr.length >= 20) {
+            srcAddr.take(8) + "..." + srcAddr.takeLast(8)
+        } else {
+            srcAddr
         }
     }
 
