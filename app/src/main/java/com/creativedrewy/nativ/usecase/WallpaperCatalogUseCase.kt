@@ -24,10 +24,10 @@ class WallpaperCatalogUseCase @Inject constructor() {
                 serviceClass = VerticalGridWallpaperService::class.java
             ),
             WallpaperDefinition(
-                name = "Sunset Dreams",
+                name = "Fullscreen",
                 previewImageRes = R.drawable.sunset,
-                requiredFavorites = 200,
-                purchaseId = "wallpaper_sunset_dreams",
+                requiredFavorites = 1,
+                purchaseId = "wallpaper_full_screen",
                 serviceClass = SlideshowWallpaperService::class.java
             )
         )

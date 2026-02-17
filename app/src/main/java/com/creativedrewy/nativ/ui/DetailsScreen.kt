@@ -112,8 +112,9 @@ fun DetailsScreen(
 
                 Box(
                     modifier = Modifier
+                        .padding(top = 44.dp)
                         .fillMaxWidth()
-                        .height(360.dp)
+                        .height(390.dp)
                 ) {
                     Box(
                         modifier = Modifier
@@ -140,7 +141,6 @@ fun DetailsScreen(
                     ) {
                         Box(
                             modifier = Modifier
-                                .width(300.dp)
                                 .aspectRatio(1f)
                                 .background(Color.Transparent)
                         ) {
