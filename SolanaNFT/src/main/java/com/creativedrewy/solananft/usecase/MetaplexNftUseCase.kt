@@ -43,13 +43,22 @@ class MetaplexNftUseCase @Inject constructor(
             try {
                 val fetchedAssets = accountsRepository.getAssetsByOwner(PublicKey(address))
 
-                databaseRepository.cacheNewAssets(fetchedAssets)
+                // Filter out known spam collections before caching
+                val cleanAssets = fetchedAssets.filter { asset ->
+                    val collectionId = asset.grouping
+                        ?.firstOrNull { it.groupKey == "collection" }
+                        ?.groupValue
+                    val spam = SpamCollections.isSpam(collectionId, asset.id)
+                    !spam
+                }
+
+                databaseRepository.cacheNewAssets(cleanAssets)
 
                 // Resolve collection names for any collections that don't have one yet
                 resolveCollectionNames()
 
                 val cachedIds = cachedAssets.map { it.id }.toSet()
-                val newAssets = fetchedAssets.filter { it.id !in cachedIds }
+                val newAssets = cleanAssets.filter { it.id !in cachedIds }
 
                 newAssets.forEach { asset ->
                     val uri = asset.content?.jsonUri ?: return@forEach
