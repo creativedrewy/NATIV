@@ -88,6 +88,8 @@ dependencies {
     implementation(libs.filament.utils.android)
     implementation(libs.gltfio.android)
 
+    implementation(libs.mwa.client)
+
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
 

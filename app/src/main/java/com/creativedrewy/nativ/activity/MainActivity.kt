@@ -10,6 +10,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import com.creativedrewy.nativ.ui.AppScreenContent
 import com.creativedrewy.nativ.ui.theme.NATIVTheme
 import com.google.android.filament.utils.Utils
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -30,12 +31,13 @@ class MainActivity : ComponentActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val activityResultSender = ActivityResultSender(this)
         setContent {
             NATIVTheme {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    AppScreenContent()
+                    AppScreenContent(activityResultSender = activityResultSender)
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.creativedrewy.nativ.ui
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -58,12 +61,19 @@ import com.creativedrewy.nativ.ui.theme.HotPink
 import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.ui.theme.Turquoise
 import com.creativedrewy.nativ.viewmodel.AddressListViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solana.mobilewalletadapter.clientlib.ConnectionIdentity
+import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import kotlinx.coroutines.launch
+import java.math.BigInteger
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
     onConnectWallet: () -> Unit,
+    activityResultSender: ActivityResultSender,
     viewModel: AddressListViewModel = hiltViewModel()
 ) {
     val viewState = viewModel.viewState.collectAsState().value
@@ -76,6 +86,16 @@ fun SettingsScreen(
     var address by remember { mutableStateOf(TextFieldValue("")) }
     val addressInteractionState = remember { MutableInteractionSource() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val coroutineScope = rememberCoroutineScope()
+    val walletAdapter = remember {
+        MobileWalletAdapter(
+            connectionIdentity = ConnectionIdentity(
+                identityUri = Uri.parse("https://nativ.app"),
+                iconUri = Uri.parse("favicon.ico"),
+                identityName = "NATIV"
+            )
+        )
+    }
 
     Box {
         Image(
@@ -117,10 +137,34 @@ fun SettingsScreen(
                 )
             }
 
-            // Connect wallet button
             Button(
-                onClick = onConnectWallet,
+                onClick = {
+                    coroutineScope.launch {
+                        val result = walletAdapter.connect(activityResultSender)
+                        when (result) {
+                            is TransactionResult.Success -> {
+                                val account = result.authResult.accounts.firstOrNull()
+                                val publicKeyBytes = account?.publicKey
+
+                                if (publicKeyBytes != null) {
+                                    val publicKeyBase58 = encodeBase58(publicKeyBytes)
+                                    viewModel.saveAddress(publicKeyBase58, "SOL")
+                                    onConnectWallet()
+                                } else {
+                                    Log.w("SettingsScreen", "Connected wallet returned no public key.")
+                                }
+                            }
+                            is TransactionResult.NoWalletFound -> {
+                                Log.w("SettingsScreen", "No MWA-compatible wallet found.")
+                            }
+                            is TransactionResult.Failure -> {
+                                Log.e("SettingsScreen", "Error connecting to wallet.", result.e)
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier
+                    .padding(top = 8.dp)
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
@@ -143,12 +187,10 @@ fun SettingsScreen(
                 )
             }
 
-//            Spacer(modifier = Modifier.height(24.dp))
-
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp),
+                    .padding(vertical = 20.dp),
                 text = "---- or ----",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6,
@@ -248,6 +290,7 @@ fun SettingsScreen(
                             outlineColor = Turquoise,
                             backgroundColor = LightPurple
                         )
+
                         Text(
                             modifier = Modifier
                                 .weight(1f)
@@ -257,6 +300,7 @@ fun SettingsScreen(
                             maxLines = 1,
                             color = MaterialTheme.colors.onPrimary
                         )
+
                         IconButton(
                             onClick = { viewModel.deleteAddress(addr.address, addr.chainTicker) }
                         ) {
@@ -272,4 +316,25 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+private fun encodeBase58(bytes: ByteArray): String {
+    if (bytes.isEmpty()) {
+        return ""
+    }
+
+    val alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    val zeros = bytes.takeWhile { it == 0.toByte() }.count()
+    var value = BigInteger(1, bytes)
+    val sb = StringBuilder()
+
+    val base = BigInteger.valueOf(58L)
+    while (value > BigInteger.ZERO) {
+        val divRem = value.divideAndRemainder(base)
+        sb.append(alphabet[divRem[1].toInt()])
+        value = divRem[0]
+    }
+
+    repeat(zeros) { sb.append(alphabet[0]) }
+    return sb.reverse().toString()
 }

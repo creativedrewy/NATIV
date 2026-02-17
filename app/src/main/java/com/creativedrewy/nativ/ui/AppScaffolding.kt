@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.Turquoise
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 
 sealed class AppScreen(
     val route: String
@@ -59,7 +60,9 @@ object Details : AppScreen("details/{${NavArgs.nftId}}")
 
 @ExperimentalComposeUiApi
 @Composable
-fun AppScreenContent() {
+fun AppScreenContent(
+    activityResultSender: ActivityResultSender
+) {
     val navController = rememberNavController()
     val listState = rememberLazyGridState()
 
@@ -107,9 +110,8 @@ fun AppScreenContent() {
         composable(Settings.route) {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onConnectWallet = {
-                    // TODO: Initiate Solana Mobile wallet adapter connection & signing
-                }
+                onConnectWallet = {},
+                activityResultSender = activityResultSender
             )
         }
         composable(
