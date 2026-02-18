@@ -30,6 +30,7 @@ media3 = "1.4.1"
 filamentAndroid = "1.69.1"
 ui = "1.3.3"
 mwa = "2.0.3"
+multmult = "0.2.3"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -86,6 +87,7 @@ coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 
 mozart = { module = "io.github.creativedrewy:mozartwallpapers", version.ref = "mozart" }
 mwa-client = { module = "com.solanamobile:mobile-wallet-adapter-clientlib-ktx", version.ref = "mwa" }
+multmult = { module = "io.github.funkatronics:multimult", version.ref = "multmult" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

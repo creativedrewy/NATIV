@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.gltfio.android)
 
     implementation(libs.mwa.client)
+    implementation(libs.multmult)
 
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)

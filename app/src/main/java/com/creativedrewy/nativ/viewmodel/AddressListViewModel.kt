@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.creativedrewy.nativ.chainsupport.ISupportedChains
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.usecase.UserAddressesUseCase
+import com.funkatronics.encoders.Base58
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.ConnectionIdentity
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
@@ -14,7 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.math.BigInteger
 import javax.inject.Inject
 
 data class AddrViewState(
@@ -108,7 +108,7 @@ class AddressListViewModel @Inject constructor(
                         message = "Connected, but no public key was returned."
                     )
                 } else {
-                    val publicKeyBase58 = encodeBase58(publicKeyBytes)
+                    val publicKeyBase58 = Base58.encodeToString(publicKeyBytes)
                     val ticker = chainSupport.supportedChains
                         .firstOrNull { it.ticker == "SOL" }
                         ?.ticker ?: "SOL"
@@ -129,26 +129,5 @@ class AddressListViewModel @Inject constructor(
                 message = "Unable to connect to wallet. Please try again."
             )
         }
-    }
-
-    private fun encodeBase58(bytes: ByteArray): String {
-        if (bytes.isEmpty()) {
-            return ""
-        }
-
-        val alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-        val zeros = bytes.takeWhile { it == 0.toByte() }.count()
-        var value = BigInteger(1, bytes)
-        val sb = StringBuilder()
-
-        val base = BigInteger.valueOf(58L)
-        while (value > BigInteger.ZERO) {
-            val divRem = value.divideAndRemainder(base)
-            sb.append(alphabet[divRem[1].toInt()])
-            value = divRem[0]
-        }
-
-        repeat(zeros) { sb.append(alphabet[0]) }
-        return sb.reverse().toString()
     }
 }
