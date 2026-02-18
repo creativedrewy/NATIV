@@ -1,0 +1,30 @@
+{
+  "name": "metaplex-master-edition-creator",
+  "version": "1.0.0",
+  "description": "Create Metaplex NFT Master Editions and mint prints with Arweave uploads",
+  "type": "module",
+  "main": "metaplex-master-edition.js",
+  "scripts": {
+    "start": "node metaplex-master-edition.js",
+    "devnet": "node metaplex-master-edition.js",
+    "test": "node metaplex-master-edition.js"
+  },
+  "keywords": [
+    "solana",
+    "metaplex",
+    "nft",
+    "master-edition",
+    "arweave",
+    "bundlr"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@metaplex-foundation/js": "^0.20.1",
+    "@solana/spl-token": "^0.4.1",
+    "@solana/web3.js": "^1.95.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

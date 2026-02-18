@@ -1,0 +1,42 @@
+# Wallet files - NEVER commit these!
+wallet.json
+mainnet-wallet.json
+*-wallet.json
+*.json.key
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Output files (optional - you may want to keep these)
+master-edition-info.json
+prints-info.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# NFT images (if you don't want to commit them)
+# nft-image.png
+# *.png
+# *.jpg
+# *.jpeg

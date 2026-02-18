@@ -1,5 +1,6 @@
 package com.creativedrewy.nativ.usecase
 
+import com.creativedrewy.fullscreengallerywallpaper.FullScreenGalleryWallpaperService
 import com.creativedrewy.nativ.R
 import com.creativedrewy.slideshowlivewallpaper.SlideshowWallpaperService
 import com.creativedrewy.verticalgridlivewallpaper.VerticalGridWallpaperService
@@ -28,7 +29,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
                 previewImageRes = R.drawable.sunset,
                 requiredFavorites = 1,
                 purchaseId = "wallpaper_full_screen",
-                serviceClass = SlideshowWallpaperService::class.java
+                serviceClass = FullScreenGalleryWallpaperService::class.java
             )
         )
     }

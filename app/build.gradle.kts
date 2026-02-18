@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation(projects.slideshowLiveWallpaper)
     implementation(projects.verticalGridLiveWallpaper)
+    implementation(project(":FullScreenGalleryWallpaper"))
     implementation(projects.chainSupport)
     implementation(projects.solanaNFT)
 
