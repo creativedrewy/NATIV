@@ -14,9 +14,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -79,11 +78,9 @@ fun SelectWallpaperScreen(
                 modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
             )
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+            LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(viewState.wallpapers) { wallpaper ->
@@ -121,15 +118,13 @@ fun WallpaperPreviewCard(
         Column(
             modifier = Modifier
                 .background(CardDarkBlue)
-                .padding(8.dp)
+                .padding(12.dp)
         ) {
-            // 9:16 phone-shaped preview box
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(9f / 16f)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(CardDarkBlue),
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -151,11 +146,20 @@ fun WallpaperPreviewCard(
                 text = wallpaper.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.h5,
                 fontWeight = FontWeight.Medium
             )
 
-            // Required favorites
+            Text(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .fillMaxWidth(),
+                text = wallpaper.description,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.body1,
+            )
+
             Text(
                 modifier = Modifier
                     .padding(top = 2.dp)

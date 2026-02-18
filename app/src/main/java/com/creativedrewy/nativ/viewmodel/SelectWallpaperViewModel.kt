@@ -26,6 +26,7 @@ class SelectWallpaperViewModel @Inject constructor(
             val wallpapers = wallpaperCatalogUseCase.getAvailableWallpapers().map { def ->
                 WallpaperViewProps(
                     name = def.name,
+                    description = def.description,
                     previewImageRes = def.previewImageRes,
                     requiredFavorites = def.requiredFavorites,
                     purchaseId = def.purchaseId,

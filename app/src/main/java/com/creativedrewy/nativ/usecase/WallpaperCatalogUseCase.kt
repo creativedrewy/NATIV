@@ -22,7 +22,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
                 name = "Lattice",
                 previewImageRes = R.drawable.sunset,
                 requiredFavorites = 8,
-                description = "When you want to see them all at once",
+                description = "When you want to see your favorites all at once",
                 purchaseId = "wallpaper_lattice",
                 serviceClass = VerticalGridWallpaperService::class.java
             ),
