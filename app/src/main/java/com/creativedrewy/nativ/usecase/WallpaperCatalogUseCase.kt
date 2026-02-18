@@ -14,21 +14,24 @@ class WallpaperCatalogUseCase @Inject constructor() {
                 name = "Baroque",
                 previewImageRes = R.drawable.sunset,
                 requiredFavorites = 1,
-                purchaseId = "wallpaper_nft_gallery",
+                description = "Treat your NFTs like royalty",
+                purchaseId = "wallpaper_baroque",
                 serviceClass = SlideshowWallpaperService::class.java
             ),
             WallpaperDefinition(
-                name = "The Grid",
+                name = "Lattice",
                 previewImageRes = R.drawable.sunset,
                 requiredFavorites = 8,
-                purchaseId = "wallpaper_cosmic_grid",
+                description = "When you want to see them all at once",
+                purchaseId = "wallpaper_lattice",
                 serviceClass = VerticalGridWallpaperService::class.java
             ),
             WallpaperDefinition(
-                name = "Fullscreen",
+                name = "Immersive Canvas",
                 previewImageRes = R.drawable.sunset,
                 requiredFavorites = 1,
-                purchaseId = "wallpaper_full_screen",
+                description = "A classic wallpaper experience evolved",
+                purchaseId = "wallpaper_immersive_canvas",
                 serviceClass = FullScreenGalleryWallpaperService::class.java
             )
         )
