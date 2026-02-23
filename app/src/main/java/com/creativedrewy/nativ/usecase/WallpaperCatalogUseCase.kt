@@ -28,7 +28,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
             ),
             WallpaperDefinition(
                 name = "Immersive Canvas",
-                previewImageRes = com.creativedrewy.nativ.R.drawable.sunset,
+                previewImageRes = com.creativedrewy.fullscreengallerywallpaper.R.drawable.imersive_preview,
                 requiredFavorites = 1,
                 description = "A classic wallpaper experience evolved",
                 purchaseId = "wallpaper_immersive_canvas",
