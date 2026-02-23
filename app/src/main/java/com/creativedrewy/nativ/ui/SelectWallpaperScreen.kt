@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
 import com.creativedrewy.nativ.ui.theme.CardDarkBlue
+import com.creativedrewy.nativ.ui.theme.LightPurple
 import com.creativedrewy.nativ.ui.theme.TitleGray
 import com.creativedrewy.nativ.viewmodel.SelectWallpaperViewModel
 import com.creativedrewy.nativ.viewmodel.WallpaperViewProps
@@ -124,7 +125,8 @@ fun WallpaperPreviewCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .clip(RoundedCornerShape(8.dp)),
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(LightPurple.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -133,7 +135,7 @@ fun WallpaperPreviewCard(
                     modifier = Modifier
                         .fillMaxSize()
                         .then(if (!wallpaper.isEnabled) Modifier.alpha(0.4f) else Modifier),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                     colorFilter = if (!wallpaper.isEnabled) ColorFilter.colorMatrix(grayscaleMatrix) else null
                 )
             }

@@ -1,7 +1,7 @@
 package com.creativedrewy.nativ.usecase
 
 import com.creativedrewy.fullscreengallerywallpaper.FullScreenGalleryWallpaperService
-import com.creativedrewy.nativ.R
+import com.creativedrewy.slideshowlivewallpaper.R
 import com.creativedrewy.slideshowlivewallpaper.SlideshowWallpaperService
 import com.creativedrewy.verticalgridlivewallpaper.VerticalGridWallpaperService
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
         return listOf(
             WallpaperDefinition(
                 name = "Baroque",
-                previewImageRes = R.drawable.sunset,
+                previewImageRes = R.drawable.baroque_preview,
                 requiredFavorites = 1,
                 description = "Treat your NFTs like royalty",
                 purchaseId = "wallpaper_baroque",
@@ -20,7 +20,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
             ),
             WallpaperDefinition(
                 name = "Lattice",
-                previewImageRes = R.drawable.sunset,
+                previewImageRes = com.creativedrewy.verticalgridlivewallpaper.R.drawable.lattice_preview,
                 requiredFavorites = 8,
                 description = "When you want to see your favorites all at once",
                 purchaseId = "wallpaper_lattice",
@@ -28,7 +28,7 @@ class WallpaperCatalogUseCase @Inject constructor() {
             ),
             WallpaperDefinition(
                 name = "Immersive Canvas",
-                previewImageRes = R.drawable.sunset,
+                previewImageRes = com.creativedrewy.nativ.R.drawable.sunset,
                 requiredFavorites = 1,
                 description = "A classic wallpaper experience evolved",
                 purchaseId = "wallpaper_immersive_canvas",
