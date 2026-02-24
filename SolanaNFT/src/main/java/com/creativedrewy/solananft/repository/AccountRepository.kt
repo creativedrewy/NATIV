@@ -15,6 +15,9 @@ import com.solana.core.PublicKey
 import com.solana.networking.Network
 import com.solana.networking.RPCEndpoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.net.URL
 
@@ -28,13 +31,9 @@ class AccountRepository(
     ),
     private val gson: Gson = Gson(),
 ) {
-
-    suspend fun getAssetsByOwner(owner: PublicKey): List<DasAsset> = withContext(Dispatchers.IO) {
-        val allItems = mutableListOf<DasAsset>()
-
+    fun getAssetsByOwnerPaged(owner: PublicKey): Flow<DasAssetsList> = flow {
         var page = 1
         val limit = 50
-
         while (true) {
             val params = mapOf<String, Any>(
                 "ownerAddress" to owner.toString(),
@@ -53,9 +52,10 @@ class AccountRepository(
                         val dto =
                             gson.fromJson<RpcResultDas<DasAssetsList>>(resultString, typeToken)
 
-                        val assets = dto.result.items
-                        allItems.addAll(assets)
+                        val assetsList = dto.result
+                        emit(assetsList)
 
+                        val assets = assetsList.items
                         // Break when we get fewer items than requested — this is the
                         // last page. Don't rely on `total` as it can be inaccurate.
                         if (assets.isEmpty() || assets.size < limit) {
@@ -72,12 +72,21 @@ class AccountRepository(
                 is Error -> {
                     Log.e(
                         "Solana",
-                        "Error fetching DAS assets: ${result.exception?.message}",
+                        "Error fetching DAS assets: ${result.exception.message}",
                         result.exception
                     )
                     break
                 }
             }
+        }
+    }.flowOn(Dispatchers.IO)
+
+    @Suppress("unused")
+    suspend fun getAssetsByOwner(owner: PublicKey): List<DasAsset> = withContext(Dispatchers.IO) {
+        val allItems = mutableListOf<DasAsset>()
+
+        getAssetsByOwnerPaged(owner).collect { pageResults ->
+            allItems.addAll(pageResults.items)
         }
 
         allItems
@@ -111,7 +120,7 @@ class AccountRepository(
             is Error -> {
                 Log.e(
                     "Solana",
-                    "Error fetching asset $assetId: ${result.exception?.message}",
+                    "Error fetching asset $assetId: ${result.exception.message}",
                     result.exception
                 )
                 null

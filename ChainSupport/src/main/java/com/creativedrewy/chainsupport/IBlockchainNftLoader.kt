@@ -5,7 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 data class LoaderNftResult(
     val supportedChain: SupportedChain,
-    val metaMap: Map<String, NftMetaStatus>
+    val metaMap: Map<String, NftMetaStatus>,
+    val pageInfo: LoaderPageInfo? = null
+)
+data class LoaderPageInfo(
+    val page: Int,
+    val itemCount: Int,
+    val isLastPage: Boolean
 )
 
 interface IBlockchainNftLoader {

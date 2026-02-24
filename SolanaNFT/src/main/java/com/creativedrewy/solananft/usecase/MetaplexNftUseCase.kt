@@ -3,6 +3,7 @@ package com.creativedrewy.solananft.usecase
 import android.util.Log
 import com.creativedrewy.nativ.chainsupport.IBlockchainNftLoader
 import com.creativedrewy.nativ.chainsupport.LoaderNftResult
+import com.creativedrewy.nativ.chainsupport.LoaderPageInfo
 import com.creativedrewy.nativ.chainsupport.SupportedChain
 import com.creativedrewy.nativ.chainsupport.nft.Invalid
 import com.creativedrewy.nativ.chainsupport.nft.MetaLoaded
@@ -41,45 +42,60 @@ class MetaplexNftUseCase @Inject constructor(
             }
 
             try {
-                val fetchedAssets = accountsRepository.getAssetsByOwner(PublicKey(address))
+                val cachedIds = cachedAssets.map { it.id }.toMutableSet()
 
-                // Filter out known spam collections before caching
-                val cleanAssets = fetchedAssets.filter { asset ->
-                    val collectionId = asset.grouping
-                        ?.firstOrNull { it.groupKey == "collection" }
-                        ?.groupValue
-                    val spam = SpamCollections.isSpam(collectionId, asset.id)
-                    !spam
+                accountsRepository.getAssetsByOwnerPaged(PublicKey(address)).collect { pageResult ->
+                    // Filter out known spam collections before caching
+                    val cleanAssets = pageResult.items.filter { asset ->
+                        val collectionId = asset.grouping
+                            ?.firstOrNull { it.groupKey == "collection" }
+                            ?.groupValue
+                        val spam = SpamCollections.isSpam(collectionId, asset.id)
+                        !spam
+                    }
+
+                    if (cleanAssets.isNotEmpty()) {
+                        databaseRepository.cacheNewAssets(cleanAssets)
+                    }
+
+                    val newAssets = cleanAssets.filter { it.id !in cachedIds }
+
+                    newAssets.forEach { asset ->
+                        val uri = asset.content?.jsonUri ?: return@forEach
+                        statusMap[uri] = Pending
+                        cachedIds.add(asset.id)
+                    }
+
+                    val isLastPage =
+                        pageResult.items.isEmpty() || pageResult.items.size < pageResult.limit
+                    emit(
+                        LoaderNftResult(
+                            chain,
+                            statusMap,
+                            pageInfo = LoaderPageInfo(
+                                page = pageResult.page,
+                                itemCount = cleanAssets.size,
+                                isLastPage = isLastPage
+                            )
+                        )
+                    )
+
+                    newAssets.forEach { asset ->
+                        val uri = asset.content?.jsonUri ?: return@forEach
+
+                        try {
+                            val nftMeta = nftMetadataMapper.mapToNftMetadata(asset)
+                            statusMap[uri] = MetaLoaded(nftMeta)
+                            emit(LoaderNftResult(chain, statusMap))
+                        } catch (e: Exception) {
+                            Log.e("SOL", "Error mapping DAS asset to metadata for $uri", e)
+                            statusMap[uri] = Invalid
+                        }
+                    }
                 }
-
-                databaseRepository.cacheNewAssets(cleanAssets)
 
                 // Resolve collection names for any collections that don't have one yet
                 resolveCollectionNames()
-
-                val cachedIds = cachedAssets.map { it.id }.toSet()
-                val newAssets = cleanAssets.filter { it.id !in cachedIds }
-
-                newAssets.forEach { asset ->
-                    val uri = asset.content?.jsonUri ?: return@forEach
-                    statusMap[uri] = Pending
-                }
-                if (newAssets.isNotEmpty()) {
-                    emit(LoaderNftResult(chain, statusMap))
-                }
-
-                newAssets.forEach { asset ->
-                    val uri = asset.content?.jsonUri ?: return@forEach
-
-                    try {
-                        val nftMeta = nftMetadataMapper.mapToNftMetadata(asset)
-                        statusMap[uri] = MetaLoaded(nftMeta)
-                        emit(LoaderNftResult(chain, statusMap))
-                    } catch (e: Exception) {
-                        Log.e("SOL", "Error mapping DAS asset to metadata for $uri", e)
-                        statusMap[uri] = Invalid
-                    }
-                }
 
                 emit(LoaderNftResult(chain, statusMap))
             } catch (e: Exception) {

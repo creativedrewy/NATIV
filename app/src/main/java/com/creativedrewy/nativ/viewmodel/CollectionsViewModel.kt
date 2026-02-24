@@ -30,6 +30,7 @@ class CollectionsViewModel @Inject constructor(
     private var allCollections: List<CollectionViewProps> = emptyList()
     private var allFavorites: List<FavoriteNftViewProps> = emptyList()
     private var currentQuery: String = ""
+    private var isSyncing: Boolean = false
 
     fun loadCollections() {
         viewModelScope.launch {
@@ -43,7 +44,6 @@ class CollectionsViewModel @Inject constructor(
                 // No cached data — fetch from API on first load
                 _state.value = CollectionsViewState.Loading
                 syncNftsFromApi()
-                refreshCollectionsFromDb()
             }
         }
     }
@@ -60,19 +60,20 @@ class CollectionsViewModel @Inject constructor(
 
             loadFavorites()
             syncNftsFromApi()
-            refreshCollectionsFromDb()
         }
     }
 
     fun onSearchQueryChanged(query: String) {
         currentQuery = query
+        val refreshing = isSyncing
         viewModelScope.launch {
             if (query.isBlank()) {
                 _state.value = CollectionsViewState.Display(
                     collections = allCollections,
                     favorites = allFavorites,
                     searchQuery = query,
-                    isSearching = false
+                    isSearching = false,
+                    isRefreshing = refreshing
                 )
             } else {
                 val matchingIds = collectionsUseCase.searchCollections(query)
@@ -81,7 +82,8 @@ class CollectionsViewModel @Inject constructor(
                     collections = filtered,
                     favorites = allFavorites,
                     searchQuery = query,
-                    isSearching = true
+                    isSearching = true,
+                    isRefreshing = refreshing
                 )
             }
         }
@@ -91,6 +93,7 @@ class CollectionsViewModel @Inject constructor(
      * Trigger the blockchain loaders to sync NFTs from the API into the local database.
      */
     private suspend fun syncNftsFromApi() {
+        isSyncing = true
         val userAddresses = userAddrsUseCase.loadUserAddresses()
 
         val loadingFlows = userAddresses.map { chainAddr ->
@@ -102,12 +105,22 @@ class CollectionsViewModel @Inject constructor(
 
             nftLoader.loadNftsThenMetaForAddress(chain, chainAddr.pubKey)
         }
+        if (loadingFlows.isEmpty()) {
+            isSyncing = false
+            refreshCollectionsFromDb()
+            return
+        }
 
-        // Collect all emissions to completion — we don't need the intermediate states here,
-        // we just need the side-effect of the loaders populating the database.
         loadingFlows.merge()
-            .onCompletion { /* sync done */ }
-            .collect { /* consuming emissions to drive the flow */ }
+            .onCompletion {
+                isSyncing = false
+                refreshCollectionsFromDb()
+            }
+            .collect { result ->
+                if (result.pageInfo != null) {
+                    refreshCollectionsFromDb()
+                }
+            }
     }
 
     private suspend fun refreshCollectionsFromDb() {
@@ -150,6 +163,7 @@ class CollectionsViewModel @Inject constructor(
                 nftCount = info.nftCount
             )
         }.sortedByDescending { it.nftCount }
+        val refreshing = isSyncing
 
         // Re-apply any active search filter
         if (currentQuery.isBlank()) {
@@ -157,7 +171,8 @@ class CollectionsViewModel @Inject constructor(
                 collections = allCollections,
                 favorites = allFavorites,
                 searchQuery = currentQuery,
-                isSearching = false
+                isSearching = false,
+                isRefreshing = refreshing
             )
         } else {
             onSearchQueryChanged(currentQuery)
