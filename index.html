@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATIV — Flex Your NFTs</title>
+
+    <!-- Fonts: Clash Display for headlines, Satoshi for body -->
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (NEON CYBER THEME)
+           Futuristic dark theme with cyan/magenta neon accents.
+           Change these to restyle the entire presentation.
+           =========================================== */
+        :root {
+            /* Colors */
+            --bg-primary: #07080f;
+            --bg-secondary: #0d1017;
+            --bg-card: rgba(15, 20, 35, 0.85);
+            --text-primary: #eaf0ff;
+            --text-secondary: #7b8db5;
+            --accent-cyan: #00f0ff;
+            --accent-magenta: #ff2daa;
+            --accent-yellow: #ffd644;
+            --accent-cyan-glow: rgba(0, 240, 255, 0.35);
+            --accent-magenta-glow: rgba(255, 45, 170, 0.25);
+
+            /* Typography — all clamp() for responsive scaling */
+            --font-display: 'Clash Display', sans-serif;
+            --font-body: 'Satoshi', sans-serif;
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.4rem, 4vw, 3rem);
+            --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+            --body-size: clamp(0.8rem, 1.5vw, 1.15rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+
+            /* Spacing — scales with viewport */
+            --slide-padding: clamp(1.5rem, 5vw, 5rem);
+            --content-gap: clamp(0.75rem, 2.5vw, 2.5rem);
+            --element-gap: clamp(0.25rem, 1vw, 1rem);
+
+            /* Animation */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.7s;
+        }
+
+        /* ===========================================
+           BASE / RESET
+           =========================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            height: 100%;
+        }
+
+        /* ===========================================
+           VIEWPORT FITTING: MANDATORY BASE STYLES
+           Each slide = exactly one viewport height.
+           No scrolling within slides, ever.
+           =========================================== */
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: var(--slide-padding);
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            max-height: 100%;
+            max-width: min(90vw, 1100px);
+            overflow: hidden;
+            text-align: center;
+            gap: var(--content-gap);
+            z-index: 2;
+        }
+
+        /* ===========================================
+           GLOBAL BACKGROUND GRID
+           Futuristic grid pattern underlying all slides
+           =========================================== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Scanline overlay for CRT effect */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ===========================================
+           GRADIENT MESH BACKGROUNDS (per slide)
+           Each slide gets a unique atmospheric glow
+           =========================================== */
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide-1::before {
+            background:
+                radial-gradient(ellipse at 30% 70%, var(--accent-cyan-glow) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 20%, var(--accent-magenta-glow) 0%, transparent 50%);
+        }
+
+        .slide-2::before {
+            background:
+                radial-gradient(ellipse at 40% 60%, rgba(255, 214, 68, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 30%, var(--accent-cyan-glow) 0%, transparent 55%);
+        }
+
+        .slide-3::before {
+            background:
+                radial-gradient(ellipse at 60% 80%, var(--accent-magenta-glow) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 30%, rgba(0, 240, 255, 0.15) 0%, transparent 50%);
+        }
+
+        .slide-4::before {
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(0, 240, 255, 0.2) 0%, transparent 60%);
+        }
+
+        .slide-5::before {
+            background:
+                radial-gradient(ellipse at 80% 70%, var(--accent-cyan-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 15% 40%, var(--accent-magenta-glow) 0%, transparent 55%);
+        }
+
+        .slide-6::before {
+            background:
+                radial-gradient(ellipse at 50% 60%, rgba(255, 214, 68, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 30%, var(--accent-cyan-glow) 0%, transparent 55%);
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 {
+            font-family: var(--font-display);
+            font-size: var(--title-size);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        h3 {
+            font-family: var(--font-display);
+            font-size: var(--h3-size);
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        p, li {
+            font-size: var(--body-size);
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           NEON GLOW EFFECTS
+           Signature neon text and border treatments
+           =========================================== */
+        .neon-cyan {
+            color: var(--accent-cyan);
+            text-shadow:
+                0 0 7px var(--accent-cyan-glow),
+                0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .neon-magenta {
+            color: var(--accent-magenta);
+            text-shadow:
+                0 0 7px var(--accent-magenta-glow),
+                0 0 20px rgba(255, 45, 170, 0.15);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow:
+                0 0 15px rgba(0, 240, 255, 0.07),
+                inset 0 0 15px rgba(0, 240, 255, 0.03);
+        }
+
+        /* ===========================================
+           TAG / BADGE
+           Small label above titles
+           =========================================== */
+        .tag {
+            display: inline-block;
+            font-family: var(--font-body);
+            font-size: var(--small-size);
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: clamp(0.25rem, 0.5vw, 0.4rem) clamp(0.6rem, 1.2vw, 1rem);
+            border-radius: 100px;
+        }
+
+        /* ===========================================
+           SUBTITLE TEXT
+           =========================================== */
+        .subtitle {
+            font-size: clamp(0.9rem, 1.8vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 650px;
+            line-height: 1.7;
+        }
+
+        /* ===========================================
+           BULLET LIST (Slide 2 & 4)
+           =========================================== */
+        .bullet-list {
+            list-style: none;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.5rem, 1.2vh, 1rem);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .bullet-list li {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            padding-left: 1.5em;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        /* ===========================================
+           TECH CARDS (Slide 4)
+           =========================================== */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: clamp(0.6rem, 1.5vw, 1rem);
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .tech-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: clamp(0.8rem, 2vw, 1.4rem);
+            text-align: left;
+            transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.1);
+        }
+
+        .tech-card .card-icon {
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            margin-bottom: clamp(0.3rem, 0.8vw, 0.6rem);
+        }
+
+        .tech-card h3 {
+            font-size: clamp(0.8rem, 1.3vw, 1rem);
+            color: var(--text-primary);
+            margin-bottom: clamp(0.15rem, 0.4vw, 0.3rem);
+        }
+
+        .tech-card p {
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ===========================================
+           DEVICE MOCKUP DISPLAY (Slide 3 — Demo)
+           Shows device screenshots side by side
+           =========================================== */
+        .device-gallery {
+            display: flex;
+            gap: clamp(0.5rem, 2vw, 1.5rem);
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            max-width: 100%;
+        }
+
+        .device-gallery img {
+            height: min(50vh, 380px);
+            width: auto;
+            border-radius: 12px;
+            box-shadow:
+                0 0 30px rgba(0, 240, 255, 0.1),
+                0 20px 60px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s var(--ease-out-expo);
+        }
+
+        .device-gallery img:hover {
+            transform: scale(1.04);
+        }
+
+        /* ===========================================
+           THANK YOU SLIDE — Signature glow
+           =========================================== */
+        .thank-you-title {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: clamp(2.5rem, 8vw, 7rem);
+            font-weight: 700;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5em;
+            font-family: var(--font-body);
+            font-size: var(--body-size);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            padding: clamp(0.35rem, 0.8vw, 0.6rem) clamp(0.8rem, 1.5vw, 1.4rem);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           Entrance animations triggered by .visible class
+           via Intersection Observer in JS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger children */
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
+        .reveal:nth-child(5) { transition-delay: 0.45s; }
+
+        /* Glitch-in for title slide */
+        @keyframes glitch-in {
+            0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, 2px); }
+            20% { clip-path: inset(92% 0 1% 0); transform: translate(1px, -1px); }
+            40% { clip-path: inset(43% 0 1% 0); transform: translate(-1px, 2px); }
+            60% { clip-path: inset(25% 0 58% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(54% 0 7% 0); transform: translate(-1px, 1px); }
+            100% { clip-path: inset(0 0 0 0); transform: translate(0); }
+        }
+
+        .glitch-reveal {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .slide.visible .glitch-reveal {
+            opacity: 1;
+            animation: glitch-in 0.5s steps(5) 0.2s both;
+        }
+
+        /* Floating animation for decorative elements */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Pulse glow for accents */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.25); }
+        }
+
+        /* ===========================================
+           PROGRESS BAR
+           Thin neon bar at the top of the viewport
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+            z-index: 1000;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-cyan-glow);
+        }
+
+        /* ===========================================
+           NAVIGATION DOTS
+           Right-side dot nav for quick slide jumping
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(0.8rem, 2vw, 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot:hover {
+            background: rgba(0, 240, 255, 0.4);
+        }
+
+        .nav-dot.active {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan-glow);
+            transform: scale(1.3);
+        }
+
+        /* ===========================================
+           KEYBOARD HINT
+           Small bottom-center hint on first slide
+           =========================================== */
+        .keyboard-hint {
+            position: absolute;
+            bottom: clamp(1rem, 3vh, 2rem);
+            font-size: var(--small-size);
+            color: var(--text-secondary);
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            z-index: 2;
+        }
+
+        .keyboard-hint span {
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 4px;
+            padding: 0.15em 0.5em;
+            font-size: 0.85em;
+        }
+
+        /* ===========================================
+           RESPONSIVE BREAKPOINTS
+           Aggressive scaling for smaller viewports
+           =========================================== */
+
+        /* Short viewports (< 700px height) */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+            }
+
+            .device-gallery img {
+                height: min(35vh, 250px);
+            }
+        }
+
+        /* Very short viewports (< 600px height) */
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+
+            .nav-dots, .keyboard-hint {
+                display: none;
+            }
+        }
+
+        /* Extremely short (landscape phones, < 500px height) */
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+            }
+
+            .device-gallery img {
+                height: min(30vh, 180px);
+            }
+        }
+
+        /* Narrow viewports (< 600px width) */
+        @media (max-width: 600px) {
+            :root {
+                --title-size: clamp(1.5rem, 8vw, 2.5rem);
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .device-gallery img {
+                height: min(40vh, 220px);
+            }
+
+            .device-gallery img:nth-child(3),
+            .device-gallery img:nth-child(4) {
+                display: none;
+            }
+        }
+
+        /* ===========================================
+           REDUCED MOTION
+           Respect user preferences
+           =========================================== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+
+            .reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress bar — width updated by JS as user scrolls -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation dots — one per slide, generated by JS -->
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- ===================================================
+         SLIDE 1: TITLE — What is NATIV
+         =================================================== -->
+    <section class="slide slide-1" data-slide="0">
+        <div class="slide-content">
+            <span class="tag reveal">Introducing</span>
+            <h1 class="glitch-reveal">NATIV</h1>
+            <p class="subtitle reveal">
+                A mobile app that lets you show off your <span class="neon-cyan">NFTs</span> in all their glory — right on your phone's <span class="neon-magenta">wallpaper</span>.
+            </p>
+        </div>
+        <div class="keyboard-hint">
+            <span>↓</span> Scroll or press arrows to navigate
+        </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 2: WHO AM I — About the builder
+         =================================================== -->
+    <section class="slide slide-2" data-slide="1">
+        <div class="slide-content">
+            <span class="tag reveal">About Me</span>
+            <h2 class="reveal">Who am I?</h2>
+            <ul class="bullet-list reveal">
+                <li><strong style="color: var(--text-primary);">Andrew</strong> — long-time Android developer &amp; Solana community member</li>
+                <li>Former mobile developer at <strong style="color: var(--accent-cyan);">Solana Mobile</strong> &amp; <strong style="color: var(--accent-magenta);">Drip</strong></li>
+                <li>I've been talking about this idea <span class="neon-cyan">FOREVER</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 3: WHY — The problem & solution
+         =================================================== -->
+    <section class="slide slide-3" data-slide="2">
+        <div class="slide-content">
+            <span class="tag reveal">The Problem</span>
+            <h2 class="reveal">Let's bring back <span class="neon-cyan">NFTs</span></h2>
+            <ul class="bullet-list reveal">
+                <li>NFTs were <strong style="color: var(--accent-magenta);">meant to be flexed</strong></li>
+                <li>Existing methods to set as Wallpaper are tedious</li>
+                <li>No animation support, can't show more than one</li>
+                <li>With <strong style="color: var(--accent-cyan);">NATIV</strong>, pick your favorites for home or lock screen — and they cycle automatically</li>
+                <li>Breathing <strong style="color: var(--accent-magenta);">new life</strong> into NFTs by letting you flex on the device that is with you all the time</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 4: LIVE PRODUCT DEMO
+         =================================================== -->
+    <section class="slide slide-4" data-slide="3">
+        <div class="slide-content">
+            <span class="tag reveal">See It In Action</span>
+            <h1 class="reveal neon-cyan" style="font-size: var(--h2-size);">Live Product Demo</h1>
+        </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 5: TECHNOLOGIES — Tech stack
+         =================================================== -->
+    <section class="slide slide-5" data-slide="4">
+        <div class="slide-content">
+            <span class="tag reveal">Under the Hood</span>
+            <h2 class="reveal">Technologies Used</h2>
+            <div class="tech-grid reveal">
+                <div class="tech-card neon-border">
+                    <div class="card-icon">🤖</div>
+                    <h3>100% Kotlin</h3>
+                    <p>Modern, native Android — no cross-platform compromises</p>
+                </div>
+                <div class="tech-card neon-border">
+                    <div class="card-icon">🎨</div>
+                    <h3>Jetpack Compose</h3>
+                    <p>Live wallpapers powered by my own library, <span class="neon-cyan">Mozart</span></p>
+                </div>
+                <div class="tech-card neon-border">
+                    <div class="card-icon">⛓️</div>
+                    <h3>Solana Infra</h3>
+                    <p>Mobile Wallet Adapter, Multmult, DAS 2.0</p>
+                </div>
+                <div class="tech-card neon-border">
+                    <div class="card-icon">📦</div>
+                    <h3>Open Source</h3>
+                    <p>Debug release will be uploaded to the repo</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 6: THANK YOU — Closing
+         =================================================== -->
+    <section class="slide slide-6" data-slide="5">
+        <div class="slide-content">
+            <h1 class="thank-you-title reveal">Thank You!</h1>
+            <p class="subtitle reveal" style="margin-top: 0.5em;">
+                Let's flex some NFTs.
+            </p>
+            <div class="reveal" style="display: flex; gap: 1em; flex-wrap: wrap; justify-content: center; margin-top: 0.5em;">
+                <a href="https://github.com/creativedrewy/NATIV" class="social-link" target="_blank">
+                    ⭐ GitHub
+                </a>
+                <a href="https://twitter.com/creativedrewy" class="social-link" target="_blank">
+                    🐦 @creativedrewy
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE PRESENTATION CONTROLLER
+         Handles navigation, scroll tracking, animations,
+         keyboard/touch input, and dot navigation.
+         =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.totalSlides = this.slides.length;
+                this.currentSlide = 0;
+
+                this.progressBar = document.getElementById('progressBar');
+                this.navDotsContainer = document.getElementById('navDots');
+
+                this.init();
+            }
+
+            init() {
+                this.createNavDots();
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupScrollTracking();
+
+                // Make first slide visible immediately
+                this.slides[0].classList.add('visible');
+                this.updateProgress(0);
+                this.updateActiveDot(0);
+            }
+
+            /* -----------------------------------------
+               NAV DOTS
+               Creates clickable dots on the right side
+               ----------------------------------------- */
+            createNavDots() {
+                for (let i = 0; i < this.totalSlides; i++) {
+                    const dot = document.createElement('button');
+                    dot.classList.add('nav-dot');
+                    dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    this.navDotsContainer.appendChild(dot);
+                }
+            }
+
+            /* -----------------------------------------
+               INTERSECTION OBSERVER
+               Triggers .visible class when slides enter
+               the viewport (for scroll-based animations)
+               ----------------------------------------- */
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const slideIndex = parseInt(entry.target.dataset.slide);
+                            this.currentSlide = slideIndex;
+                            this.updateActiveDot(slideIndex);
+                            this.updateProgress(slideIndex);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            /* -----------------------------------------
+               KEYBOARD NAVIGATION
+               Arrow keys, space, page up/down
+               ----------------------------------------- */
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    switch (e.key) {
+                        case 'ArrowDown':
+                        case 'ArrowRight':
+                        case ' ':
+                        case 'PageDown':
+                            e.preventDefault();
+                            this.nextSlide();
+                            break;
+                        case 'ArrowUp':
+                        case 'ArrowLeft':
+                        case 'PageUp':
+                            e.preventDefault();
+                            this.prevSlide();
+                            break;
+                        case 'Home':
+                            e.preventDefault();
+                            this.goToSlide(0);
+                            break;
+                        case 'End':
+                            e.preventDefault();
+                            this.goToSlide(this.totalSlides - 1);
+                            break;
+                    }
+                });
+            }
+
+            /* -----------------------------------------
+               TOUCH / SWIPE NAVIGATION
+               Detect vertical swipes on mobile
+               ----------------------------------------- */
+            setupTouchNav() {
+                let touchStartY = 0;
+                let touchEndY = 0;
+
+                document.addEventListener('touchstart', (e) => {
+                    touchStartY = e.changedTouches[0].screenY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    touchEndY = e.changedTouches[0].screenY;
+                    const diff = touchStartY - touchEndY;
+
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) this.nextSlide();
+                        else this.prevSlide();
+                    }
+                }, { passive: true });
+            }
+
+            /* -----------------------------------------
+               SCROLL TRACKING
+               Updates progress bar as user scrolls
+               ----------------------------------------- */
+            setupScrollTracking() {
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.scrollY;
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                    this.progressBar.style.width = scrollPercent + '%';
+                }, { passive: true });
+            }
+
+            /* -----------------------------------------
+               SLIDE NAVIGATION METHODS
+               ----------------------------------------- */
+            nextSlide() {
+                if (this.currentSlide < this.totalSlides - 1) {
+                    this.goToSlide(this.currentSlide + 1);
+                }
+            }
+
+            prevSlide() {
+                if (this.currentSlide > 0) {
+                    this.goToSlide(this.currentSlide - 1);
+                }
+            }
+
+            goToSlide(index) {
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                this.currentSlide = index;
+                this.updateActiveDot(index);
+                this.updateProgress(index);
+            }
+
+            /* -----------------------------------------
+               UI UPDATES
+               ----------------------------------------- */
+            updateProgress(index) {
+                const percent = ((index + 1) / this.totalSlides) * 100;
+                this.progressBar.style.width = percent + '%';
+            }
+
+            updateActiveDot(index) {
+                const dots = this.navDotsContainer.querySelectorAll('.nav-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlidePresentation();
+        });
+    </script>
+</body>
+</html>
