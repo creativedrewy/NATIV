@@ -4,7 +4,9 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,12 +50,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.nativ.R
@@ -74,7 +78,13 @@ fun SettingsScreen(
 ) {
     val viewState = viewModel.viewState.collectAsState().value
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     val coroutineScope = rememberCoroutineScope()
+    val versionName = remember(context) {
+        runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "Unknown"
+        }.getOrDefault("Unknown")
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadAddresses()
@@ -100,7 +110,8 @@ fun SettingsScreen(
                 .padding(
                     top = 44.dp,
                     end = 16.dp,
-                    start = 16.dp)
+                    start = 16.dp,
+                    bottom = 16.dp)
         ) {
             // Top bar with back button and title
             Row(
@@ -252,7 +263,9 @@ fun SettingsScreen(
             )
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 items(viewState.userAddresses) { addr ->
                     Row(
@@ -291,6 +304,37 @@ fun SettingsScreen(
                         }
                     }
                 }
+            }
+            Text(
+                text = "Version $versionName",
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.onPrimary.copy(alpha = 0.8f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Made with \u2764\uFE0F by ",
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onPrimary.copy(alpha = 0.9f)
+                )
+                Text(
+                    text = "creativedrewy",
+                    style = MaterialTheme.typography.body2,
+                    color = Turquoise,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable {
+                        uriHandler.openUri("https://twitter.com/creativedrewy")
+                    }
+                )
             }
         }
     }
