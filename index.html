@@ -16,16 +16,17 @@
            =========================================== */
         :root {
             /* Colors */
-            --bg-primary: #07080f;
-            --bg-secondary: #0d1017;
-            --bg-card: rgba(15, 20, 35, 0.85);
-            --text-primary: #eaf0ff;
-            --text-secondary: #7b8db5;
-            --accent-cyan: #00f0ff;
-            --accent-magenta: #ff2daa;
-            --accent-yellow: #ffd644;
-            --accent-cyan-glow: rgba(0, 240, 255, 0.35);
-            --accent-magenta-glow: rgba(255, 45, 170, 0.25);
+            --bg-primary: #0c1e3e;
+            --bg-secondary: #27306f;
+            --bg-card: rgba(40, 45, 109, 0.84);
+            --text-primary: #fff8f1;
+            --text-secondary: #bac6eb;
+            --accent-cyan: #6fc4ff;
+            --accent-magenta: #ff4cb8;
+            --accent-yellow: #f3de62;
+            --accent-orange: #f6a25f;
+            --accent-cyan-glow: rgba(111, 196, 255, 0.34);
+            --accent-magenta-glow: rgba(255, 76, 184, 0.3);
 
             /* Typography — all clamp() for responsive scaling */
             --font-display: 'Clash Display', sans-serif;
@@ -104,83 +105,117 @@
         }
 
         /* ===========================================
-           GLOBAL BACKGROUND GRID
-           Futuristic grid pattern underlying all slides
+           STAR FIELD BACKGROUND
+           Two layered star maps with subtle twinkle
+           to match the reference image atmosphere.
            =========================================== */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             background-image:
-                linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
-            background-size: 60px 60px;
+                radial-gradient(1px 1px at 8% 14%, rgba(255, 255, 255, 0.95) 99%, transparent 100%),
+                radial-gradient(1px 1px at 16% 68%, rgba(255, 255, 255, 0.7) 99%, transparent 100%),
+                radial-gradient(1px 1px at 27% 35%, rgba(255, 255, 255, 0.85) 99%, transparent 100%),
+                radial-gradient(1px 1px at 34% 82%, rgba(255, 255, 255, 0.75) 99%, transparent 100%),
+                radial-gradient(1px 1px at 42% 19%, rgba(255, 255, 255, 0.9) 99%, transparent 100%),
+                radial-gradient(1px 1px at 55% 72%, rgba(255, 255, 255, 0.8) 99%, transparent 100%),
+                radial-gradient(1px 1px at 64% 28%, rgba(255, 255, 255, 0.7) 99%, transparent 100%),
+                radial-gradient(1px 1px at 73% 56%, rgba(255, 255, 255, 0.9) 99%, transparent 100%),
+                radial-gradient(1px 1px at 86% 23%, rgba(255, 255, 255, 0.8) 99%, transparent 100%),
+                radial-gradient(1px 1px at 93% 76%, rgba(255, 255, 255, 0.9) 99%, transparent 100%);
+            background-repeat: repeat;
+            background-size: 420px 320px;
             pointer-events: none;
             z-index: 0;
+            animation: stars-twinkle 7s ease-in-out infinite;
         }
 
-        /* Scanline overlay for CRT effect */
+        /* Secondary star layer for depth */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0, 0, 0, 0.03) 2px,
-                rgba(0, 0, 0, 0.03) 4px
-            );
+            background-image:
+                radial-gradient(1px 1px at 12% 40%, rgba(255, 255, 255, 0.6) 99%, transparent 100%),
+                radial-gradient(1px 1px at 29% 8%, rgba(255, 255, 255, 0.55) 99%, transparent 100%),
+                radial-gradient(1px 1px at 47% 61%, rgba(255, 255, 255, 0.55) 99%, transparent 100%),
+                radial-gradient(1px 1px at 58% 11%, rgba(255, 255, 255, 0.65) 99%, transparent 100%),
+                radial-gradient(1px 1px at 76% 45%, rgba(255, 255, 255, 0.6) 99%, transparent 100%),
+                radial-gradient(1px 1px at 88% 64%, rgba(255, 255, 255, 0.6) 99%, transparent 100%);
+            background-repeat: repeat;
+            background-size: 300px 220px;
             pointer-events: none;
             z-index: 1;
+            animation: stars-twinkle 11s ease-in-out infinite reverse;
+        }
+        
+        @keyframes stars-twinkle {
+            0%, 100% { opacity: 0.65; }
+            50% { opacity: 1; }
         }
 
         /* ===========================================
-           GRADIENT MESH BACKGROUNDS (per slide)
-           Each slide gets a unique atmospheric glow
+           CROSSFADE BACKGROUND LAYERS
+           Fixed-position slide atmospheres that fade
+           between slides instead of scrolling with them.
            =========================================== */
-        .slide::before {
-            content: '';
+        .background-stack {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .bg-layer {
             position: absolute;
             inset: 0;
-            opacity: 0.5;
-            pointer-events: none;
-            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.65s var(--ease-out-expo);
         }
-
-        .slide-1::before {
+        
+        .bg-1 {
             background:
                 radial-gradient(ellipse at 30% 70%, var(--accent-cyan-glow) 0%, transparent 55%),
                 radial-gradient(ellipse at 70% 20%, var(--accent-magenta-glow) 0%, transparent 50%);
         }
-
-        .slide-2::before {
+        
+        .bg-2 {
             background:
                 radial-gradient(ellipse at 40% 60%, rgba(255, 214, 68, 0.12) 0%, transparent 50%),
                 radial-gradient(ellipse at 70% 30%, var(--accent-cyan-glow) 0%, transparent 55%);
         }
-
-        .slide-3::before {
+        
+        .bg-3 {
             background:
                 radial-gradient(ellipse at 60% 80%, var(--accent-magenta-glow) 0%, transparent 55%),
-                radial-gradient(ellipse at 20% 30%, rgba(0, 240, 255, 0.15) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 30%, rgba(111, 196, 255, 0.16) 0%, transparent 50%);
         }
-
-        .slide-4::before {
+        
+        .bg-4 {
             background:
-                radial-gradient(ellipse at 50% 50%, rgba(0, 240, 255, 0.2) 0%, transparent 60%);
+                radial-gradient(ellipse at 50% 50%, rgba(111, 196, 255, 0.2) 0%, transparent 60%);
         }
-
-        .slide-5::before {
+        
+        .bg-5 {
             background:
                 radial-gradient(ellipse at 80% 70%, var(--accent-cyan-glow) 0%, transparent 50%),
                 radial-gradient(ellipse at 15% 40%, var(--accent-magenta-glow) 0%, transparent 55%);
         }
-
-        .slide-6::before {
+        
+        .bg-6 {
             background:
                 radial-gradient(ellipse at 50% 60%, rgba(255, 214, 68, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 30%, var(--accent-cyan-glow) 0%, transparent 55%);
+        }
+        
+        body.active-slide-1 .bg-1,
+        body.active-slide-2 .bg-2,
+        body.active-slide-3 .bg-3,
+        body.active-slide-4 .bg-4,
+        body.active-slide-5 .bg-5,
+        body.active-slide-6 .bg-6 {
+            opacity: 0.55;
         }
 
         /* ===========================================
@@ -452,8 +487,8 @@
 
         /* Pulse glow for accents */
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.1); }
-            50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.25); }
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 76, 184, 0.12); }
+            50% { box-shadow: 0 0 30px rgba(255, 76, 184, 0.28); }
         }
 
         /* ===========================================
@@ -465,7 +500,7 @@
             top: 0;
             left: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+            background: linear-gradient(90deg, var(--accent-yellow), var(--accent-orange), var(--accent-magenta));
             z-index: 1000;
             transition: width 0.3s ease;
             box-shadow: 0 0 10px var(--accent-cyan-glow);
@@ -497,12 +532,12 @@
         }
 
         .nav-dot:hover {
-            background: rgba(0, 240, 255, 0.4);
+            background: rgba(255, 76, 184, 0.45);
         }
 
         .nav-dot.active {
-            background: var(--accent-cyan);
-            box-shadow: 0 0 10px var(--accent-cyan-glow);
+            background: var(--accent-magenta);
+            box-shadow: 0 0 10px var(--accent-magenta-glow);
             transform: scale(1.3);
         }
 
@@ -625,6 +660,16 @@
 
     <!-- Navigation dots — one per slide, generated by JS -->
     <nav class="nav-dots" id="navDots"></nav>
+    
+    <!-- Fixed background layers — crossfaded by active slide -->
+    <div class="background-stack" aria-hidden="true">
+        <div class="bg-layer bg-1"></div>
+        <div class="bg-layer bg-2"></div>
+        <div class="bg-layer bg-3"></div>
+        <div class="bg-layer bg-4"></div>
+        <div class="bg-layer bg-5"></div>
+        <div class="bg-layer bg-6"></div>
+    </div>
 
     <!-- ===================================================
          SLIDE 1: TITLE — What is NATIV
@@ -765,6 +810,7 @@
                 this.slides[0].classList.add('visible');
                 this.updateProgress(0);
                 this.updateActiveDot(0);
+                this.updateActiveBackground(0);
             }
 
             /* -----------------------------------------
@@ -795,6 +841,7 @@
                             this.currentSlide = slideIndex;
                             this.updateActiveDot(slideIndex);
                             this.updateProgress(slideIndex);
+                            this.updateActiveBackground(slideIndex);
                         }
                     });
                 }, { threshold: 0.5 });
@@ -890,6 +937,7 @@
                 this.currentSlide = index;
                 this.updateActiveDot(index);
                 this.updateProgress(index);
+                this.updateActiveBackground(index);
             }
 
             /* -----------------------------------------
@@ -905,6 +953,13 @@
                 dots.forEach((dot, i) => {
                     dot.classList.toggle('active', i === index);
                 });
+            }
+            
+            updateActiveBackground(index) {
+                for (let i = 1; i <= this.totalSlides; i++) {
+                    document.body.classList.remove(`active-slide-${i}`);
+                }
+                document.body.classList.add(`active-slide-${index + 1}`);
             }
         }
 
