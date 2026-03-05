@@ -522,6 +522,64 @@
         }
 
         /* ===========================================
+           SPLIT LAYOUT — Content left, image right
+           Used on Slide 3 (Solution)
+           =========================================== */
+        .split-layout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(1rem, 2vw, 2rem);
+            max-width: min(95vw, 1200px);
+            width: 100%;
+        }
+
+        .split-layout .split-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--content-gap);
+            text-align: left;
+            align-items: flex-start;
+        }
+
+        .split-layout .split-image {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .split-layout .split-image img {
+            transform: translateY(50px) translateX(40px);
+            height: min(75vh, 550px);
+            width: auto;
+            border-radius: 16px;
+            box-shadow: none;
+            transition: transform 0.5s var(--ease-out-expo);
+        }
+
+        .split-layout .split-image img:hover {
+            transform: scale(1.03);
+        }
+
+        /* On narrower screens, stack vertically */
+        @media (max-width: 850px) {
+            .split-layout {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .split-layout .split-content {
+                text-align: center;
+                align-items: center;
+            }
+
+            .split-layout .split-image img {
+                height: min(40vh, 300px);
+            }
+        }
+
+        /* ===========================================
            THANK YOU SLIDE — Signature glow
            =========================================== */
         .thank-you-title {
@@ -866,17 +924,22 @@
          SLIDE 3: THE SOLUTION — What NATIV does
          =================================================== -->
     <section class="slide slide-3" data-slide="2">
-        <div class="slide-content">
-            <span class="tag reveal">The Solution</span>
-            <h2 class="reveal"><span class="neon-cyan">NATIV</span> Solves This</h2>
-            <hr class="divider reveal">
-            <ul class="bullet-list step-list reveal">
-                <li><strong style="color: var(--accent-cyan);">Connect</strong> your wallet</li>
-                <li><strong style="color: var(--text-primary);">Choose</strong> your favorite NFTs from your collection</li>
-                <li>Pick from a library of <strong style="color: var(--accent-magenta);">stunning included wallpapers</strong></li>
-                <li>Instantly flex on your <strong style="color: var(--accent-cyan);">wallpaper or lock screen</strong> — with style!</li>
-                <li>Images, videos, GIFs — <strong style="color: var(--accent-yellow);">they just work</strong></li>
-            </ul>
+        <div class="split-layout">
+            <div class="split-content">
+                <span class="tag reveal">The Solution</span>
+                <h2 class="reveal"><span class="neon-cyan">NATIV</span> Solves This</h2>
+                <hr class="divider reveal">
+                <ul class="bullet-list step-list reveal">
+                    <li><strong style="color: var(--accent-cyan);">Connect</strong> your wallet</li>
+                    <li><strong style="color: var(--text-primary);">Choose</strong> your favorite NFTs from your collection</li>
+                    <li>Pick from a library of <strong style="color: var(--accent-magenta);">stunning included wallpapers</strong></li>
+                    <li>Instantly flex on your <strong style="color: var(--accent-cyan);">wallpaper or lock screen</strong> — with style!</li>
+                    <li>Images, videos, GIFs — <strong style="color: var(--accent-yellow);">they just work</strong></li>
+                </ul>
+            </div>
+            <div class="split-image reveal">
+                <img src="assets/on_phone_1.png" alt="NATIV running on a phone">
+            </div>
         </div>
     </section>
 
