@@ -31,11 +31,11 @@
             /* Typography — all clamp() for responsive scaling */
             --font-display: 'Clash Display', sans-serif;
             --font-body: 'Satoshi', sans-serif;
-            --title-size: clamp(2rem, 6vw, 5rem);
-            --h2-size: clamp(1.4rem, 4vw, 3rem);
-            --h3-size: clamp(1rem, 2.5vw, 1.75rem);
-            --body-size: clamp(0.8rem, 1.5vw, 1.15rem);
-            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --title-size: clamp(2.4rem, 7.2vw, 6rem);
+            --h2-size: clamp(1.7rem, 4.8vw, 3.6rem);
+            --h3-size: clamp(1.2rem, 3vw, 2.1rem);
+            --body-size: clamp(0.95rem, 1.8vw, 1.4rem);
+            --small-size: clamp(0.78rem, 1.2vw, 1.05rem);
 
             /* Spacing — scales with viewport */
             --slide-padding: clamp(1.5rem, 5vw, 5rem);
@@ -174,39 +174,58 @@
             transition: opacity 0.65s var(--ease-out-expo);
         }
         
+        /* Title — balanced cyan/magenta glow */
         .bg-1 {
             background:
-                radial-gradient(ellipse at 30% 70%, var(--accent-cyan-glow) 0%, transparent 55%),
-                radial-gradient(ellipse at 70% 20%, var(--accent-magenta-glow) 0%, transparent 50%);
+                radial-gradient(ellipse at 25% 75%, rgba(111, 196, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 15%, rgba(255, 76, 184, 0.35) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 90%, rgba(243, 222, 98, 0.12) 0%, transparent 40%);
         }
         
+        /* Problem — ominous magenta-heavy mood */
         .bg-2 {
             background:
-                radial-gradient(ellipse at 40% 60%, rgba(255, 214, 68, 0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 30%, var(--accent-cyan-glow) 0%, transparent 55%);
+                radial-gradient(ellipse at 70% 70%, rgba(255, 76, 184, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 15% 25%, rgba(111, 196, 255, 0.2) 0%, transparent 45%);
         }
         
+        /* Solution — optimistic cyan with golden accent */
         .bg-3 {
             background:
-                radial-gradient(ellipse at 60% 80%, var(--accent-magenta-glow) 0%, transparent 55%),
-                radial-gradient(ellipse at 20% 30%, rgba(111, 196, 255, 0.16) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 60%, rgba(111, 196, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 30%, rgba(243, 222, 98, 0.2) 0%, transparent 45%),
+                radial-gradient(ellipse at 60% 85%, rgba(255, 76, 184, 0.15) 0%, transparent 40%);
         }
         
+        /* About — warm, friendly golden center */
         .bg-4 {
             background:
-                radial-gradient(ellipse at 50% 50%, rgba(111, 196, 255, 0.2) 0%, transparent 60%);
+                radial-gradient(ellipse at 50% 50%, rgba(246, 162, 95, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 80%, rgba(111, 196, 255, 0.2) 0%, transparent 45%);
         }
         
+        /* Business — ambitious magenta/cyan split */
         .bg-5 {
             background:
-                radial-gradient(ellipse at 80% 70%, var(--accent-cyan-glow) 0%, transparent 50%),
-                radial-gradient(ellipse at 15% 40%, var(--accent-magenta-glow) 0%, transparent 55%);
+                radial-gradient(ellipse at 85% 65%, rgba(111, 196, 255, 0.4) 0%, transparent 45%),
+                radial-gradient(ellipse at 10% 35%, rgba(255, 76, 184, 0.35) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 90%, rgba(243, 222, 98, 0.1) 0%, transparent 35%);
         }
         
+        /* Tech — focused blue/violet energy */
         .bg-6 {
             background:
-                radial-gradient(ellipse at 50% 60%, rgba(255, 214, 68, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 30%, var(--accent-cyan-glow) 0%, transparent 55%);
+                radial-gradient(ellipse at 50% 55%, rgba(111, 196, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 76, 184, 0.25) 0%, transparent 45%),
+                radial-gradient(ellipse at 20% 80%, rgba(111, 196, 255, 0.15) 0%, transparent 40%);
+        }
+        
+        /* Thank you — warm sunset glow */
+        .bg-7 {
+            background:
+                radial-gradient(ellipse at 50% 40%, rgba(243, 222, 98, 0.3) 0%, transparent 45%),
+                radial-gradient(ellipse at 30% 70%, rgba(255, 76, 184, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 70%, rgba(111, 196, 255, 0.25) 0%, transparent 45%);
         }
         
         body.active-slide-1 .bg-1,
@@ -214,8 +233,9 @@
         body.active-slide-3 .bg-3,
         body.active-slide-4 .bg-4,
         body.active-slide-5 .bg-5,
-        body.active-slide-6 .bg-6 {
-            opacity: 0.55;
+        body.active-slide-6 .bg-6,
+        body.active-slide-7 .bg-7 {
+            opacity: 0.7;
         }
 
         /* ===========================================
@@ -276,6 +296,66 @@
         }
 
         /* ===========================================
+           ANIMATED SUNSET GRADIENT TITLE
+           Shifts through synthwave sunset colors
+           =========================================== */
+        .gradient-title {
+            background: linear-gradient(
+                135deg,
+                var(--accent-yellow),
+                var(--accent-orange),
+                var(--accent-magenta),
+                var(--accent-cyan),
+                var(--accent-yellow)
+            );
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 6s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ===========================================
+           DECORATIVE DIVIDER
+           Neon gradient line between content sections
+           =========================================== */
+        .divider {
+            width: clamp(40px, 8vw, 80px);
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-magenta), var(--accent-cyan));
+            border: none;
+            border-radius: 2px;
+            opacity: 0.6;
+        }
+
+        /* ===========================================
+           SLIDE COUNTER
+           Bottom-left slide number indicator
+           =========================================== */
+        .slide-counter {
+            position: fixed;
+            bottom: clamp(0.8rem, 2vh, 1.5rem);
+            left: clamp(1rem, 3vw, 2rem);
+            font-family: var(--font-body);
+            font-size: var(--small-size);
+            color: rgba(255, 255, 255, 0.25);
+            z-index: 100;
+            font-variant-numeric: tabular-nums;
+            transition: color 0.3s ease;
+        }
+
+        .slide-counter .current {
+            color: var(--accent-magenta);
+            font-weight: 700;
+        }
+
+        /* ===========================================
            TAG / BADGE
            Small label above titles
            =========================================== */
@@ -297,7 +377,7 @@
            SUBTITLE TEXT
            =========================================== */
         .subtitle {
-            font-size: clamp(0.9rem, 1.8vw, 1.35rem);
+            font-size: clamp(1.08rem, 2.15vw, 1.6rem);
             color: var(--text-secondary);
             max-width: 650px;
             line-height: 1.7;
@@ -332,6 +412,47 @@
             font-weight: 700;
         }
 
+        /* Problem bullets — red ✕ markers */
+        .bullet-list.problem-list li::before {
+            content: '✕';
+            color: var(--accent-magenta);
+        }
+
+        /* Solution bullets — numbered step markers */
+        .step-list {
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            padding-left: 2.2em;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            width: 1.6em;
+            height: 1.6em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 0.75em;
+            font-weight: 700;
+            color: var(--bg-primary);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border-radius: 50%;
+            top: 0.15em;
+        }
+
+        /* Check marks for business / positive lists */
+        .bullet-list.check-list li::before {
+            content: '✓';
+            color: var(--accent-yellow);
+            font-weight: 900;
+        }
+
         /* ===========================================
            TECH CARDS (Slide 4)
            =========================================== */
@@ -357,12 +478,12 @@
         }
 
         .tech-card .card-icon {
-            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            font-size: clamp(1.45rem, 2.4vw, 1.9rem);
             margin-bottom: clamp(0.3rem, 0.8vw, 0.6rem);
         }
 
         .tech-card h3 {
-            font-size: clamp(0.8rem, 1.3vw, 1rem);
+            font-size: clamp(0.95rem, 1.55vw, 1.2rem);
             color: var(--text-primary);
             margin-bottom: clamp(0.15rem, 0.4vw, 0.3rem);
         }
@@ -404,11 +525,7 @@
            THANK YOU SLIDE — Signature glow
            =========================================== */
         .thank-you-title {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: clamp(2.5rem, 8vw, 7rem);
+            font-size: clamp(3rem, 9.6vw, 8.4rem);
             font-weight: 700;
         }
 
@@ -541,6 +658,38 @@
             transform: scale(1.3);
         }
 
+        /* Slide 1 overrides — let sunrise bleed past the slide boundary */
+        .slide-1 {
+            overflow: visible;
+        }
+
+        .slide-1 .slide-content {
+            transform: translateY(-16vh);
+        }
+
+        /* ===========================================
+           SUNRISE BACKDROP — Title slide
+           Synthwave sun positioned at bottom center
+           =========================================== */
+        .sunrise-bg {
+            position: absolute;
+            bottom: -25%;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: clamp(280px, 50vw, 600px);
+            height: auto;
+            opacity: 0.55;
+            z-index: 1;
+            pointer-events: none;
+            transition: transform 2s var(--ease-out-expo), opacity 2s ease;
+        }
+
+        /* Slide sunrise off the top when leaving slide 1 */
+        body:not(.active-slide-1) .sunrise-bg {
+            transform: translateX(-50%) translateY(-50vh);
+            opacity: 0;
+        }
+
         /* ===========================================
            KEYBOARD HINT
            Small bottom-center hint on first slide
@@ -575,8 +724,8 @@
             :root {
                 --slide-padding: clamp(0.75rem, 3vw, 2rem);
                 --content-gap: clamp(0.4rem, 1.5vw, 1rem);
-                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
-                --h2-size: clamp(1rem, 3vw, 1.75rem);
+                --title-size: clamp(1.5rem, 5.4vw, 3rem);
+                --h2-size: clamp(1.2rem, 3.6vw, 2.1rem);
             }
 
             .device-gallery img {
@@ -589,11 +738,11 @@
             :root {
                 --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
                 --content-gap: clamp(0.3rem, 1vw, 0.75rem);
-                --title-size: clamp(1.1rem, 4vw, 2rem);
-                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+                --title-size: clamp(1.3rem, 4.8vw, 2.4rem);
+                --body-size: clamp(0.84rem, 1.45vw, 1.15rem);
             }
 
-            .nav-dots, .keyboard-hint {
+            .nav-dots, .keyboard-hint, .slide-counter {
                 display: none;
             }
         }
@@ -602,9 +751,9 @@
         @media (max-height: 500px) {
             :root {
                 --slide-padding: clamp(0.4rem, 2vw, 1rem);
-                --title-size: clamp(1rem, 3.5vw, 1.5rem);
-                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
-                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+                --title-size: clamp(1.2rem, 4.2vw, 1.8rem);
+                --h2-size: clamp(1.08rem, 3vw, 1.5rem);
+                --body-size: clamp(0.78rem, 1.2vw, 1rem);
             }
 
             .device-gallery img {
@@ -615,7 +764,7 @@
         /* Narrow viewports (< 600px width) */
         @media (max-width: 600px) {
             :root {
-                --title-size: clamp(1.5rem, 8vw, 2.5rem);
+                --title-size: clamp(1.8rem, 9.6vw, 3rem);
             }
 
             .tech-grid {
@@ -669,17 +818,26 @@
         <div class="bg-layer bg-4"></div>
         <div class="bg-layer bg-5"></div>
         <div class="bg-layer bg-6"></div>
+        <div class="bg-layer bg-7"></div>
+    </div>
+
+    <!-- Slide counter — bottom-left indicator -->
+    <div class="slide-counter" id="slideCounter">
+        <span class="current">01</span> / 07
     </div>
 
     <!-- ===================================================
-         SLIDE 1: TITLE — What is NATIV
+         SLIDE 1: TITLE — Hero intro
          =================================================== -->
     <section class="slide slide-1" data-slide="0">
+        <!-- Synthwave sunrise backdrop -->
+        <img src="assets/sunrise.png" class="sunrise-bg" alt="" aria-hidden="true">
         <div class="slide-content">
             <span class="tag reveal">Introducing</span>
-            <h1 class="glitch-reveal">NATIV</h1>
+            <h1 class="glitch-reveal gradient-title">NATIV</h1>
+            <hr class="divider reveal">
             <p class="subtitle reveal">
-                A mobile app that lets you show off your <span class="neon-cyan">NFTs</span> in all their glory — right on your phone's <span class="neon-magenta">wallpaper</span>.
+                Flex your <span class="neon-cyan">NFTs</span> in all their glory — right on your phone's <span class="neon-magenta">wallpaper</span> &amp; lock screen.
             </p>
         </div>
         <div class="keyboard-hint">
@@ -688,54 +846,81 @@
     </section>
 
     <!-- ===================================================
-         SLIDE 2: WHO AM I — About the builder
+         SLIDE 2: THE PROBLEM — Pain points
          =================================================== -->
     <section class="slide slide-2" data-slide="1">
         <div class="slide-content">
-            <span class="tag reveal">About Me</span>
-            <h2 class="reveal">Who am I?</h2>
-            <ul class="bullet-list reveal">
-                <li><strong style="color: var(--text-primary);">Andrew</strong> — long-time Android developer &amp; Solana community member</li>
-                <li>Former mobile developer at <strong style="color: var(--accent-cyan);">Solana Mobile</strong> &amp; <strong style="color: var(--accent-magenta);">Drip</strong></li>
-                <li>I've been talking about this idea <span class="neon-cyan">FOREVER</span></li>
+            <span class="tag reveal">The Pain</span>
+            <h2 class="reveal">The <span class="neon-magenta">Problem</span></h2>
+            <p class="subtitle reveal">There's no <strong style="color: var(--accent-magenta);">good</strong> or <strong style="color: var(--accent-magenta);">easy</strong> way to display NFTs <br> on your wallpaper.</p>
+            <hr class="divider reveal">
+            <ul class="bullet-list problem-list reveal">
+                <li>Manually saving images and setting them is <strong style="color: var(--accent-magenta);">tedious</strong></li>
+                <li>You're stuck with a <strong style="color: var(--text-primary);">single, static image</strong> — boring!</li>
+                <li>Animations like <strong style="color: var(--accent-cyan);">videos</strong> and <strong style="color: var(--accent-cyan);">GIFs</strong>? Completely unsupported.</li>
             </ul>
         </div>
     </section>
 
     <!-- ===================================================
-         SLIDE 3: WHY — The problem & solution
+         SLIDE 3: THE SOLUTION — What NATIV does
          =================================================== -->
     <section class="slide slide-3" data-slide="2">
         <div class="slide-content">
-            <span class="tag reveal">The Problem</span>
-            <h2 class="reveal">Let's bring back <span class="neon-cyan">NFTs</span></h2>
-            <ul class="bullet-list reveal">
-                <li>NFTs were <strong style="color: var(--accent-magenta);">meant to be flexed</strong></li>
-                <li>Existing methods to set as Wallpaper are tedious</li>
-                <li>No animation support, can't show more than one</li>
-                <li>With <strong style="color: var(--accent-cyan);">NATIV</strong>, pick your favorites for home or lock screen — and they cycle automatically</li>
-                <li>Breathing <strong style="color: var(--accent-magenta);">new life</strong> into NFTs by letting you flex on the device that is with you all the time</li>
+            <span class="tag reveal">The Solution</span>
+            <h2 class="reveal"><span class="neon-cyan">NATIV</span> Solves This</h2>
+            <hr class="divider reveal">
+            <ul class="bullet-list step-list reveal">
+                <li><strong style="color: var(--accent-cyan);">Connect</strong> your wallet</li>
+                <li><strong style="color: var(--text-primary);">Choose</strong> your favorite NFTs from your collection</li>
+                <li>Pick from a library of <strong style="color: var(--accent-magenta);">stunning included wallpapers</strong></li>
+                <li>Instantly flex on your <strong style="color: var(--accent-cyan);">wallpaper or lock screen</strong> — with style!</li>
+                <li>Images, videos, GIFs — <strong style="color: var(--accent-yellow);">they just work</strong></li>
             </ul>
         </div>
     </section>
 
     <!-- ===================================================
-         SLIDE 4: LIVE PRODUCT DEMO
+         SLIDE 4: ABOUT — The human behind it
          =================================================== -->
     <section class="slide slide-4" data-slide="3">
         <div class="slide-content">
-            <span class="tag reveal">See It In Action</span>
-            <h1 class="reveal neon-cyan" style="font-size: var(--h2-size);">Live Product Demo</h1>
+            <span class="tag reveal">Hey There</span>
+            <h2 class="reveal">Oh, Hey Everyone!</h2>
+            <p class="subtitle reveal">Just thought I'd stop to say hi. I figure I don't need to introduce myself.</p>
+            <hr class="divider reveal">
+            <ul class="bullet-list reveal">
+                <li>Building this <strong style="color: var(--accent-cyan);">solo</strong> — just me and the code</li>
+                <li>This is a <strong style="color: var(--accent-magenta);">passion project</strong> born from real frustration</li>
+                <li>If you remember, I've been talking about this <span class="neon-cyan">FOREVER</span></li>
+            </ul>
         </div>
     </section>
 
     <!-- ===================================================
-         SLIDE 5: TECHNOLOGIES — Tech stack
+         SLIDE 5: BUSINESS — Monetization
          =================================================== -->
     <section class="slide slide-5" data-slide="4">
         <div class="slide-content">
+            <span class="tag reveal">The Business</span>
+            <h2 class="reveal">So How Does This <span class="neon-cyan">Make Money</span>?</h2>
+            <hr class="divider reveal">
+            <ul class="bullet-list check-list reveal">
+                <li>Many awesome wallpapers left to explore: <strong style="color: var(--accent-cyan);">3D models</strong>, interactivity, and more</li>
+                <li>Sell <strong style="color: var(--accent-magenta);">"Packs"</strong> that unlock premium wallpaper experiences</li>
+                <li>Let the community drive what gets built — <strong style="color: var(--text-primary);">build what users request</strong></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- ===================================================
+         SLIDE 6: TECH — Stack & hackathon work
+         =================================================== -->
+    <section class="slide slide-6" data-slide="5">
+        <div class="slide-content">
             <span class="tag reveal">Under the Hood</span>
-            <h2 class="reveal">Technologies Used</h2>
+            <h2 class="reveal">Technologies &amp; <span class="neon-magenta">Hackathon Work</span></h2>
+            <hr class="divider reveal">
             <div class="tech-grid reveal">
                 <div class="tech-card neon-border">
                     <div class="card-icon">🤖</div>
@@ -745,7 +930,7 @@
                 <div class="tech-card neon-border">
                     <div class="card-icon">🎨</div>
                     <h3>Jetpack Compose</h3>
-                    <p>Live wallpapers powered by my own library, <span class="neon-cyan">Mozart</span></p>
+                    <p>Powers both the UI <em>and</em> the Live Wallpapers</p>
                 </div>
                 <div class="tech-card neon-border">
                     <div class="card-icon">⛓️</div>
@@ -753,22 +938,28 @@
                     <p>Mobile Wallet Adapter, Multmult, DAS 2.0</p>
                 </div>
                 <div class="tech-card neon-border">
-                    <div class="card-icon">📦</div>
-                    <h3>Open Source</h3>
-                    <p>Debug release will be uploaded to the repo</p>
+                    <div class="card-icon">🏗️</div>
+                    <h3>Hackathon Dev</h3>
+                    <p>Existing repo, but significant features built during the Hackathon</p>
+                </div>
+                <div class="tech-card neon-border" style="grid-column: span 2;">
+                    <div class="card-icon">🚀</div>
+                    <h3>Shipping Wallpapers & More</h3>
+                    <p>Major app features delivered — including the live wallpapers themselves</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ===================================================
-         SLIDE 6: THANK YOU — Closing
+         SLIDE 7: THANK YOU — Closing
          =================================================== -->
-    <section class="slide slide-6" data-slide="5">
+    <section class="slide slide-7" data-slide="6">
         <div class="slide-content">
-            <h1 class="thank-you-title reveal">Thank You!</h1>
+            <h1 class="thank-you-title gradient-title reveal">Thank You!</h1>
+            <hr class="divider reveal">
             <p class="subtitle reveal" style="margin-top: 0.5em;">
-                Let's flex some NFTs.
+                Which NFTs will <em>you</em> flex?
             </p>
             <div class="reveal" style="display: flex; gap: 1em; flex-wrap: wrap; justify-content: center; margin-top: 0.5em;">
                 <a href="https://github.com/creativedrewy/NATIV" class="social-link" target="_blank">
@@ -795,6 +986,7 @@
 
                 this.progressBar = document.getElementById('progressBar');
                 this.navDotsContainer = document.getElementById('navDots');
+                this.slideCounter = document.getElementById('slideCounter');
 
                 this.init();
             }
@@ -811,6 +1003,7 @@
                 this.updateProgress(0);
                 this.updateActiveDot(0);
                 this.updateActiveBackground(0);
+                this.updateSlideCounter(0);
             }
 
             /* -----------------------------------------
@@ -842,6 +1035,7 @@
                             this.updateActiveDot(slideIndex);
                             this.updateProgress(slideIndex);
                             this.updateActiveBackground(slideIndex);
+                            this.updateSlideCounter(slideIndex);
                         }
                     });
                 }, { threshold: 0.5 });
@@ -938,6 +1132,7 @@
                 this.updateActiveDot(index);
                 this.updateProgress(index);
                 this.updateActiveBackground(index);
+                this.updateSlideCounter(index);
             }
 
             /* -----------------------------------------
@@ -960,6 +1155,12 @@
                     document.body.classList.remove(`active-slide-${i}`);
                 }
                 document.body.classList.add(`active-slide-${index + 1}`);
+            }
+
+            updateSlideCounter(index) {
+                const num = String(index + 1).padStart(2, '0');
+                const total = String(this.totalSlides).padStart(2, '0');
+                this.slideCounter.innerHTML = `<span class="current">${num}</span> / ${total}`;
             }
         }
 
